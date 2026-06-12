@@ -4,9 +4,9 @@ import {
   Route,
 } from "react-router-dom";
 
-import Loja from "./pages/Loja";
-import Admin from "./pages/Admin";
-import Login from "./pages/Login";
+import Login from "./pages/login";
+import Admin from "./pages/admin";
+import Loja from "./pages/loja";
 
 function App() {
   return (
