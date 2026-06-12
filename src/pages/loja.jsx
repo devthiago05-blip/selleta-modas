@@ -37,6 +37,8 @@ export default function Loja() {
       .from("products")
       .select("*")
       .order("nome");
+      console.log(data);
+console.log(error);
 
     if (error) {
       console.log(error);
@@ -440,14 +442,14 @@ if (!telefoneCliente) {
             {produto.imagem && (
               <img
   src={produto.imagem}
-  alt={produto.nome}
+  alt={produto.products}
   className="w-full aspect-square object-cover rounded-xl border"
 />
 
             )}
 
             <h2 className="text-xl font-bold mt-4">
-              {produto.nome}
+              {produto.products}
             </h2>
             <p className="text-gray-600 mt-2">
               {produto.descricao}
