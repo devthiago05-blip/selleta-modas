@@ -159,7 +159,7 @@ if (!telefoneCliente) {
 
   carrinho.forEach((item) => {
     mensagem +=
-      `• ${item.nome}%0A` +
+      `• ${item.products}%0A` +
       `Tam: ${item.tamanho}%0A` +
       `Cor: ${item.cor}%0A` +
       `Qtd: ${item.quantidade}%0A` +
@@ -178,7 +178,7 @@ if (!telefoneCliente) {
   `Observações: ${observacoesCliente}`;
 
   const numero =
-    "5585987433260"; // TROCAR PELO SEU NÚMERO
+    "5585992903028"; //  NÚMERO
 
   window.open(
     `https://wa.me/${numero}?text=${mensagem}`,
@@ -254,7 +254,7 @@ if (!telefoneCliente) {
 >
   <div>
    <div>
-  <div>{item.nome}</div>
+  <div>{item.products}</div>
 
   <div className="text-sm text-gray-500">
     Tam: {item.tamanho}
