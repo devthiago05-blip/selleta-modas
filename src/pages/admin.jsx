@@ -25,7 +25,7 @@ export default function Admin() {
     const { data, error } = await supabase
       .from("products")
       .select("*")
-      .order("nome");
+      .order("products");
 
     if (error) {
       console.log("Erro ao buscar produtos:", error);

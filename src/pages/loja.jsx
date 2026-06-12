@@ -34,9 +34,9 @@ export default function Loja() {
 
   async function carregarProdutos() {
     const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .order("nome");
+  .from("products")
+  .select("*")
+  .order("products");
       console.log(data);
 console.log(error);
 
