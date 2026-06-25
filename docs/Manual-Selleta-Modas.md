@@ -10,6 +10,7 @@ O sistema possui áreas separadas para clientes e administradores:
 - Loja: `/`
 - Área da cliente: `/cliente`
 - Acompanhamento sem login: `/pedido`
+- Políticas de compra: `/politicas`
 - Login administrativo: `/login`
 - Painel administrativo: `/admin`
 
@@ -68,6 +69,10 @@ Formas disponíveis:
 
 Para acompanhar sem conta, acesse `/pedido` e informe o código do pedido e o
 telefone utilizado na compra.
+
+Antes de confirmar o checkout no site, a cliente deve aceitar as políticas de
+compra. O subtotal não inclui automaticamente o frete; prazo e custo são
+confirmados pela equipe antes do envio.
 
 Situações de pagamento:
 
@@ -250,5 +255,5 @@ pedido anterior” com código e telefone corretos.
 O arquivo `CONTINUIDADE.md` registra o estado técnico e os próximos passos do
 projeto. Consulte-o antes de novas alterações.
 
-Prioridades futuras: Pix automático com webhook, cálculo de frete, páginas
-legais, galeria de imagens, analytics, monitoramento e testes E2E.
+Prioridades futuras: Pix automático com webhook, cálculo automático de frete,
+galeria de imagens, analytics, monitoramento e testes E2E.

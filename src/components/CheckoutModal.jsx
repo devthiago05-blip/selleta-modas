@@ -19,6 +19,7 @@ export default function CheckoutModal({ carrinho, total, onClose, onSuccess }) {
   const [endereco, setEndereco] = useState("");
   const [observacoes, setObservacoes] = useState("");
   const [pagamento, setPagamento] = useState(pixKey ? "pix" : "cash_on_delivery");
+  const [aceitouPoliticas, setAceitouPoliticas] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState("");
   const [pedido, setPedido] = useState(null);
@@ -29,6 +30,11 @@ export default function CheckoutModal({ carrinho, total, onClose, onSuccess }) {
 
     if (!nome.trim() || telefone.replace(/\D/g, "").length < 8 || !endereco.trim()) {
       setErro("Informe nome, telefone e endereço completos.");
+      return;
+    }
+
+    if (!aceitouPoliticas) {
+      setErro("Confirme que leu as políticas de compra.");
       return;
     }
 
@@ -196,6 +202,11 @@ export default function CheckoutModal({ carrinho, total, onClose, onSuccess }) {
               required
             />
 
+            <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-800">
+              O subtotal não inclui frete. Prazo e valor da entrega serão
+              confirmados pela equipe antes do envio.
+            </p>
+
             <textarea
               value={observacoes}
               onChange={(e) => setObservacoes(e.target.value)}
@@ -254,6 +265,28 @@ export default function CheckoutModal({ carrinho, total, onClose, onSuccess }) {
                 </label>
               </div>
             </fieldset>
+
+            <label className="flex items-start gap-3 rounded-xl border p-4 text-sm">
+              <input
+                type="checkbox"
+                checked={aceitouPoliticas}
+                onChange={(e) => setAceitouPoliticas(e.target.checked)}
+                className="mt-1 h-4 w-4 accent-[#8a5d2b]"
+                required
+              />
+              <span>
+                Li e aceito as{" "}
+                <Link
+                  to="/politicas"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-[#8a5d2b] underline"
+                >
+                  políticas de compra, entrega, troca e privacidade
+                </Link>
+                .
+              </span>
+            </label>
 
             {erro && (
               <p role="alert" className="rounded-xl bg-red-50 p-3 text-sm text-red-700">

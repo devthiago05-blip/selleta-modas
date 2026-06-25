@@ -901,6 +901,13 @@ if (!telefoneCliente.trim()) {
     >
       Acompanhar pedido
     </Link>
+    <span className="mx-2 text-gray-300">·</span>
+    <Link
+      to="/politicas"
+      className="mt-3 inline-flex font-semibold text-[#8a5d2b] hover:underline"
+    >
+      Trocas, entrega e privacidade
+    </Link>
   </div>
 
 </footer>

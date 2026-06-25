@@ -62,6 +62,8 @@ Depois de cada publicação:
 - Catálogo, carrinho, WhatsApp, checkout e pedidos passaram a transportar a estampa e o identificador da variação.
 - Estoque da grade é consolidado no produto e reservado/restaurado na combinação correta ao atualizar o pedido.
 - Criado `public/docs/Manual-Selleta-Modas.pdf`, acompanhado da versão editável em Markdown.
+- Criada a página `/politicas` com regras de troca, entrega, privacidade e compra.
+- Checkout passou a informar que o frete não está no subtotal e exige aceite das políticas.
 
 ## Esquema principal
 

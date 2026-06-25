@@ -12,6 +12,7 @@ const Login = lazy(() => import("./pages/login"));
 const Admin = lazy(() => import("./pages/admin"));
 const OrderStatus = lazy(() => import("./pages/order-status"));
 const Customer = lazy(() => import("./pages/customer"));
+const Policies = lazy(() => import("./pages/policies"));
 
 function CarregandoPagina() {
   return (
@@ -63,6 +64,15 @@ function App() {
           element={
             <Suspense fallback={<CarregandoPagina />}>
               <Customer />
+            </Suspense>
+          }
+        />
+
+        <Route
+          path="/politicas"
+          element={
+            <Suspense fallback={<CarregandoPagina />}>
+              <Policies />
             </Suspense>
           }
         />
