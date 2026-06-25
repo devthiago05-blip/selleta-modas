@@ -16,7 +16,8 @@ const whatsappNumero = String(
   import.meta.env.VITE_WHATSAPP_NUMBER || "5585992903028"
 ).replace(/\D/g, "");
 const checkoutDiretoAtivo =
-  import.meta.env.VITE_DIRECT_CHECKOUT_ENABLED === "true";
+  import.meta.env.VITE_DIRECT_CHECKOUT_ENABLED === "true" &&
+  import.meta.env.VITE_ORDERS_READY === "true";
 const CheckoutModal = lazy(() => import("../components/CheckoutModal"));
 
 const formatarPreco = (valor) =>
