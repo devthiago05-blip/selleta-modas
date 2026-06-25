@@ -21,20 +21,24 @@ async function chamarRpc(funcao, corpo, accessToken) {
   return texto ? JSON.parse(texto) : null;
 }
 
-export function criarPedido({ cliente, pagamento, itens }) {
-  return chamarRpc("create_order", {
-    p_customer_name: cliente.nome,
-    p_customer_phone: cliente.telefone,
-    p_customer_address: cliente.endereco,
-    p_notes: cliente.observacoes,
-    p_payment_method: pagamento,
-    p_items: itens.map((item) => ({
-      product_id: item.id,
-      size: item.tamanho,
-      color: item.cor,
-      quantity: item.quantidade,
-    })),
-  });
+export function criarPedido({ cliente, pagamento, itens, accessToken }) {
+  return chamarRpc(
+    "create_order",
+    {
+      p_customer_name: cliente.nome,
+      p_customer_phone: cliente.telefone,
+      p_customer_address: cliente.endereco,
+      p_notes: cliente.observacoes,
+      p_payment_method: pagamento,
+      p_items: itens.map((item) => ({
+        product_id: item.id,
+        size: item.tamanho,
+        color: item.cor,
+        quantity: item.quantidade,
+      })),
+    },
+    accessToken
+  );
 }
 
 export function acompanharPedido(token, telefone) {
@@ -42,6 +46,17 @@ export function acompanharPedido(token, telefone) {
     p_public_token: token,
     p_customer_phone: telefone,
   });
+}
+
+export function vincularPedido(token, telefone, accessToken) {
+  return chamarRpc(
+    "claim_order",
+    {
+      p_public_token: token,
+      p_customer_phone: telefone,
+    },
+    accessToken
+  );
 }
 
 export function atualizarPedidoAdmin(

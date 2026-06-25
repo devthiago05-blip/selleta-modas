@@ -3,3 +3,5 @@ Allow: /
 
 Disallow: /admin
 Disallow: /login
+Disallow: /cliente
+Disallow: /pedido

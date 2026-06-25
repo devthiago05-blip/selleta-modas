@@ -11,6 +11,7 @@ import NotFound from "./pages/not-found";
 const Login = lazy(() => import("./pages/login"));
 const Admin = lazy(() => import("./pages/admin"));
 const OrderStatus = lazy(() => import("./pages/order-status"));
+const Customer = lazy(() => import("./pages/customer"));
 
 function CarregandoPagina() {
   return (
@@ -53,6 +54,15 @@ function App() {
           element={
             <Suspense fallback={<CarregandoPagina />}>
               <OrderStatus />
+            </Suspense>
+          }
+        />
+
+        <Route
+          path="/cliente"
+          element={
+            <Suspense fallback={<CarregandoPagina />}>
+              <Customer />
             </Suspense>
           }
         />

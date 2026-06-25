@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import logoSelleta from "../assets/logo-selleta.png";
 
 export default function SiteHeader({ quantidadeCarrinho, onOpenCart }) {
@@ -25,14 +26,40 @@ export default function SiteHeader({ quantidadeCarrinho, onOpenCart }) {
           <a href="#como-comprar" className="transition hover:text-[#8a5d2b]">
             Como comprar
           </a>
+          <Link to="/cliente" className="transition hover:text-[#8a5d2b]">
+            Minha conta
+          </Link>
         </nav>
 
-        <button
-          type="button"
-          onClick={onOpenCart}
-          aria-label={`Abrir carrinho com ${quantidadeCarrinho} item(ns)`}
-          className="relative grid h-11 w-11 place-items-center rounded-full bg-[#8a5d2b] text-white shadow-md transition hover:bg-[#70491f]"
-        >
+        <div className="flex items-center gap-2">
+          <Link
+            to="/cliente"
+            aria-label="Abrir minha conta"
+            className="grid h-11 w-11 place-items-center rounded-full border border-[#8a5d2b]/20 bg-white text-[#8a5d2b] md:hidden"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="h-5 w-5"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.5 20.118a7.5 7.5 0 0115 0A17.933 17.933 0 0112 21.75a17.933 17.933 0 01-7.5-1.632z"
+              />
+            </svg>
+          </Link>
+
+          <button
+            type="button"
+            onClick={onOpenCart}
+            aria-label={`Abrir carrinho com ${quantidadeCarrinho} item(ns)`}
+            className="relative grid h-11 w-11 place-items-center rounded-full bg-[#8a5d2b] text-white shadow-md transition hover:bg-[#70491f]"
+          >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -54,7 +81,8 @@ export default function SiteHeader({ quantidadeCarrinho, onOpenCart }) {
               {quantidadeCarrinho}
             </span>
           )}
-        </button>
+          </button>
+        </div>
       </div>
     </header>
   );

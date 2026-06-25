@@ -53,6 +53,9 @@ Depois de cada publicação:
 - Preparado checkout próprio com Pix manual, dinheiro/cartão na entrega e acompanhamento.
 - Preparado painel de pedidos com confirmação de pagamento e evolução de status.
 - Criado `supabase/orders.sql`; o checkout permanece desativado até a migração e configuração.
+- Criado `supabase/orders-uuid-client-fix.sql` para corrigir instalações com `product_id bigint`.
+- Adicionada área da cliente com cadastro, login, histórico e vínculo de pedidos anteriores.
+- Adicionados relatórios administrativos, filtros, métricas e exportação CSV.
 
 ## Esquema confirmado da tabela `products`
 

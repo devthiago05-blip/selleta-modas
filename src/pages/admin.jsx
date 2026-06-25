@@ -276,6 +276,17 @@ export default function Admin() {
         return;
       }
 
+      const { data: admin } = await supabase
+        .from("admin_users")
+        .select("user_id")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+      if (!admin) {
+        navigate("/cliente", { replace: true });
+        return;
+      }
+
       setCarregandoPagina(false);
       await carregarProdutos();
     }

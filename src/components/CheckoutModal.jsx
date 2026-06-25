@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { criarPedido } from "../lib/orders";
 import { obterPrecoVenda } from "../lib/product";
+import { supabase } from "../lib/supabase";
 
 const pixKey = import.meta.env.VITE_PIX_KEY || "";
 const pixReceiver = import.meta.env.VITE_PIX_RECEIVER || "Selleta Modas";
@@ -34,10 +35,15 @@ export default function CheckoutModal({ carrinho, total, onClose, onSuccess }) {
     setEnviando(true);
 
     try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       const resultado = await criarPedido({
         cliente: { nome, telefone, endereco, observacoes },
         pagamento,
         itens: carrinho,
+        accessToken: session?.access_token,
       });
 
       const dadosPedido = {

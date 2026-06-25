@@ -9,6 +9,7 @@ create table if not exists public.orders (
   id uuid primary key default gen_random_uuid(),
   order_number bigint generated always as identity unique,
   public_token uuid not null default gen_random_uuid() unique,
+  customer_user_id uuid references auth.users(id) on delete set null,
   customer_name text not null check (char_length(customer_name) between 2 and 100),
   customer_phone text not null check (char_length(customer_phone) between 8 and 20),
   customer_address text,
@@ -39,7 +40,7 @@ create table if not exists public.orders (
 create table if not exists public.order_items (
   id bigint generated always as identity primary key,
   order_id uuid not null references public.orders(id) on delete cascade,
-  product_id bigint not null,
+  product_id uuid not null references public.products(id),
   product_name text not null,
   size text not null,
   color text not null,
@@ -67,6 +68,8 @@ grant select on public.order_items to authenticated;
 
 drop policy if exists "admin_orders_select" on public.orders;
 drop policy if exists "admin_order_items_select" on public.order_items;
+drop policy if exists "customer_orders_select" on public.orders;
+drop policy if exists "customer_order_items_select" on public.order_items;
 
 create policy "admin_orders_select"
 on public.orders
@@ -79,6 +82,25 @@ on public.order_items
 for select
 to authenticated
 using ((select private.is_admin()));
+
+create policy "customer_orders_select"
+on public.orders
+for select
+to authenticated
+using (customer_user_id = (select auth.uid()));
+
+create policy "customer_order_items_select"
+on public.order_items
+for select
+to authenticated
+using (
+  exists (
+    select 1
+    from public.orders o
+    where o.id = order_id
+      and o.customer_user_id = (select auth.uid())
+  )
+);
 
 create or replace function public.create_order(
   p_customer_name text,
@@ -132,6 +154,7 @@ begin
 
   insert into public.orders (
     customer_name,
+    customer_user_id,
     customer_phone,
     customer_address,
     notes,
@@ -141,6 +164,7 @@ begin
   )
   values (
     trim(p_customer_name),
+    (select auth.uid()),
     v_phone,
     nullif(trim(coalesce(p_customer_address, '')), ''),
     nullif(trim(coalesce(p_notes, '')), ''),
@@ -160,7 +184,7 @@ begin
     select *
     into v_product
     from public.products
-    where id = (v_item->>'product_id')::bigint
+    where id = (v_item->>'product_id')::uuid
       and ativo = true;
 
     if not found then
@@ -213,6 +237,34 @@ begin
     'subtotal', v_subtotal,
     'created_at', v_order.created_at
   );
+end;
+$$;
+
+create or replace function public.claim_order(
+  p_public_token uuid,
+  p_customer_phone text
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if (select auth.uid()) is null then
+    raise exception 'Faça login para vincular o pedido';
+  end if;
+
+  update public.orders
+  set customer_user_id = (select auth.uid()),
+      updated_at = now()
+  where public_token = p_public_token
+    and customer_phone = regexp_replace(p_customer_phone, '\D', '', 'g')
+    and (
+      customer_user_id is null
+      or customer_user_id = (select auth.uid())
+    );
+
+  return found;
 end;
 $$;
 
@@ -341,6 +393,7 @@ $$;
 revoke all on function public.create_order(text, text, text, text, text, jsonb) from public;
 revoke all on function public.track_order(uuid, text) from public;
 revoke all on function public.admin_update_order(uuid, text, text) from public;
+revoke all on function public.claim_order(uuid, text) from public;
 
 grant execute on function public.create_order(text, text, text, text, text, jsonb)
 to anon, authenticated;
@@ -349,6 +402,9 @@ grant execute on function public.track_order(uuid, text)
 to anon, authenticated;
 
 grant execute on function public.admin_update_order(uuid, text, text)
+to authenticated;
+
+grant execute on function public.claim_order(uuid, text)
 to authenticated;
 
 commit;
