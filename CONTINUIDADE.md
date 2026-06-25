@@ -50,6 +50,9 @@ Depois de cada publicação:
 - Rotas de login/admin carregadas sob demanda para reduzir o JavaScript inicial.
 - Adicionada página 404 alinhada à identidade da marca.
 - Catálogo público passou a usar a API REST do Supabase; o SDK completo fica restrito às rotas administrativas.
+- Preparado checkout próprio com Pix manual, dinheiro/cartão na entrega e acompanhamento.
+- Preparado painel de pedidos com confirmação de pagamento e evolução de status.
+- Criado `supabase/orders.sql`; o checkout permanece desativado até a migração e configuração.
 
 ## Esquema confirmado da tabela `products`
 
@@ -71,10 +74,11 @@ No painel do Supabase, confirmar:
 
 1. Executar `supabase/product-commerce-fields.sql`.
 2. Revisar e executar `supabase/rls-policies.sql`; cadastrar o administrador e remover políticas antigas/permissivas do Storage.
-3. Adicionar estoque por combinação de tamanho e cor.
-4. Criar testes dos fluxos de catálogo, carrinho, login e CRUD.
-5. Adicionar imagem Open Graph e dados estruturados de produtos.
-6. Configurar `VITE_WHATSAPP_NUMBER` também na Vercel.
+3. Executar `supabase/orders.sql`.
+4. Configurar `VITE_DIRECT_CHECKOUT_ENABLED=true`, `VITE_PIX_KEY` e `VITE_PIX_RECEIVER` na Vercel.
+5. Adicionar estoque por combinação de tamanho e cor.
+6. Integrar provedor de Pix com webhook para confirmação automática.
+7. Configurar `VITE_WHATSAPP_NUMBER` também na Vercel.
 
 ## Como continuar em outro chat
 

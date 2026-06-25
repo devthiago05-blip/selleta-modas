@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AdminOrders from "../components/AdminOrders";
 import { temPrecoPromocional } from "../lib/product";
 import { removerImagemProduto } from "../lib/storage";
 import { supabase } from "../lib/supabase";
@@ -32,6 +33,7 @@ export default function Admin() {
   const [camposComerciaisDisponiveis, setCamposComerciaisDisponiveis] =
     useState(false);
   const [feedback, setFeedback] = useState(null);
+  const [secao, setSecao] = useState("produtos");
   const navigate = useNavigate();
 
   const carregarProdutos = useCallback(async () => {
@@ -326,6 +328,32 @@ export default function Admin() {
         </div>
       )}
 
+      <nav className="mb-8 flex gap-2 border-b" aria-label="Seções do painel">
+        <button
+          type="button"
+          onClick={() => setSecao("produtos")}
+          className={`border-b-2 px-4 py-3 font-semibold ${
+            secao === "produtos"
+              ? "border-[#8a5d2b] text-[#8a5d2b]"
+              : "border-transparent text-gray-500"
+          }`}
+        >
+          Produtos
+        </button>
+        <button
+          type="button"
+          onClick={() => setSecao("pedidos")}
+          className={`border-b-2 px-4 py-3 font-semibold ${
+            secao === "pedidos"
+              ? "border-[#8a5d2b] text-[#8a5d2b]"
+              : "border-transparent text-gray-500"
+          }`}
+        >
+          Pedidos
+        </button>
+      </nav>
+
+      {secao === "produtos" ? (
       <section className="grid gap-8 lg:grid-cols-[minmax(0,420px)_1fr]">
         <form
           onSubmit={salvarProduto}
@@ -577,6 +605,9 @@ export default function Admin() {
           )}
         </div>
       </section>
+      ) : (
+        <AdminOrders />
+      )}
 
       {produtoParaExcluir && (
         <div

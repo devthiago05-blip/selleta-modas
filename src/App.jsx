@@ -10,6 +10,7 @@ import NotFound from "./pages/not-found";
 
 const Login = lazy(() => import("./pages/login"));
 const Admin = lazy(() => import("./pages/admin"));
+const OrderStatus = lazy(() => import("./pages/order-status"));
 
 function CarregandoPagina() {
   return (
@@ -43,6 +44,15 @@ function App() {
           element={
             <Suspense fallback={<CarregandoPagina />}>
               <Admin />
+            </Suspense>
+          }
+        />
+
+        <Route
+          path="/pedido"
+          element={
+            <Suspense fallback={<CarregandoPagina />}>
+              <OrderStatus />
             </Suspense>
           }
         />

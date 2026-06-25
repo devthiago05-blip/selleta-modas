@@ -1,6 +1,7 @@
 
 import logoSelleta from "../assets/logo-selleta.png";
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import ProductModal from "../components/ProductModal";
 import SiteHeader from "../components/SiteHeader";
@@ -14,6 +15,9 @@ const CHAVE_CARRINHO = "selleta-modas-carrinho";
 const whatsappNumero = String(
   import.meta.env.VITE_WHATSAPP_NUMBER || "5585992903028"
 ).replace(/\D/g, "");
+const checkoutDiretoAtivo =
+  import.meta.env.VITE_DIRECT_CHECKOUT_ENABLED === "true";
+const CheckoutModal = lazy(() => import("../components/CheckoutModal"));
 
 const formatarPreco = (valor) =>
   Number(valor || 0).toLocaleString("pt-BR", {
@@ -33,6 +37,7 @@ export default function Loja() {
   });
   const [carrinhoAberto, setCarrinhoAberto] =
   useState(false);
+  const [checkoutAberto, setCheckoutAberto] = useState(false);
   const [produtoAberto, setProdutoAberto] = useState(null);
   const [tamanhoSelecionado, setTamanhoSelecionado] = useState({});
   const [corSelecionada, setCorSelecionada] = useState({});
@@ -369,6 +374,20 @@ if (!telefoneCliente.trim()) {
         />
       )}
 
+      {checkoutAberto && (
+        <Suspense fallback={null}>
+        <CheckoutModal
+          carrinho={carrinho}
+          total={total}
+          onClose={() => setCheckoutAberto(false)}
+          onSuccess={() => {
+            setCarrinho([]);
+            setCarrinhoAberto(false);
+          }}
+        />
+        </Suspense>
+      )}
+
       <div className="mb-10"> {carrinhoAberto && ( 
         <>
   <div
@@ -525,8 +544,26 @@ if (!telefoneCliente.trim()) {
   onClick={finalizarPedido}
   className="mt-4 w-full bg-green-600 text-white p-3 rounded-lg font-bold"
 >
-  Finalizar Pedido
+  Finalizar pelo WhatsApp
 </button>
+
+{checkoutDiretoAtivo && (
+  <button
+    type="button"
+    onClick={() => setCheckoutAberto(true)}
+    disabled={carrinho.length === 0}
+    className="mt-2 w-full rounded-lg bg-[#8a5d2b] p-3 font-bold text-white"
+  >
+    Escolher pagamento e finalizar
+  </button>
+)}
+
+<Link
+  to="/pedido"
+  className="mt-3 block text-center text-sm font-semibold text-[#8a5d2b] hover:underline"
+>
+  Acompanhar um pedido
+</Link>
 </div>
 </>
 )}
@@ -791,6 +828,12 @@ if (!telefoneCliente.trim()) {
   Thiago Maia
 </a>
     </p>
+    <Link
+      to="/pedido"
+      className="mt-3 inline-flex font-semibold text-[#8a5d2b] hover:underline"
+    >
+      Acompanhar pedido
+    </Link>
   </div>
 
 </footer>
