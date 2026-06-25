@@ -44,6 +44,11 @@ Depois de cada publicação:
 - Painel preparado para limpar imagens antigas após edição/exclusão.
 - Adicionados dados estruturados `ClothingStore`, `ItemList` e `Product`.
 - Adicionados testes unitários sem dependências novas para opções e preços.
+- Catálogo simplificado com cards focados em imagem, nome, preço e conversão.
+- Criado cabeçalho fixo com navegação e carrinho integrado.
+- Adicionada seção explicando o processo de compra.
+- Rotas de login/admin carregadas sob demanda para reduzir o JavaScript inicial.
+- Adicionada página 404 alinhada à identidade da marca.
 
 ## Esquema confirmado da tabela `products`
 

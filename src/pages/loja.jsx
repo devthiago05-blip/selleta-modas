@@ -1,12 +1,12 @@
 
 import logoSelleta from "../assets/logo-selleta.png";
 import { useCallback, useEffect, useState } from "react";
+import ProductCard from "../components/ProductCard";
 import ProductModal from "../components/ProductModal";
-import ProductOptions from "../components/ProductOptions";
+import SiteHeader from "../components/SiteHeader";
 import {
   obterOpcoes,
   obterPrecoVenda,
-  temPrecoPromocional,
 } from "../lib/product";
 import { supabase } from "../lib/supabase";
 
@@ -323,7 +323,13 @@ if (!telefoneCliente.trim()) {
   }
 
   return (
-    <main className="min-h-screen max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-10">
+    <div className="min-h-screen">
+      <SiteHeader
+        quantidadeCarrinho={quantidadeCarrinho}
+        onOpenCart={() => setCarrinhoAberto(true)}
+      />
+
+    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
       {feedback && (
         <div
           role="status"
@@ -530,73 +536,11 @@ if (!telefoneCliente.trim()) {
 </div>
 </>
 )}
-  <div className="text-center mb-10">
-<div className="fixed top-4 right-4 z-50">
-
-  <button
-    onClick={() =>
-      setCarrinhoAberto(!carrinhoAberto)
-    }
-    aria-label="Abrir carrinho"
-    className="
-      relative
-      bg-white
-      shadow-lg
-      rounded-full
-      w-14
-      h-14
-      flex
-      items-center
-      justify-center
-      text-2xl
-    "
-  >
-    <svg
-  xmlns="http://www.w3.org/2000/svg"
-  fill="none"
-  viewBox="0 0 24 24"
-  strokeWidth={2}
-  stroke="currentColor"
-  className="w-7 h-7"
->
-  <path
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    d="M2.25 3h1.386a1.5 1.5 0 011.415 1.026L5.76 6.75m0 0h13.74l-1.125 6.75H7.125m-1.365-6.75L7.125 13.5m0 0a2.25 2.25 0 104.5 0m-4.5 0a2.25 2.25 0 104.5 0m4.5 0a2.25 2.25 0 104.5 0"
-  />
-</svg>
-
-    {carrinho.length > 0 && (
-      <span
-        className="
-          absolute
-          -top-2
-          -right-2
-          bg-red-500
-          text-white
-          text-xs
-          font-bold
-          rounded-full
-          w-6
-          h-6
-          flex
-          items-center
-          justify-center
-        "
-      >
-        {quantidadeCarrinho}
-      </span>
-    )}
-
-  </button>
-
-</div>
-  <img
-    src={logoSelleta}
-    alt="Selleta Modas"
-    className="mx-auto mb-5 w-48 sm:w-56"
-  />
-  <section className="mb-8 rounded-3xl bg-gradient-to-br from-[#8a5d2b] to-[#C58B39] px-6 py-10 text-center text-white shadow-lg sm:px-10 sm:py-14">
+  <div id="inicio" className="mb-10 text-center">
+  <section className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-[#70491f] via-[#8a5d2b] to-[#C58B39] px-6 py-12 text-center text-white shadow-xl sm:px-10 sm:py-20">
+    <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-white/10" />
+    <div className="absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-black/10" />
+    <div className="relative">
     <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em]">
       Novidades Selleta
     </p>
@@ -613,24 +557,26 @@ if (!telefoneCliente.trim()) {
     >
       Ver coleção
     </a>
+    </div>
   </section>
 
 </div>
 </div>
 
       <section
+        id="beneficios"
         aria-label="Diferenciais da loja"
-        className="mb-10 grid gap-3 text-center sm:grid-cols-3"
+        className="mb-12 grid gap-3 text-center sm:grid-cols-3"
       >
-        <div className="rounded-xl border bg-white p-4">
+        <div className="rounded-2xl border border-[#8a5d2b]/10 bg-white p-5 shadow-sm">
           <strong>Atendimento próximo</strong>
           <p className="mt-1 text-sm text-gray-500">Pedido fácil pelo WhatsApp</p>
         </div>
-        <div className="rounded-xl border bg-white p-4">
+        <div className="rounded-2xl border border-[#8a5d2b]/10 bg-white p-5 shadow-sm">
           <strong>Compra segura</strong>
           <p className="mt-1 text-sm text-gray-500">Confirmação antes de finalizar</p>
         </div>
-        <div className="rounded-xl border bg-white p-4">
+        <div className="rounded-2xl border border-[#8a5d2b]/10 bg-white p-5 shadow-sm">
           <strong>Troca facilitada</strong>
           <p className="mt-1 text-sm text-gray-500">Consulte as condições no atendimento</p>
         </div>
@@ -708,6 +654,36 @@ if (!telefoneCliente.trim()) {
           </div>
         </div>
 
+      {categorias.length > 0 && (
+        <div className="mb-6 flex gap-2 overflow-x-auto pb-2">
+          <button
+            type="button"
+            onClick={() => setCategoriaSelecionada("")}
+            className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-semibold transition ${
+              !categoriaSelecionada
+                ? "border-[#8a5d2b] bg-[#8a5d2b] text-white"
+                : "bg-white text-gray-600"
+            }`}
+          >
+            Ver tudo
+          </button>
+          {categorias.map((categoria) => (
+            <button
+              type="button"
+              key={categoria}
+              onClick={() => setCategoriaSelecionada(categoria)}
+              className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-semibold transition ${
+                categoriaSelecionada === categoria
+                  ? "border-[#8a5d2b] bg-[#8a5d2b] text-white"
+                  : "bg-white text-gray-600"
+              }`}
+            >
+              {categoria}
+            </button>
+          ))}
+        </div>
+      )}
+
       {filtrosAtivos && (
         <div className="mb-5 flex items-center justify-between rounded-xl bg-[#fff7ed] px-4 py-3 text-sm">
           <span>{produtosFiltrados.length} produto(s) encontrado(s)</span>
@@ -739,93 +715,46 @@ if (!telefoneCliente.trim()) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {produtosFiltrados.map((produto) => (
-          <article
+          <ProductCard
             key={produto.id}
-            className="flex flex-col rounded-2xl border bg-white p-4 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
-          >
-            {produto.imagem && (
-              <img
-  src={produto.imagem}
-  alt={produto.products}
-  loading="lazy"
-  decoding="async"
-  className="w-full aspect-square object-cover rounded-xl border"
-/>
-
-            )}
-
-            <h2 className="text-xl font-bold mt-4">
-              {produto.products}
-            </h2>
-            <p className="text-gray-600 mt-2">
-              {produto.descricao}
-            </p>
-            <div className="my-4">
-              <ProductOptions
-                produto={produto}
-                tamanho={tamanhoSelecionado[produto.id] || ""}
-                cor={corSelecionada[produto.id] || ""}
-                quantidade={quantidadeSelecionada[produto.id] || 1}
-                onTamanhoChange={(tamanho) =>
-                  setTamanhoSelecionado((selecoes) => ({
-                    ...selecoes,
-                    [produto.id]: tamanho,
-                  }))
-                }
-                onCorChange={(cor) =>
-                  setCorSelecionada((selecoes) => ({
-                    ...selecoes,
-                    [produto.id]: cor,
-                  }))
-                }
-                onQuantidadeChange={(quantidade) =>
-                  setQuantidadeSelecionada((selecoes) => ({
-                    ...selecoes,
-                    [produto.id]: quantidade,
-                  }))
-                }
-              />
-            </div>
-            <div className="mt-4">
-              {temPrecoPromocional(produto) && (
-                <div className="mb-1 flex items-center gap-2">
-                  <span className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-700">
-                    Oferta
-                  </span>
-                  <span className="text-sm text-gray-400 line-through">
-                    {formatarPreco(produto.preco)}
-                  </span>
-                </div>
-              )}
-              <p className="text-xl font-bold text-[#8a5d2b]">
-                {formatarPreco(obterPrecoVenda(produto))}
-              </p>
-            </div>
-
-            <div className="mt-auto grid gap-2 pt-4">
-              <button
-                type="button"
-                onClick={() => setProdutoAberto(produto)}
-                className="w-full rounded-lg border border-[#8a5d2b] p-3 font-semibold text-[#8a5d2b] transition hover:bg-[#fff7ed]"
-              >
-                Ver detalhes
-              </button>
-              <button
-                type="button"
-                onClick={() => adicionarAoCarrinho(produto)}
-                disabled={produto.estoque <= 0}
-                className="w-full rounded-lg bg-[#8a5d2b] p-3 font-semibold text-white transition hover:bg-[#70491f]"
-              >
-                {produto.estoque > 0
-                  ? "Adicionar ao carrinho"
-                  : "Produto esgotado"}
-              </button>
-            </div>
-          </article>
+            produto={produto}
+            onOpen={() => setProdutoAberto(produto)}
+          />
         ))}
       </div>
+      </section>
+
+      <section
+        id="como-comprar"
+        className="mt-20 rounded-3xl bg-[#2f2924] px-6 py-10 text-white sm:px-10"
+      >
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#e8bd7a]">
+            Simples e pessoal
+          </p>
+          <h2 className="mt-2 text-3xl font-bold">Como comprar na Selleta</h2>
+          <p className="mt-3 text-white/70">
+            Você escolhe com calma e nossa equipe confirma cada detalhe antes
+            de finalizar.
+          </p>
+        </div>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {[
+            ["1", "Escolha sua peça", "Veja detalhes, tamanhos, cores e estoque."],
+            ["2", "Monte seu pedido", "Adicione as opções desejadas ao carrinho."],
+            ["3", "Finalize no WhatsApp", "Confirme entrega e pagamento com a equipe."],
+          ].map(([numero, titulo, texto]) => (
+            <div key={numero} className="rounded-2xl bg-white/10 p-5">
+              <span className="grid h-9 w-9 place-items-center rounded-full bg-[#C58B39] font-bold">
+                {numero}
+              </span>
+              <h3 className="mt-4 font-bold">{titulo}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-white/70">{texto}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       <a
@@ -872,5 +801,6 @@ if (!telefoneCliente.trim()) {
 
 </footer>
     </main>
+    </div>
   );
 }
