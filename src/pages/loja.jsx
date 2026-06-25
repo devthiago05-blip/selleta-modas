@@ -4,11 +4,11 @@ import { useCallback, useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
 import ProductModal from "../components/ProductModal";
 import SiteHeader from "../components/SiteHeader";
+import { carregarCatalogo } from "../lib/catalog";
 import {
   obterOpcoes,
   obterPrecoVenda,
 } from "../lib/product";
-import { supabase } from "../lib/supabase";
 
 const CHAVE_CARRINHO = "selleta-modas-carrinho";
 const whatsappNumero = String(
@@ -239,30 +239,24 @@ if (!telefoneCliente.trim()) {
   }, [produtos]);
 
   useEffect(() => {
-    let ativo = true;
+    const controller = new AbortController();
 
     async function carregarProdutos() {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*")
-        .order("products");
-
-      if (!ativo) return;
-
-      if (error) {
+      try {
+        const data = await carregarCatalogo(controller.signal);
+        setProdutos(data || []);
+      } catch (error) {
+        if (error.name === "AbortError") return;
         setErroProdutos("Não foi possível carregar o catálogo agora.");
-        setCarregando(false);
-        return;
+      } finally {
+        if (!controller.signal.aborted) setCarregando(false);
       }
-
-      setProdutos(data || []);
-      setCarregando(false);
     }
 
     carregarProdutos();
 
     return () => {
-      ativo = false;
+      controller.abort();
     };
   }, []);
   const quantidadeCarrinho = carrinho.reduce(

@@ -49,6 +49,7 @@ Depois de cada publicação:
 - Adicionada seção explicando o processo de compra.
 - Rotas de login/admin carregadas sob demanda para reduzir o JavaScript inicial.
 - Adicionada página 404 alinhada à identidade da marca.
+- Catálogo público passou a usar a API REST do Supabase; o SDK completo fica restrito às rotas administrativas.
 
 ## Esquema confirmado da tabela `products`
 
