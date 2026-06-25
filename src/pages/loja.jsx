@@ -1,13 +1,35 @@
 
 import logoSelleta from "../assets/logo-selleta.png";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import ProductModal from "../components/ProductModal";
+import ProductOptions from "../components/ProductOptions";
+import { obterOpcoes } from "../lib/product";
 import { supabase } from "../lib/supabase";
+
+const CHAVE_CARRINHO = "selleta-modas-carrinho";
+const whatsappNumero = String(
+  import.meta.env.VITE_WHATSAPP_NUMBER || "5585992903028"
+).replace(/\D/g, "");
+
+const formatarPreco = (valor) =>
+  Number(valor || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+  });
 
 export default function Loja() {
   const [produtos, setProdutos] = useState([]);
-  const [carrinho, setCarrinho] = useState([]);
+  const [carrinho, setCarrinho] = useState(() => {
+    try {
+      const carrinhoSalvo = localStorage.getItem(CHAVE_CARRINHO);
+      return carrinhoSalvo ? JSON.parse(carrinhoSalvo) : [];
+    } catch {
+      return [];
+    }
+  });
   const [carrinhoAberto, setCarrinhoAberto] =
   useState(false);
+  const [produtoAberto, setProdutoAberto] = useState(null);
   const [tamanhoSelecionado, setTamanhoSelecionado] = useState({});
   const [corSelecionada, setCorSelecionada] = useState({});
   const [quantidadeSelecionada, setQuantidadeSelecionada] = useState({});
@@ -15,48 +37,27 @@ export default function Loja() {
   const [telefoneCliente, setTelefoneCliente] = useState("");
   const [enderecoCliente, setEnderecoCliente] = useState("");
   const [observacoesCliente, setObservacoesCliente] = useState("");
-  const mapaCores = {
-  preto: "#000000",
-  branco: "#FFFFFF",
-  vermelho: "#EF4444",
-  azul: "#3B82F6",
-  rosa: "#EC4899",
-  verde: "#22C55E",
-  amarelo: "#EAB308",
-  bege: "#D6C6A5",
-  marrom: "#92400E",
-  cinza: "#6B7280",
-  laranja: "#F97316",
-  roxo: "#9333EA",
-};
-
-  
-
-  async function carregarProdutos() {
-    const { data, error } = await supabase
-  .from("products")
-  .select("*")
-  .order("products");
-      console.log(data);
-console.log(error);
-
-    if (error) {
-      console.log(error);
-      return;
-    }
-
-    setProdutos(data);
-  }
+  const [busca, setBusca] = useState("");
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState("");
+  const [tamanhoFiltro, setTamanhoFiltro] = useState("");
+  const [corFiltro, setCorFiltro] = useState("");
+  const [precoMaximo, setPrecoMaximo] = useState("");
+  const [carregando, setCarregando] = useState(true);
+  const [erroProdutos, setErroProdutos] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const fecharProduto = useCallback(() => setProdutoAberto(null), []);
 
   function adicionarAoCarrinho(produto) {
+  const tamanhosProduto = obterOpcoes(produto.tamanhos);
+  const coresProduto = obterOpcoes(produto.cores);
 
-  if (!tamanhoSelecionado[produto.id]) {
-    alert("Selecione um tamanho");
+  if (tamanhosProduto.length > 0 && !tamanhoSelecionado[produto.id]) {
+    setFeedback("Selecione um tamanho antes de adicionar.");
     return;
   }
 
-  if (!corSelecionada[produto.id]) {
-    alert("Selecione uma cor");
+  if (coresProduto.length > 0 && !corSelecionada[produto.id]) {
+    setFeedback("Selecione uma cor antes de adicionar.");
     return;
   }
 
@@ -64,28 +65,43 @@ console.log(error);
   (quantidadeSelecionada[produto.id] || 1) >
   produto.estoque
 ) {
-  alert("Quantidade maior que o estoque disponível");
+  setFeedback("Quantidade maior que o estoque disponível.");
   return;
 }
 
   const itemCarrinho = {
     ...produto,
-    tamanho: tamanhoSelecionado[produto.id],
-    cor: corSelecionada[produto.id],
+    tamanho: tamanhoSelecionado[produto.id] || "Único",
+    cor: corSelecionada[produto.id] || "Padrão",
     quantidade:
       quantidadeSelecionada[produto.id] || 1,
   };
 
-  setCarrinho((itens) => {
-
-  const itemExistente = itens.find(
+  const itemExistente = carrinho.find(
     (item) =>
       item.id === itemCarrinho.id &&
       item.tamanho === itemCarrinho.tamanho &&
       item.cor === itemCarrinho.cor
   );
 
-  if (itemExistente) {
+  if (
+    itemExistente &&
+    itemExistente.quantidade + itemCarrinho.quantidade > produto.estoque
+  ) {
+    setFeedback("A quantidade total ultrapassa o estoque disponível.");
+    return;
+  }
+
+  setCarrinho((itens) => {
+
+  const itemAtual = itens.find(
+    (item) =>
+      item.id === itemCarrinho.id &&
+      item.tamanho === itemCarrinho.tamanho &&
+      item.cor === itemCarrinho.cor
+  );
+
+  if (itemAtual) {
     return itens.map((item) => {
 
       if (
@@ -97,13 +113,6 @@ console.log(error);
         const novaQuantidade =
           item.quantidade +
           itemCarrinho.quantidade;
-
-        if (novaQuantidade > produto.estoque) {
-          alert(
-            "Quantidade ultrapassa o estoque disponível"
-          );
-          return item;
-        }
 
         return {
           ...item,
@@ -117,6 +126,7 @@ console.log(error);
 
   return [...itens, itemCarrinho];
 });
+  setFeedback("Produto adicionado ao carrinho.");
 }
 
 function removerDoCarrinho(indexRemover) {
@@ -133,61 +143,82 @@ function alterarQuantidadeCarrinho(index, novaQuantidade) {
       i === index
         ? {
             ...item,
-            quantidade: novaQuantidade,
+            quantidade: Math.min(novaQuantidade, item.estoque),
           }
         : item
     )
   );
 }
 function finalizarPedido() {
-  if (!nomeCliente) {
-  alert("Informe seu nome");
+  if (!nomeCliente.trim()) {
+  setFeedback("Informe seu nome.");
   return;
 }
 
-if (!telefoneCliente) {
-  alert("Informe seu telefone");
+if (!telefoneCliente.trim()) {
+  setFeedback("Informe seu telefone.");
   return;
 }
   if (carrinho.length === 0) {
-    alert("Seu carrinho está vazio");
+    setFeedback("Seu carrinho está vazio.");
     return;
   }
 
-  let mensagem =
-    "Olá! Gostaria de fazer o seguinte pedido:%0A%0A";
+  let mensagem = "Olá! Gostaria de fazer o seguinte pedido:\n\n";
 
   carrinho.forEach((item) => {
     mensagem +=
-      `• ${item.products}%0A` +
-      `Tam: ${item.tamanho}%0A` +
-      `Cor: ${item.cor}%0A` +
-      `Qtd: ${item.quantidade}%0A` +
-      `Valor: R$ ${(item.preco * item.quantidade).toFixed(2)}%0A%0A`;
+      `• ${item.products}\n` +
+      `Tam: ${item.tamanho}\n` +
+      `Cor: ${item.cor}\n` +
+      `Qtd: ${item.quantidade}\n` +
+      `Valor: ${formatarPreco(item.preco * item.quantidade)}\n\n`;
   });
 
   mensagem +=
-  `Total: R$ ${total.toFixed(2)}%0A%0A` +
-
-  `Nome: ${nomeCliente}%0A` +
-
-  `Telefone: ${telefoneCliente}%0A` +
-
-  `Endereço: ${enderecoCliente}%0A` +
-
+  `Total: ${formatarPreco(total)}\n\n` +
+  `Nome: ${nomeCliente.trim()}\n` +
+  `Telefone: ${telefoneCliente.trim()}\n` +
+  `Endereço: ${enderecoCliente.trim() || "A combinar"}\n` +
   `Observações: ${observacoesCliente}`;
 
-  const numero =
-    "5585992903028"; //  NÚMERO
-
   window.open(
-    `https://wa.me/${numero}?text=${mensagem}`,
-    "_blank"
+    `https://wa.me/${whatsappNumero}?text=${encodeURIComponent(mensagem)}`,
+    "_blank",
+    "noopener,noreferrer"
   );
 }
 
   useEffect(() => {
+    localStorage.setItem(CHAVE_CARRINHO, JSON.stringify(carrinho));
+  }, [carrinho]);
+
+  useEffect(() => {
+    let ativo = true;
+
+    async function carregarProdutos() {
+      const { data, error } = await supabase
+        .from("products")
+        .select("*")
+        .order("products");
+
+      if (!ativo) return;
+
+      if (error) {
+        setErroProdutos("Não foi possível carregar o catálogo agora.");
+        setCarregando(false);
+        return;
+      }
+
+      setProdutos(data || []);
+      setCarregando(false);
+    }
+
     carregarProdutos();
+
+    return () => {
+      ativo = false;
+    };
   }, []);
   const quantidadeCarrinho = carrinho.reduce(
   (soma, item) =>
@@ -199,9 +230,98 @@ if (!telefoneCliente) {
     soma + Number(item.preco) * item.quantidade,
   0
 );
+  const categorias = [
+    ...new Set(produtos.map((produto) => produto.categoria).filter(Boolean)),
+  ];
+  const tamanhosDisponiveis = [
+    ...new Set(produtos.flatMap((produto) => obterOpcoes(produto.tamanhos))),
+  ];
+  const coresDisponiveis = [
+    ...new Set(produtos.flatMap((produto) => obterOpcoes(produto.cores))),
+  ];
+  const produtosFiltrados = produtos.filter((produto) => {
+    const correspondeBusca = produto.products
+      ?.toLowerCase()
+      .includes(busca.trim().toLowerCase());
+    const correspondeCategoria =
+      !categoriaSelecionada || produto.categoria === categoriaSelecionada;
+    const correspondeTamanho =
+      !tamanhoFiltro || obterOpcoes(produto.tamanhos).includes(tamanhoFiltro);
+    const correspondeCor =
+      !corFiltro || obterOpcoes(produto.cores).includes(corFiltro);
+    const correspondePreco =
+      !precoMaximo || Number(produto.preco) <= Number(precoMaximo);
+
+    return (
+      correspondeBusca &&
+      correspondeCategoria &&
+      correspondeTamanho &&
+      correspondeCor &&
+      correspondePreco
+    );
+  });
+  const filtrosAtivos =
+    busca ||
+    categoriaSelecionada ||
+    tamanhoFiltro ||
+    corFiltro ||
+    precoMaximo;
+
+  function limparFiltros() {
+    setBusca("");
+    setCategoriaSelecionada("");
+    setTamanhoFiltro("");
+    setCorFiltro("");
+    setPrecoMaximo("");
+  }
 
   return (
-    <div className="max-w-7xl mx-auto p-10">
+    <main className="min-h-screen max-w-7xl mx-auto px-4 py-6 sm:px-6 sm:py-10">
+      {feedback && (
+        <div
+          role="status"
+          className="fixed left-1/2 top-4 z-[60] flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 items-center justify-between gap-3 rounded-xl bg-[#2f2924] px-4 py-3 text-sm text-white shadow-xl"
+        >
+          <span>{feedback}</span>
+          <button
+            onClick={() => setFeedback("")}
+            className="text-lg leading-none"
+            aria-label="Fechar mensagem"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
+      {produtoAberto && (
+        <ProductModal
+          produto={produtoAberto}
+          tamanho={tamanhoSelecionado[produtoAberto.id] || ""}
+          cor={corSelecionada[produtoAberto.id] || ""}
+          quantidade={quantidadeSelecionada[produtoAberto.id] || 1}
+          onTamanhoChange={(tamanho) =>
+            setTamanhoSelecionado((selecoes) => ({
+              ...selecoes,
+              [produtoAberto.id]: tamanho,
+            }))
+          }
+          onCorChange={(cor) =>
+            setCorSelecionada((selecoes) => ({
+              ...selecoes,
+              [produtoAberto.id]: cor,
+            }))
+          }
+          onQuantidadeChange={(quantidade) =>
+            setQuantidadeSelecionada((selecoes) => ({
+              ...selecoes,
+              [produtoAberto.id]: quantidade,
+            }))
+          }
+          onAdicionar={() => adicionarAoCarrinho(produtoAberto)}
+          onClose={fecharProduto}
+        />
+      )}
+
       <div className="mb-10"> {carrinhoAberto && ( 
         <>
   <div
@@ -214,12 +334,16 @@ if (!telefoneCliente) {
     onClick={() => setCarrinhoAberto(false)}
   />
         <div
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="titulo-carrinho"
   className="
     fixed
     top-0
     right-0
     h-full
-    w-96
+    w-full
+    max-w-md
     bg-white
     shadow-2xl
     p-4
@@ -229,12 +353,13 @@ if (!telefoneCliente) {
 >
   <div className="flex justify-between items-center mb-4">
 
-  <h2 className="text-xl font-bold">
+  <h2 id="titulo-carrinho" className="text-xl font-bold">
     Resumo do Pedido
   </h2>
 
   <button
     onClick={() => setCarrinhoAberto(false)}
+    aria-label="Fechar carrinho"
     className="
       text-2xl
       font-bold
@@ -247,9 +372,15 @@ if (!telefoneCliente) {
 
 </div>
 
+  {carrinho.length === 0 && (
+    <div className="rounded-xl bg-gray-50 p-6 text-center text-gray-500">
+      Seu carrinho está vazio.
+    </div>
+  )}
+
   {carrinho.map((item, index) => (
     <div
-  key={index}
+  key={`${item.id}-${item.tamanho}-${item.cor}`}
   className="flex justify-between items-center py-2"
 >
   <div>
@@ -273,6 +404,7 @@ if (!telefoneCliente) {
         item.quantidade - 1
       )
     }
+    aria-label={`Diminuir quantidade de ${item.products}`}
     className="px-2 border rounded"
   >
     -
@@ -289,6 +421,7 @@ if (!telefoneCliente) {
         item.quantidade + 1
       )
     }
+    aria-label={`Aumentar quantidade de ${item.products}`}
     className="px-2 border rounded"
   >
     +
@@ -297,15 +430,16 @@ if (!telefoneCliente) {
 </div>
 </div>
 <div>
-  R$ {(item.preco * item.quantidade).toFixed(2)}
+  {formatarPreco(item.preco * item.quantidade)}
 </div>
   </div>
 
   <button
     onClick={() => removerDoCarrinho(index)}
-    className="bg-red-500 text-white px-2 py-1 rounded"
+    aria-label={`Remover ${item.products} do carrinho`}
+    className="rounded bg-red-50 px-2 py-1 text-sm text-red-700"
   >
-    ❌
+    Remover
   </button>
 </div>
   ))}
@@ -317,6 +451,7 @@ if (!telefoneCliente) {
 />
 
 <input
+  type="tel"
   value={telefoneCliente}
   onChange={(e) => setTelefoneCliente(e.target.value)}
   placeholder="Telefone"
@@ -337,7 +472,7 @@ if (!telefoneCliente) {
   className="w-full border p-2 rounded mt-2"
 />
   <div className="border-t mt-3 pt-3 font-bold">
-  Total: R$ {total.toFixed(2)}
+  Total: {formatarPreco(total)}
 </div>
 <button
   onClick={finalizarPedido}
@@ -349,12 +484,13 @@ if (!telefoneCliente) {
 </>
 )}
   <div className="text-center mb-10">
-<div className="fixed top-6 right-6 z-50">
+<div className="fixed top-4 right-4 z-50">
 
   <button
     onClick={() =>
       setCarrinhoAberto(!carrinhoAberto)
     }
+    aria-label="Abrir carrinho"
     className="
       relative
       bg-white
@@ -411,38 +547,163 @@ if (!telefoneCliente) {
   <img
     src={logoSelleta}
     alt="Selleta Modas"
-    className="mx-auto w-56 mb-4"
+    className="mx-auto mb-5 w-48 sm:w-56"
   />
-<div className="bg-[#C58B39] text-white rounded-2xl p-8 text-center mb-10">
-  <h2 className="text-3xl font-bold">
-    Elegância e estilo para todas as ocasiões
-  </h2>
+  <section className="mb-8 rounded-3xl bg-gradient-to-br from-[#8a5d2b] to-[#C58B39] px-6 py-10 text-center text-white shadow-lg sm:px-10 sm:py-14">
+    <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em]">
+      Novidades Selleta
+    </p>
+    <h1 className="text-3xl font-bold sm:text-5xl">
+      Elegância e estilo para todas as ocasiões
+    </h1>
+    <p className="mx-auto mt-4 max-w-2xl text-white/90">
+      Descubra peças femininas selecionadas e compre com atendimento
+      personalizado pelo WhatsApp.
+    </p>
+    <a
+      href="#catalogo"
+      className="mt-6 inline-flex rounded-full bg-white px-6 py-3 font-bold text-[#8a5d2b] transition hover:-translate-y-0.5"
+    >
+      Ver coleção
+    </a>
+  </section>
 
-  <p className="mt-2">
-    Confira nossas novidades e tendências
-  </p>
 </div>
-  <h1 className="text-4xl font-bold">
-    Selleta Modas
-  </h1>
-
-  <p className="text-gray-500 mt-2">
-    Moda feminina para todos os estilos
-  </p>
-
-</div>
 </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {produtos.map((produto) => (
-          <div
+      <section
+        aria-label="Diferenciais da loja"
+        className="mb-10 grid gap-3 text-center sm:grid-cols-3"
+      >
+        <div className="rounded-xl border bg-white p-4">
+          <strong>Atendimento próximo</strong>
+          <p className="mt-1 text-sm text-gray-500">Pedido fácil pelo WhatsApp</p>
+        </div>
+        <div className="rounded-xl border bg-white p-4">
+          <strong>Compra segura</strong>
+          <p className="mt-1 text-sm text-gray-500">Confirmação antes de finalizar</p>
+        </div>
+        <div className="rounded-xl border bg-white p-4">
+          <strong>Troca facilitada</strong>
+          <p className="mt-1 text-sm text-gray-500">Consulte as condições no atendimento</p>
+        </div>
+      </section>
+
+      <section id="catalogo" aria-labelledby="titulo-catalogo">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-[#8a5d2b]">
+              Catálogo
+            </p>
+            <h2 id="titulo-catalogo" className="text-3xl font-bold">
+              Encontre seu próximo look
+            </h2>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <input
+              type="search"
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder="Buscar produto"
+              aria-label="Buscar produto"
+              className="rounded-lg border bg-white px-4 py-3 outline-none focus:border-[#C58B39]"
+            />
+            <select
+              value={categoriaSelecionada}
+              onChange={(e) => setCategoriaSelecionada(e.target.value)}
+              aria-label="Filtrar por categoria"
+              className="rounded-lg border bg-white px-4 py-3 outline-none focus:border-[#C58B39]"
+            >
+              <option value="">Todas as categorias</option>
+              {categorias.map((categoria) => (
+                <option key={categoria} value={categoria}>
+                  {categoria}
+                </option>
+              ))}
+            </select>
+            <select
+              value={tamanhoFiltro}
+              onChange={(e) => setTamanhoFiltro(e.target.value)}
+              aria-label="Filtrar por tamanho"
+              className="rounded-lg border bg-white px-4 py-3 outline-none focus:border-[#C58B39]"
+            >
+              <option value="">Todos os tamanhos</option>
+              {tamanhosDisponiveis.map((tamanho) => (
+                <option key={tamanho} value={tamanho}>
+                  {tamanho}
+                </option>
+              ))}
+            </select>
+            <select
+              value={corFiltro}
+              onChange={(e) => setCorFiltro(e.target.value)}
+              aria-label="Filtrar por cor"
+              className="rounded-lg border bg-white px-4 py-3 outline-none focus:border-[#C58B39]"
+            >
+              <option value="">Todas as cores</option>
+              {coresDisponiveis.map((cor) => (
+                <option key={cor} value={cor}>
+                  {cor}
+                </option>
+              ))}
+            </select>
+            <input
+              type="number"
+              min="0"
+              step="10"
+              value={precoMaximo}
+              onChange={(e) => setPrecoMaximo(e.target.value)}
+              placeholder="Preço máximo"
+              aria-label="Filtrar por preço máximo"
+              className="rounded-lg border bg-white px-4 py-3 outline-none focus:border-[#C58B39]"
+            />
+          </div>
+        </div>
+
+      {filtrosAtivos && (
+        <div className="mb-5 flex items-center justify-between rounded-xl bg-[#fff7ed] px-4 py-3 text-sm">
+          <span>{produtosFiltrados.length} produto(s) encontrado(s)</span>
+          <button
+            type="button"
+            onClick={limparFiltros}
+            className="font-semibold text-[#8a5d2b] hover:underline"
+          >
+            Limpar filtros
+          </button>
+        </div>
+      )}
+
+      {carregando && (
+        <div className="rounded-2xl border bg-white p-10 text-center text-gray-500">
+          Carregando produtos...
+        </div>
+      )}
+
+      {erroProdutos && (
+        <div role="alert" className="rounded-2xl bg-red-50 p-6 text-center text-red-700">
+          {erroProdutos}
+        </div>
+      )}
+
+      {!carregando && !erroProdutos && produtosFiltrados.length === 0 && (
+        <div className="rounded-2xl border border-dashed bg-white p-10 text-center text-gray-500">
+          Nenhum produto encontrado.
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {produtosFiltrados.map((produto) => (
+          <article
             key={produto.id}
-            className="border rounded-xl p-4 shadow-lg bg-white hover:shadow-xl transition duration-300"
+            className="flex flex-col rounded-2xl border bg-white p-4 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl"
           >
             {produto.imagem && (
               <img
   src={produto.imagem}
   alt={produto.products}
+  loading="lazy"
+  decoding="async"
   className="w-full aspect-square object-cover rounded-xl border"
 />
 
@@ -453,138 +714,73 @@ if (!telefoneCliente) {
             </h2>
             <p className="text-gray-600 mt-2">
               {produto.descricao}
-              </p>
-              {produto.tamanhos && (
-  <div className="mt-3">
-    <p className="font-semibold mb-2">
-      Tamanho
-    </p>
-
-    <div className="flex gap-2">
-      {produto.tamanhos
-        .split(",")
-        .map((tam) => (
-          <button
-            key={tam}
-            onClick={() =>
-              setTamanhoSelecionado({
-                ...tamanhoSelecionado,
-                [produto.id]: tam,
-              })
-            }
-            className={`px-3 py-1 border rounded ${
-              tamanhoSelecionado[produto.id] === tam
-                ? "bg-[#C58B39] text-white"
-                : ""
-            }`}
-          >
-            {tam}
-          </button>
-        ))}
-    </div>
-  </div>
-)}
-
-      
-      
-
-{produto.cores && (
-  <div className="mt-3">
-    <p className="font-semibold mb-2">
-      Cor
-    </p>
-
-    <div className="flex gap-2">
-      {produto.cores
-        .split(",")
-        .map((cor) => {
-          const corLimpa = cor.trim().toLowerCase();
-
-          return (
-            <button
-              key={cor}
-              onClick={() =>
-                setCorSelecionada({
-                  ...corSelecionada,
-                  [produto.id]: cor.trim(),
-                })
-              }
-              className={`w-8 h-8 rounded-full border-2 ${
-                corSelecionada[produto.id] === cor.trim()
-                  ? "border-pink-500 scale-110"
-                  : "border-gray-300"
-              }`}
-              style={{
-                backgroundColor:
-                  mapaCores[corLimpa] || "#cccccc",
-              }}
-              title={cor}
-            />
-          );
-        })}
-    </div>
-  </div>
-)}
-<div className="mt-3">
-  <p className="font-semibold mb-2">
-    Quantidade
-  </p>
-
-  <div className="flex items-center gap-2">
-
-    <button
-      onClick={() =>
-        setQuantidadeSelecionada({
-          ...quantidadeSelecionada,
-          [produto.id]: Math.max(
-            1,
-            (quantidadeSelecionada[produto.id] || 1) - 1
-          ),
-        })
-      }
-      className="px-3 py-1 border rounded"
-    >
-      -
-    </button>
-
-    <span className="font-bold">
-      {quantidadeSelecionada[produto.id] || 1}
-    </span>
-
-    <button
-      onClick={() =>
-        setQuantidadeSelecionada({
-          ...quantidadeSelecionada,
-          [produto.id]: Math.min(
-            produto.estoque,
-            (quantidadeSelecionada[produto.id] || 1) + 1
-          ),
-        })
-      }
-      className="px-3 py-1 border rounded"
-    >
-      +
-    </button>
-
-  </div>
-
-  <p className="text-sm text-gray-500 mt-1">
-    Estoque disponível: {produto.estoque}
-  </p>
-</div>
-            <p className="text-[#C58B39] font-bold text-lg">
-              R$ {produto.preco}
+            </p>
+            <div className="my-4">
+              <ProductOptions
+                produto={produto}
+                tamanho={tamanhoSelecionado[produto.id] || ""}
+                cor={corSelecionada[produto.id] || ""}
+                quantidade={quantidadeSelecionada[produto.id] || 1}
+                onTamanhoChange={(tamanho) =>
+                  setTamanhoSelecionado((selecoes) => ({
+                    ...selecoes,
+                    [produto.id]: tamanho,
+                  }))
+                }
+                onCorChange={(cor) =>
+                  setCorSelecionada((selecoes) => ({
+                    ...selecoes,
+                    [produto.id]: cor,
+                  }))
+                }
+                onQuantidadeChange={(quantidade) =>
+                  setQuantidadeSelecionada((selecoes) => ({
+                    ...selecoes,
+                    [produto.id]: quantidade,
+                  }))
+                }
+              />
+            </div>
+            <p className="mt-4 text-xl font-bold text-[#8a5d2b]">
+              {formatarPreco(produto.preco)}
             </p>
 
-            <button
-  onClick={() => adicionarAoCarrinho(produto)}
-  className="mt-4 w-full bg-[#C58B39] text-white p-3 rounded"
->
-  Adicionar ao Carrinho
-</button>
-          </div>
+            <div className="mt-auto grid gap-2 pt-4">
+              <button
+                type="button"
+                onClick={() => setProdutoAberto(produto)}
+                className="w-full rounded-lg border border-[#8a5d2b] p-3 font-semibold text-[#8a5d2b] transition hover:bg-[#fff7ed]"
+              >
+                Ver detalhes
+              </button>
+              <button
+                type="button"
+                onClick={() => adicionarAoCarrinho(produto)}
+                disabled={produto.estoque <= 0}
+                className="w-full rounded-lg bg-[#8a5d2b] p-3 font-semibold text-white transition hover:bg-[#70491f]"
+              >
+                {produto.estoque > 0
+                  ? "Adicionar ao carrinho"
+                  : "Produto esgotado"}
+              </button>
+            </div>
+          </article>
         ))}
       </div>
+      </section>
+
+      <a
+        href={`https://wa.me/${whatsappNumero}?text=${encodeURIComponent(
+          "Olá! Gostaria de conhecer as novidades da Selleta Modas."
+        )}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Falar com a Selleta Modas pelo WhatsApp"
+        className="fixed bottom-4 right-4 z-30 rounded-full bg-green-600 px-5 py-3 font-bold text-white shadow-xl transition hover:bg-green-700"
+      >
+        WhatsApp
+      </a>
+
       <footer className="mt-20 border-t pt-8 pb-6 text-center text-gray-600">
 
   <img
@@ -616,6 +812,6 @@ if (!telefoneCliente) {
   </div>
 
 </footer>
-    </div>
+    </main>
   );
 }

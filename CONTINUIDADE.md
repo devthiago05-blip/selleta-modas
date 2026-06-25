@@ -1,0 +1,82 @@
+# Continuidade do projeto Selleta Modas
+
+Atualizado em: 25 de junho de 2026.
+
+## Estado atual
+
+- Stack: React 19, Vite 8, Tailwind CSS 4 e Supabase.
+- Branch analisada: `main`.
+- URL de produção: https://selleta-modas.vercel.app/
+- `npm run lint`: aprovado.
+- `npm run build`: aprovado.
+- Em 25 de junho de 2026, a URL pública ainda exibia a versão antiga. As mudanças estão somente locais e precisam de commit, push e deploy.
+- A checagem visual automatizada em localhost foi bloqueada pelo navegador da sessão. Fazer uma revisão manual com `npm run dev`.
+
+## Regra para próximas rodadas
+
+Depois de cada publicação:
+
+1. Abrir `https://selleta-modas.vercel.app/`.
+2. Confirmar visualmente a funcionalidade alterada.
+3. Testar a versão mobile.
+4. Conferir catálogo, carrinho, WhatsApp e console do navegador.
+5. Não considerar a rodada publicada até a URL principal refletir a mudança.
+
+## Alterações já realizadas
+
+- Corrigido o painel para usar a coluna real `products` da tabela do Supabase.
+- Removidos `alert`, `window.confirm`, logs de depuração e função de logout duplicada.
+- Adicionados feedback visual, loading, validação de formulário e modal de exclusão.
+- Upload administrativo limitado a PNG/JPG/WebP e 5 MB.
+- Painel não renderiza conteúdo antes da validação da sessão.
+- Loja ganhou hero, benefícios, busca, filtro de categoria, estados de loading/erro/vazio e melhor responsividade.
+- Carrinho limita quantidade ao estoque e gera a mensagem do WhatsApp com codificação correta.
+- Adicionados SEO básico, idioma `pt-BR`, Open Graph, lazy loading e formatação monetária.
+- Removido o cliente Supabase antigo com configuração fixa.
+- Adicionados `.env.example` e validação das variáveis de ambiente.
+- Adicionado modal de produto com opções, informações de entrega e troca.
+- Adicionados filtros por tamanho, cor e preço máximo.
+- Carrinho salvo no `localStorage`.
+- Número comercial do WhatsApp configurável por variável de ambiente.
+- Criado `supabase/rls-policies.sql` para proteger produtos e uploads por lista de administradores.
+
+## Esquema confirmado da tabela `products`
+
+`id`, `products`, `preco`, `estoque`, `imagem`, `categoria`, `descricao`, `tamanhos`, `cores`.
+
+## Risco de segurança que precisa ser verificado
+
+O front-end protege a tela administrativa, mas a segurança real depende das políticas RLS do Supabase.
+
+No painel do Supabase, confirmar:
+
+1. Visitantes anônimos podem apenas ler produtos ativos.
+2. `INSERT`, `UPDATE` e `DELETE` exigem usuário autenticado e autorizado.
+3. Upload no bucket `produtos` exige autenticação.
+4. Não existe chave `service_role` no front-end ou na Vercel com prefixo `VITE_`.
+5. Há somente contas administrativas conhecidas no Supabase Auth.
+
+## Próximas melhorias por prioridade
+
+1. Revisar e executar `supabase/rls-policies.sql` no SQL Editor; cadastrar o administrador e remover políticas antigas/permissivas do Storage.
+2. Adicionar campos `preco_promocional` e `ativo` no banco e na interface.
+3. Remover do Storage imagens antigas após troca/exclusão de produto.
+4. Adicionar estoque por combinação de tamanho e cor.
+5. Criar testes dos fluxos de catálogo, carrinho, login e CRUD.
+6. Adicionar URL canônica, imagem Open Graph e dados estruturados de produtos.
+7. Configurar `VITE_WHATSAPP_NUMBER` também na Vercel.
+
+## Como continuar em outro chat
+
+Envie este arquivo junto com o projeto e peça:
+
+> Leia `CONTINUIDADE.md`, revise as alterações atuais e continue pela execução validada das políticas RLS e pelos campos de promoção/status. Preserve o que já funciona, faça mudanças pequenas e valide com lint e build.
+
+## Comandos
+
+```bash
+npm install
+npm run dev
+npm run lint
+npm run build
+```

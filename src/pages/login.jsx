@@ -1,42 +1,54 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(false);
+  const navigate = useNavigate();
 
   async function fazerLogin(e) {
     e.preventDefault();
+    setErro("");
+    setCarregando(true);
 
     const { error } =
       await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim(),
         password: senha,
       });
 
     if (error) {
-      alert(error.message);
+      setErro("E-mail ou senha inválidos.");
+      setCarregando(false);
       return;
     }
 
-    window.location.href = "/admin";
+    navigate("/admin", { replace: true });
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <main className="min-h-screen flex items-center justify-center px-4">
       <form
         onSubmit={fazerLogin}
-        className="bg-white p-8 rounded-xl shadow w-96"
+        className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-sm border border-[#C58B39]/20"
       >
-        <h1 className="text-2xl font-bold mb-6">
+        <h1 className="text-2xl font-bold mb-2">
           Login Administrativo
         </h1>
+        <p className="text-sm text-gray-500 mb-6">
+          Acesso restrito à equipe Selleta Modas.
+        </p>
 
         <input
           type="email"
           placeholder="E-mail"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          autoComplete="email"
+          required
           className="border p-3 w-full mb-3 rounded"
         />
 
@@ -45,15 +57,25 @@ export default function Login() {
           placeholder="Senha"
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
+          autoComplete="current-password"
+          required
           className="border p-3 w-full mb-3 rounded"
         />
 
+        {erro && (
+          <p role="alert" className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+            {erro}
+          </p>
+        )}
+
         <button
-          className="w-full bg-[#C58B39] text-white p-3 rounded"
+          type="submit"
+          disabled={carregando}
+          className="w-full bg-[#8a5d2b] hover:bg-[#70491f] text-white p-3 rounded-lg font-semibold transition"
         >
-          Entrar
+          {carregando ? "Entrando..." : "Entrar"}
         </button>
       </form>
-    </div>
+    </main>
   );
 }
