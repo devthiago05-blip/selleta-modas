@@ -1,6 +1,7 @@
 -- Selleta Modas - políticas de produção para Supabase
 -- Revise e execute no SQL Editor do Supabase.
 -- IMPORTANTE: cadastre ao menos um administrador no bloco final antes de testar o painel.
+-- Execute antes o arquivo product-commerce-fields.sql.
 
 begin;
 
@@ -36,6 +37,7 @@ grant execute on function private.is_admin() to authenticated;
 grant select on public.products to anon, authenticated;
 grant insert, update, delete on public.products to authenticated;
 revoke insert, update, delete on public.products from anon;
+grant select on public.admin_users to authenticated;
 
 -- Remove políticas antigas somente da tabela de produtos.
 do $$
@@ -57,6 +59,7 @@ end
 $$;
 
 drop policy if exists "catalogo_publico_select" on public.products;
+drop policy if exists "admin_products_select" on public.products;
 drop policy if exists "admin_products_insert" on public.products;
 drop policy if exists "admin_products_update" on public.products;
 drop policy if exists "admin_products_delete" on public.products;
@@ -64,8 +67,22 @@ drop policy if exists "admin_products_delete" on public.products;
 create policy "catalogo_publico_select"
 on public.products
 for select
-to anon, authenticated
-using (true);
+to anon
+using (ativo = true);
+
+create policy "admin_products_select"
+on public.products
+for select
+to authenticated
+using ((select private.is_admin()));
+
+drop policy if exists "admin_users_select_self" on public.admin_users;
+
+create policy "admin_users_select_self"
+on public.admin_users
+for select
+to authenticated
+using (user_id = (select auth.uid()));
 
 create policy "admin_products_insert"
 on public.products

@@ -10,6 +10,7 @@ Atualizado em: 25 de junho de 2026.
 - `npm run lint`: aprovado.
 - `npm run build`: aprovado.
 - Em 25 de junho de 2026, a URL pública ainda exibia a versão antiga. As mudanças estão somente locais e precisam de commit, push e deploy.
+- O commit `96cc480` foi publicado e validado na URL principal em desktop e viewport mobile de 390 px.
 - A checagem visual automatizada em localhost foi bloqueada pelo navegador da sessão. Fazer uma revisão manual com `npm run dev`.
 
 ## Regra para próximas rodadas
@@ -39,6 +40,8 @@ Depois de cada publicação:
 - Carrinho salvo no `localStorage`.
 - Número comercial do WhatsApp configurável por variável de ambiente.
 - Criado `supabase/rls-policies.sql` para proteger produtos e uploads por lista de administradores.
+- Criado `supabase/product-commerce-fields.sql` para preço promocional e status ativo.
+- Painel preparado para limpar imagens antigas após edição/exclusão.
 
 ## Esquema confirmado da tabela `products`
 
@@ -58,13 +61,12 @@ No painel do Supabase, confirmar:
 
 ## Próximas melhorias por prioridade
 
-1. Revisar e executar `supabase/rls-policies.sql` no SQL Editor; cadastrar o administrador e remover políticas antigas/permissivas do Storage.
-2. Adicionar campos `preco_promocional` e `ativo` no banco e na interface.
-3. Remover do Storage imagens antigas após troca/exclusão de produto.
-4. Adicionar estoque por combinação de tamanho e cor.
-5. Criar testes dos fluxos de catálogo, carrinho, login e CRUD.
-6. Adicionar URL canônica, imagem Open Graph e dados estruturados de produtos.
-7. Configurar `VITE_WHATSAPP_NUMBER` também na Vercel.
+1. Executar `supabase/product-commerce-fields.sql`.
+2. Revisar e executar `supabase/rls-policies.sql`; cadastrar o administrador e remover políticas antigas/permissivas do Storage.
+3. Adicionar estoque por combinação de tamanho e cor.
+4. Criar testes dos fluxos de catálogo, carrinho, login e CRUD.
+5. Adicionar imagem Open Graph e dados estruturados de produtos.
+6. Configurar `VITE_WHATSAPP_NUMBER` também na Vercel.
 
 ## Como continuar em outro chat
 

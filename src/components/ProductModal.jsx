@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import ProductOptions from "./ProductOptions";
+import { obterPrecoVenda, temPrecoPromocional } from "../lib/product";
 
 const formatarPreco = (valor) =>
   Number(valor || 0).toLocaleString("pt-BR", {
@@ -77,9 +78,16 @@ export default function ProductModal({
             <h2 id="titulo-produto" className="mt-1 text-3xl font-bold">
               {produto.products}
             </h2>
-            <p className="mt-3 text-2xl font-bold text-[#8a5d2b]">
-              {formatarPreco(produto.preco)}
-            </p>
+            <div className="mt-3">
+              {temPrecoPromocional(produto) && (
+                <p className="text-sm text-gray-400 line-through">
+                  {formatarPreco(produto.preco)}
+                </p>
+              )}
+              <p className="text-2xl font-bold text-[#8a5d2b]">
+                {formatarPreco(obterPrecoVenda(produto))}
+              </p>
+            </div>
             <p className="mt-4 leading-relaxed text-gray-600">
               {produto.descricao || "Peça selecionada pela Selleta Modas."}
             </p>

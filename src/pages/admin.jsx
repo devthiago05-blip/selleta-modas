@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { temPrecoPromocional } from "../lib/product";
+import { removerImagemProduto } from "../lib/storage";
 import { supabase } from "../lib/supabase";
 
 const campoClasse =
@@ -15,7 +17,9 @@ export default function Admin() {
   const [nome, setNome] = useState("");
   const [categoria, setCategoria] = useState("");
   const [preco, setPreco] = useState("");
+  const [precoPromocional, setPrecoPromocional] = useState("");
   const [estoque, setEstoque] = useState("");
+  const [ativoProduto, setAtivoProduto] = useState(true);
   const [imagem, setImagem] = useState(null);
   const [descricao, setDescricao] = useState("");
   const [tamanhos, setTamanhos] = useState("");
@@ -25,14 +29,16 @@ export default function Admin() {
   const [produtoParaExcluir, setProdutoParaExcluir] = useState(null);
   const [carregandoPagina, setCarregandoPagina] = useState(true);
   const [salvando, setSalvando] = useState(false);
+  const [camposComerciaisDisponiveis, setCamposComerciaisDisponiveis] =
+    useState(false);
   const [feedback, setFeedback] = useState(null);
   const navigate = useNavigate();
 
   const carregarProdutos = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .order("products");
+    const [{ data, error }, { error: erroCamposComerciais }] = await Promise.all([
+      supabase.from("products").select("*").order("products"),
+      supabase.from("products").select("preco_promocional,ativo").limit(1),
+    ]);
 
     if (error) {
       setFeedback({
@@ -43,13 +49,16 @@ export default function Admin() {
     }
 
     setProdutos(data || []);
+    setCamposComerciaisDisponiveis(!erroCamposComerciais);
   }, []);
 
   function limparFormulario() {
     setNome("");
     setCategoria("");
     setPreco("");
+    setPrecoPromocional("");
     setEstoque("");
+    setAtivoProduto(true);
     setImagem(null);
     setDescricao("");
     setTamanhos("");
@@ -62,7 +71,13 @@ export default function Admin() {
     setNome(produto.products || "");
     setCategoria(produto.categoria || "");
     setPreco(String(produto.preco ?? ""));
+    setPrecoPromocional(
+      produto.preco_promocional == null
+        ? ""
+        : String(produto.preco_promocional)
+    );
     setEstoque(String(produto.estoque ?? ""));
+    setAtivoProduto(produto.ativo !== false);
     setDescricao(produto.descricao || "");
     setTamanhos(produto.tamanhos || "");
     setCores(produto.cores || "");
@@ -72,6 +87,7 @@ export default function Admin() {
 
   async function confirmarExclusao() {
     if (!produtoParaExcluir) return;
+    const produtoExcluido = produtoParaExcluir;
 
     const { error } = await supabase
       .from("products")
@@ -87,9 +103,14 @@ export default function Admin() {
     }
 
     setProdutoParaExcluir(null);
+    const { error: erroImagem } = await removerImagemProduto(
+      produtoExcluido.imagem
+    );
     setFeedback({
-      tipo: "sucesso",
-      mensagem: "Produto excluído com sucesso.",
+      tipo: erroImagem ? "erro" : "sucesso",
+      mensagem: erroImagem
+        ? "Produto excluído, mas a imagem antiga precisa ser removida manualmente."
+        : "Produto e imagem excluídos com sucesso.",
     });
     await carregarProdutos();
   }
@@ -99,6 +120,9 @@ export default function Admin() {
     setFeedback(null);
 
     const precoFormatado = Number(preco.replace(",", "."));
+    const precoPromocionalFormatado = precoPromocional
+      ? Number(precoPromocional.replace(",", "."))
+      : null;
     const estoqueFormatado = Number(estoque);
 
     if (
@@ -117,6 +141,20 @@ export default function Admin() {
     }
 
     if (
+      camposComerciaisDisponiveis &&
+      precoPromocional &&
+      (!Number.isFinite(precoPromocionalFormatado) ||
+        precoPromocionalFormatado <= 0 ||
+        precoPromocionalFormatado >= precoFormatado)
+    ) {
+      setFeedback({
+        tipo: "erro",
+        mensagem: "O preço promocional deve ser maior que zero e menor que o preço normal.",
+      });
+      return;
+    }
+
+    if (
       imagem &&
       (!imagem.type.startsWith("image/") || imagem.size > 5 * 1024 * 1024)
     ) {
@@ -129,6 +167,7 @@ export default function Admin() {
 
     setSalvando(true);
     let imagemUrl = produtoEditando?.imagem || null;
+    let novaImagemUrl = null;
 
     if (imagem) {
       const nomeSeguro = imagem.name
@@ -158,6 +197,7 @@ export default function Admin() {
         .getPublicUrl(nomeArquivo);
 
       imagemUrl = data.publicUrl;
+      novaImagemUrl = data.publicUrl;
     }
 
     const dadosProduto = {
@@ -171,6 +211,11 @@ export default function Admin() {
       cores: cores.trim(),
     };
 
+    if (camposComerciaisDisponiveis) {
+      dadosProduto.preco_promocional = precoPromocionalFormatado;
+      dadosProduto.ativo = ativoProduto;
+    }
+
     const resultado = produtoEditando
       ? await supabase
           .from("products")
@@ -179,12 +224,23 @@ export default function Admin() {
       : await supabase.from("products").insert(dadosProduto);
 
     if (resultado.error) {
+      if (novaImagemUrl) {
+        await removerImagemProduto(novaImagemUrl);
+      }
       setFeedback({
         tipo: "erro",
         mensagem: "Não foi possível salvar o produto.",
       });
       setSalvando(false);
       return;
+    }
+
+    if (
+      produtoEditando?.imagem &&
+      novaImagemUrl &&
+      produtoEditando.imagem !== novaImagemUrl
+    ) {
+      await removerImagemProduto(produtoEditando.imagem);
     }
 
     setFeedback({
@@ -336,6 +392,43 @@ export default function Admin() {
               </label>
             </div>
 
+            {camposComerciaisDisponiveis ? (
+              <>
+                <label>
+                  <span className="mb-1 block text-sm font-medium">
+                    Preço promocional
+                  </span>
+                  <input
+                    value={precoPromocional}
+                    onChange={(e) => setPrecoPromocional(e.target.value)}
+                    placeholder="Opcional"
+                    inputMode="decimal"
+                    className={campoClasse}
+                  />
+                </label>
+
+                <label className="flex items-center justify-between rounded-lg border p-3">
+                  <span>
+                    <strong className="block text-sm">Produto ativo</strong>
+                    <span className="text-xs text-gray-500">
+                      Produtos inativos não aparecem na loja.
+                    </span>
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={ativoProduto}
+                    onChange={(e) => setAtivoProduto(e.target.checked)}
+                    className="h-5 w-5 accent-[#8a5d2b]"
+                  />
+                </label>
+              </>
+            ) : (
+              <p className="rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
+                Execute `supabase/product-commerce-fields.sql` para liberar
+                promoção e status ativo/inativo.
+              </p>
+            )}
+
             <label>
               <span className="mb-1 block text-sm font-medium">Descrição</span>
               <textarea
@@ -436,11 +529,31 @@ export default function Admin() {
                       {produto.categoria || "Sem categoria"}
                     </p>
                     <p className="mt-2 font-semibold text-[#8a5d2b]">
-                      {formatarPreco(produto.preco)}
+                      {temPrecoPromocional(produto) ? (
+                        <>
+                          <span className="mr-2 text-sm font-normal text-gray-400 line-through">
+                            {formatarPreco(produto.preco)}
+                          </span>
+                          {formatarPreco(produto.preco_promocional)}
+                        </>
+                      ) : (
+                        formatarPreco(produto.preco)
+                      )}
                     </p>
                     <p className="text-sm text-gray-600">
                       Estoque: {produto.estoque}
                     </p>
+                    {camposComerciaisDisponiveis && (
+                      <span
+                        className={`mt-2 inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                          produto.ativo === false
+                            ? "bg-gray-100 text-gray-600"
+                            : "bg-green-50 text-green-700"
+                        }`}
+                      >
+                        {produto.ativo === false ? "Inativo" : "Ativo"}
+                      </span>
+                    )}
 
                     <div className="mt-4 flex gap-2">
                       <button

@@ -3,7 +3,11 @@ import logoSelleta from "../assets/logo-selleta.png";
 import { useCallback, useEffect, useState } from "react";
 import ProductModal from "../components/ProductModal";
 import ProductOptions from "../components/ProductOptions";
-import { obterOpcoes } from "../lib/product";
+import {
+  obterOpcoes,
+  obterPrecoVenda,
+  temPrecoPromocional,
+} from "../lib/product";
 import { supabase } from "../lib/supabase";
 
 const CHAVE_CARRINHO = "selleta-modas-carrinho";
@@ -172,7 +176,7 @@ if (!telefoneCliente.trim()) {
       `Tam: ${item.tamanho}\n` +
       `Cor: ${item.cor}\n` +
       `Qtd: ${item.quantidade}\n` +
-      `Valor: ${formatarPreco(item.preco * item.quantidade)}\n\n`;
+      `Valor: ${formatarPreco(obterPrecoVenda(item) * item.quantidade)}\n\n`;
   });
 
   mensagem +=
@@ -227,7 +231,7 @@ if (!telefoneCliente.trim()) {
 );
   const total = carrinho.reduce(
   (soma, item) =>
-    soma + Number(item.preco) * item.quantidade,
+    soma + obterPrecoVenda(item) * item.quantidade,
   0
 );
   const categorias = [
@@ -240,6 +244,7 @@ if (!telefoneCliente.trim()) {
     ...new Set(produtos.flatMap((produto) => obterOpcoes(produto.cores))),
   ];
   const produtosFiltrados = produtos.filter((produto) => {
+    const produtoAtivo = produto.ativo !== false;
     const correspondeBusca = produto.products
       ?.toLowerCase()
       .includes(busca.trim().toLowerCase());
@@ -250,9 +255,10 @@ if (!telefoneCliente.trim()) {
     const correspondeCor =
       !corFiltro || obterOpcoes(produto.cores).includes(corFiltro);
     const correspondePreco =
-      !precoMaximo || Number(produto.preco) <= Number(precoMaximo);
+      !precoMaximo || obterPrecoVenda(produto) <= Number(precoMaximo);
 
     return (
+      produtoAtivo &&
       correspondeBusca &&
       correspondeCategoria &&
       correspondeTamanho &&
@@ -430,7 +436,7 @@ if (!telefoneCliente.trim()) {
 </div>
 </div>
 <div>
-  {formatarPreco(item.preco * item.quantidade)}
+  {formatarPreco(obterPrecoVenda(item) * item.quantidade)}
 </div>
   </div>
 
@@ -741,9 +747,21 @@ if (!telefoneCliente.trim()) {
                 }
               />
             </div>
-            <p className="mt-4 text-xl font-bold text-[#8a5d2b]">
-              {formatarPreco(produto.preco)}
-            </p>
+            <div className="mt-4">
+              {temPrecoPromocional(produto) && (
+                <div className="mb-1 flex items-center gap-2">
+                  <span className="rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-700">
+                    Oferta
+                  </span>
+                  <span className="text-sm text-gray-400 line-through">
+                    {formatarPreco(produto.preco)}
+                  </span>
+                </div>
+              )}
+              <p className="text-xl font-bold text-[#8a5d2b]">
+                {formatarPreco(obterPrecoVenda(produto))}
+              </p>
+            </div>
 
             <div className="mt-auto grid gap-2 pt-4">
               <button
