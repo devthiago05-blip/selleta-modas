@@ -61,6 +61,7 @@ Depois de cada publicação:
 - Adicionado cadastro administrativo de grade com tamanho, cor, estampa, SKU, estoque e status por combinação.
 - Catálogo, carrinho, WhatsApp, checkout e pedidos passaram a transportar a estampa e o identificador da variação.
 - Estoque da grade é consolidado no produto e reservado/restaurado na combinação correta ao atualizar o pedido.
+- Criado `public/docs/Manual-Selleta-Modas.pdf`, acompanhado da versão editável em Markdown.
 
 ## Esquema principal
 

@@ -1,4 +1,33 @@
-# React + Vite
+# Selleta Modas
+
+E-commerce de moda feminina com catálogo, carrinho, checkout, área da cliente
+e painel administrativo.
+
+## Manual de operação
+
+- [Manual em PDF](public/docs/Manual-Selleta-Modas.pdf)
+- [Versão editável](docs/Manual-Selleta-Modas.md)
+
+O manual explica o login administrativo e da cliente, cadastro de produtos,
+grade por tamanho/cor/estampa, estoque, pedidos, pagamentos e relatórios.
+
+## Desenvolvimento
+
+```bash
+npm install
+npm run dev
+npm run lint
+npm run test
+npm run build
+```
+
+## Base técnica
+
+React, Vite, Tailwind CSS, Supabase e Vercel.
+
+---
+
+## Referência do template Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

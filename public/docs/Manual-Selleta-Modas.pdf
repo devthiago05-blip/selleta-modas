@@ -1,0 +1,415 @@
+%PDF-1.4
+%âãÏÓ
+1 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+2 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+3 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R 11 0 R 13 0 R 15 0 R 17 0 R] /Count 7 >>
+endobj
+4 0 obj
+<< /Length 1145 >>
+stream
+1.000 0.980 0.953 rg 0 0 595.28 841.89 re f
+0.541 0.365 0.169 rg 0 0 18 841.89 re f
+0.773 0.545 0.224 rg 18 0 7 841.89 re f
+BT /F2 13 Tf 0.773 0.545 0.224 rg 64.00 720.00 Td (SELLETA MODAS) Tj ET
+0.773 0.545 0.224 RG 1.5 w 64 700 m 520 700 l S
+BT /F2 34 Tf 0.184 0.161 0.141 rg 64.00 620.00 Td (Manual de) Tj ET
+BT /F2 34 Tf 0.541 0.365 0.169 rg 64.00 578.00 Td (Operação) Tj ET
+BT /F1 13 Tf 0.373 0.341 0.314 rg 64.00 530.00 Td (Administração, clientes, produtos, estoque,) Tj ET
+BT /F1 13 Tf 0.373 0.341 0.314 rg 64.00 510.00 Td (pedidos, pagamentos e relatórios) Tj ET
+0.184 0.161 0.141 rg 64 390 430 74 re f
+BT /F2 9 Tf 0.910 0.741 0.478 rg 84.00 434.00 Td (SITE OFICIAL) Tj ET
+BT /F2 15 Tf 1.000 1.000 1.000 rg 84.00 409.00 Td (selleta-modas.vercel.app) Tj ET
+BT /F1 10 Tf 0.420 0.384 0.357 rg 64.00 120.00 Td (Versão 1.0  |  25 de junho de 2026) Tj ET
+BT /F1 9 Tf 0.541 0.365 0.169 rg 64.00 96.00 Td (Documento operacional do projeto) Tj ET
+0.918 0.851 0.761 RG 0.5 w 52 39 m 543.28 39 l S
+BT /F1 8 Tf 0.420 0.384 0.357 rg 52.00 24.00 Td (Selleta Modas — Manual de Operação) Tj ET
+BT /F2 8 Tf 0.541 0.365 0.169 rg 501.28 24.00 Td (1) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 3 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 4990 >>
+stream
+BT /F2 9 Tf 0.541 0.365 0.169 rg 52.00 774.89 Td (SELLETA MODAS) Tj ET
+0.918 0.851 0.761 RG 0.7 w 52 764.89 m 543.28 764.89 l S
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 734.89 Td (1. Visão geral) Tj ET
+0.773 0.545 0.224 RG 1 w 52 722.89 m 543.28 722.89 l S
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 702.89 Td (O sistema possui áreas separadas para clientes e administradores:) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 679.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 679.89 Td (Loja: `/`) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 661.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 661.89 Td (Área da cliente: `/cliente`) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 643.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 643.89 Td (Acompanhamento sem login: `/pedido`) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 625.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 625.89 Td (Login administrativo: `/login`) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 607.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 607.89 Td (Painel administrativo: `/admin`) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 589.89 Td (Nunca compartilhe a senha administrativa com clientes. A conta de cliente não possui permissão para) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 574.89 Td (alterar produtos, estoque ou pedidos.) Tj ET
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 543.89 Td (2. Área da cliente) Tj ET
+0.773 0.545 0.224 RG 1 w 52 531.89 m 543.28 531.89 l S
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 511.89 Td (### Criar conta ou entrar) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 488.89 Td (1.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 488.89 Td (Acesse `https://selleta-modas.vercel.app/cliente`.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 470.89 Td (2.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 470.89 Td (Selecione “Ainda não tenho conta” para criar um cadastro.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 452.89 Td (3.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 452.89 Td (Informe nome, e-mail e uma senha com pelo menos seis caracteres.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 434.89 Td (4.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 434.89 Td (Caso a confirmação de e-mail esteja habilitada no Supabase, confirme o) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 416.89 Td (cadastro pela mensagem recebida.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 393.89 Td (5.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 393.89 Td (Para entrar depois, use o mesmo e-mail e senha.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 375.89 Td (### Consultar pedidos) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 352.89 Td (Após o login, a cliente visualiza os pedidos vinculados à sua conta, incluindo:) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 329.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 329.89 Td (número e valor do pedido;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 311.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 311.89 Td (forma e situação do pagamento;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 293.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 293.89 Td (situação atual do pedido;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 275.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 275.89 Td (produtos, tamanhos, cores e estampas.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 257.89 Td (### Vincular pedido anterior) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 234.89 Td (Um pedido feito antes do login pode ser vinculado à conta:) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 211.89 Td (1.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 211.89 Td (Abra a área da cliente.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 193.89 Td (2.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 193.89 Td (Use a seção “Vincular pedido anterior”.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 175.89 Td (3.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 175.89 Td (Informe o código de acompanhamento e o telefone usado na compra.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 157.89 Td (4.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 157.89 Td (Clique em “Vincular à minha conta”.) Tj ET
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 131.89 Td (3. Compra e carrinho) Tj ET
+0.773 0.545 0.224 RG 1 w 52 119.88999999999999 m 543.28 119.88999999999999 l S
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 99.89 Td (1.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 99.89 Td (Na loja, use a busca ou os filtros de categoria, tamanho, cor e preço.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 81.89 Td (2.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 81.89 Td (Abra o produto em “Escolher opções”.) Tj ET
+0.918 0.851 0.761 RG 0.5 w 52 39 m 543.28 39 l S
+BT /F1 8 Tf 0.420 0.384 0.357 rg 52.00 24.00 Td (Selleta Modas — Manual de Operação) Tj ET
+BT /F2 8 Tf 0.541 0.365 0.169 rg 501.28 24.00 Td (2) Tj ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 3 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 5212 >>
+stream
+BT /F2 9 Tf 0.541 0.365 0.169 rg 52.00 774.89 Td (SELLETA MODAS) Tj ET
+0.918 0.851 0.761 RG 0.7 w 52 764.89 m 543.28 764.89 l S
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 742.89 Td (3.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 742.89 Td (Selecione tamanho, cor e estampa disponíveis.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 724.89 Td (4.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 724.89 Td (Escolha a quantidade respeitando o estoque exibido.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 706.89 Td (5.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 706.89 Td (Adicione ao carrinho.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 688.89 Td (6.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 688.89 Td (Finalize pelo WhatsApp ou pelo checkout do site.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 670.89 Td (O carrinho fica salvo no navegador. Ao trocar de celular ou limpar os dados do navegador, os itens podem) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 655.89 Td (não ser mantidos.) Tj ET
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 624.89 Td (4. Pagamentos e acompanhamento) Tj ET
+0.773 0.545 0.224 RG 1 w 52 612.89 m 543.28 612.89 l S
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 592.89 Td (Formas disponíveis:) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 569.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 569.89 Td (Pix: começa como “Pagamento pendente” e deve ser confirmado no painel.) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 551.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 551.89 Td (Dinheiro na entrega: começa como “Pagamento na entrega”.) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 533.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 533.89 Td (Cartão na entrega: começa como “Pagamento na entrega”.) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 515.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 515.89 Td (WhatsApp: a equipe confirma manualmente os detalhes da compra.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 497.89 Td (Para acompanhar sem conta, acesse `/pedido` e informe o código do pedido e o telefone utilizado na compra.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 474.89 Td (Situações de pagamento:) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 451.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 451.89 Td (Pagamento pendente;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 433.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 433.89 Td (Pagamento confirmado;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 415.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 415.89 Td (Pagamento na entrega;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 397.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 397.89 Td (Pagamento recusado;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 379.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 379.89 Td (Pagamento estornado.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 361.89 Td (Situações do pedido:) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 338.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 338.89 Td (Pedido recebido;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 320.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 320.89 Td (Pedido confirmado;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 302.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 302.89 Td (Em preparação;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 284.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 284.89 Td (Pronto;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 266.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 266.89 Td (Saiu para entrega;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 248.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 248.89 Td (Entregue;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 230.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 230.89 Td (Cancelado.) Tj ET
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 204.89 Td (5. Acesso administrativo) Tj ET
+0.773 0.545 0.224 RG 1 w 52 192.89 m 543.28 192.89 l S
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 172.89 Td (1.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 172.89 Td (Acesse `https://selleta-modas.vercel.app/login`.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 154.89 Td (2.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 154.89 Td (Informe o e-mail e a senha do administrador.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 136.89 Td (3.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 136.89 Td (Após entrar, o sistema direciona para `/admin`.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 118.89 Td (Além de existir no Supabase Auth, o usuário precisa estar cadastrado na tabela `public.admin_users`.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 103.89 Td (Usuários comuns são redirecionados para a área da cliente.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 80.89 Td (Para sair com segurança, use o botão “Sair” no cabeçalho do painel.) Tj ET
+0.918 0.851 0.761 RG 0.5 w 52 39 m 543.28 39 l S
+BT /F1 8 Tf 0.420 0.384 0.357 rg 52.00 24.00 Td (Selleta Modas — Manual de Operação) Tj ET
+BT /F2 8 Tf 0.541 0.365 0.169 rg 501.28 24.00 Td (3) Tj ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 3 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 4936 >>
+stream
+BT /F2 9 Tf 0.541 0.365 0.169 rg 52.00 774.89 Td (SELLETA MODAS) Tj ET
+0.918 0.851 0.761 RG 0.7 w 52 764.89 m 543.28 764.89 l S
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 734.89 Td (6. Cadastro e edição de produtos) Tj ET
+0.773 0.545 0.224 RG 1 w 52 722.89 m 543.28 722.89 l S
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 702.89 Td (Na guia “Produtos”:) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 679.89 Td (1.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 679.89 Td (Informe nome, categoria, preço e estoque.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 661.89 Td (2.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 661.89 Td (Preencha preço promocional somente quando for menor que o preço normal.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 643.89 Td (3.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 643.89 Td (Marque o produto como ativo para exibi-lo na loja.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 625.89 Td (4.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 625.89 Td (Adicione descrição, tamanhos e cores.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 607.89 Td (5.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 607.89 Td (Envie uma imagem PNG, JPG ou WebP de até 5 MB.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 589.89 Td (6.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 589.89 Td (Clique em “Salvar produto”.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 571.89 Td (Para alterar um produto, clique em “Editar”. Para removê-lo, clique em “Excluir” e confirme no modal.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 556.89 Td (Antes de excluir, confirme se o produto não precisa permanecer no histórico operacional.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 533.89 Td (Produtos inativos ficam ocultos na loja, mas continuam cadastrados.) Tj ET
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 502.89 Td (7. Grade, cores, estampas e estoque) Tj ET
+0.773 0.545 0.224 RG 1 w 52 490.89 m 543.28 490.89 l S
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 470.89 Td (Antes de usar a grade, execute no SQL Editor do Supabase:) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 447.89 Td (`supabase/product-variants.sql`) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 424.89 Td (Depois:) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 401.89 Td (1.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 401.89 Td (Salve o produto normalmente.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 383.89 Td (2.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 383.89 Td (Na lista de produtos, clique em “Editar”.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 365.89 Td (3.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 365.89 Td (Na seção “Grade de variações”, clique em “+ Adicionar”.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 347.89 Td (4.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 347.89 Td (Informe tamanho, cor, estampa, SKU opcional, estoque e situação ativa.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 329.89 Td (5.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 329.89 Td (Crie uma linha para cada combinação comercial.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 311.89 Td (6.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 311.89 Td (Clique em “Salvar grade”.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 293.89 Td (Exemplo:) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 270.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 270.89 Td (P / Preto / Floral / estoque 2;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 252.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 252.89 Td (M / Preto / Floral / estoque 3;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 234.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 234.89 Td (M / Rosa / Liso / estoque 1.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 216.89 Td (Não repita exatamente a mesma combinação de tamanho, cor e estampa. Quando há grade, o estoque total) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 201.89 Td (do produto é calculado pela soma das variações ativas.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 178.89 Td (Ao confirmar um pedido, o sistema reduz o estoque da combinação vendida. Ao cancelar um pedido que já) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 163.89 Td (reservou estoque, a quantidade é devolvida.) Tj ET
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 132.89 Td (8. Pedidos, pagamentos e estoque no painel) Tj ET
+0.773 0.545 0.224 RG 1 w 52 120.88999999999999 m 543.28 120.88999999999999 l S
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 100.89 Td (Na guia “Pedidos”, é possível:) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 77.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 77.89 Td (buscar por pedido, cliente ou telefone;) Tj ET
+0.918 0.851 0.761 RG 0.5 w 52 39 m 543.28 39 l S
+BT /F1 8 Tf 0.420 0.384 0.357 rg 52.00 24.00 Td (Selleta Modas — Manual de Operação) Tj ET
+BT /F2 8 Tf 0.541 0.365 0.169 rg 501.28 24.00 Td (4) Tj ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 3 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 10 0 R >>
+endobj
+12 0 obj
+<< /Length 5305 >>
+stream
+BT /F2 9 Tf 0.541 0.365 0.169 rg 52.00 774.89 Td (SELLETA MODAS) Tj ET
+0.918 0.851 0.761 RG 0.7 w 52 764.89 m 543.28 764.89 l S
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 742.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 742.89 Td (filtrar por situação e período;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 724.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 724.89 Td (consultar itens e variações;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 706.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 706.89 Td (alterar a situação do pagamento;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 688.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 688.89 Td (alterar a situação do pedido;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 670.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 670.89 Td (exportar os dados em CSV.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 652.89 Td (Fluxo recomendado para Pix:) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 629.89 Td (1.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 629.89 Td (O pedido chega como “Pagamento pendente” e “Pedido recebido”.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 611.89 Td (2.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 611.89 Td (Confira o recebimento do Pix.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 593.89 Td (3.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 593.89 Td (Altere o pagamento para “Pagamento confirmado”.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 575.89 Td (4.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 575.89 Td (Altere o pedido para “Pedido confirmado”.) Tj ET
+BT /F2 10.3 Tf 0.541 0.365 0.169 rg 52.00 557.89 Td (5.) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 77.00 557.89 Td (Continue por “Em preparação”, “Pronto”, “Saiu para entrega” e “Entregue”.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 539.89 Td (O sistema impede a confirmação de um pedido Pix enquanto o pagamento não estiver marcado como) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 524.89 Td (confirmado.) Tj ET
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 493.89 Td (9. Relatórios) Tj ET
+0.773 0.545 0.224 RG 1 w 52 481.89 m 543.28 481.89 l S
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 461.89 Td (O painel apresenta:) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 438.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 438.89 Td (faturamento confirmado;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 420.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 420.89 Td (total de pedidos no período;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 402.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 402.89 Td (quantidade de Pix pendentes;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 384.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 384.89 Td (ticket médio pago;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 366.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 366.89 Td (produtos mais vendidos;) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 348.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 348.89 Td (exportação CSV.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 330.89 Td (O faturamento considera pedidos com pagamento confirmado. Use os filtros antes de exportar para gerar) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 315.89 Td (relatórios de períodos específicos.) Tj ET
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 284.89 Td (10. Segurança e boas práticas) Tj ET
+0.773 0.545 0.224 RG 1 w 52 272.89 m 543.28 272.89 l S
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 252.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 252.89 Td (Use senha administrativa exclusiva e forte.) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 234.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 234.89 Td (Não coloque a chave `service_role` no front-end ou em variável `VITE_`.) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 216.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 216.89 Td (Revise periodicamente os usuários de `admin_users`.) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 198.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 198.89 Td (Mantenha as políticas RLS do Supabase ativas.) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 180.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 180.89 Td (Confirme que visitantes somente leem produtos ativos.) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 162.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 162.89 Td (Restrinja cadastro, edição, exclusão e upload aos administradores.) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 144.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 144.89 Td (Não compartilhe códigos, senhas ou chaves em mensagens públicas.) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 126.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 126.89 Td (Faça backup antes de grandes alterações no banco.) Tj ET
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 100.89 Td (11. Configuração e manutenção) Tj ET
+0.773 0.545 0.224 RG 1 w 52 88.88999999999999 m 543.28 88.88999999999999 l S
+0.918 0.851 0.761 RG 0.5 w 52 39 m 543.28 39 l S
+BT /F1 8 Tf 0.420 0.384 0.357 rg 52.00 24.00 Td (Selleta Modas — Manual de Operação) Tj ET
+BT /F2 8 Tf 0.541 0.365 0.169 rg 501.28 24.00 Td (5) Tj ET
+endstream
+endobj
+13 0 obj
+<< /Type /Page /Parent 3 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 12 0 R >>
+endobj
+14 0 obj
+<< /Length 4122 >>
+stream
+BT /F2 9 Tf 0.541 0.365 0.169 rg 52.00 774.89 Td (SELLETA MODAS) Tj ET
+0.918 0.851 0.761 RG 0.7 w 52 764.89 m 543.28 764.89 l S
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 742.89 Td (Variáveis principais:) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 719.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 719.89 Td (`VITE_SUPABASE_URL`) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 701.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 701.89 Td (`VITE_SUPABASE_ANON_KEY`) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 683.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 683.89 Td (`VITE_WHATSAPP_NUMBER`) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 665.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 665.89 Td (`VITE_DIRECT_CHECKOUT_ENABLED`) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 647.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 647.89 Td (`VITE_PIX_KEY`) Tj ET
+BT /F2 11 Tf 0.773 0.545 0.224 rg 54.00 629.89 Td (•) Tj ET
+BT /F1 10.3 Tf 0.184 0.161 0.141 rg 72.00 629.89 Td (`VITE_PIX_RECEIVER`) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 611.89 Td (Comandos de validação:) Tj ET
+0.184 0.161 0.141 rg 52 508.89 491.28 88 re f
+BT /F1 9.2 Tf 1.000 1.000 1.000 rg 64.00 584.89 Td (npm install) Tj ET
+BT /F1 9.2 Tf 1.000 1.000 1.000 rg 64.00 570.89 Td (npm run dev) Tj ET
+BT /F1 9.2 Tf 1.000 1.000 1.000 rg 64.00 556.89 Td (npm run lint) Tj ET
+BT /F1 9.2 Tf 1.000 1.000 1.000 rg 64.00 542.89 Td (npm run test) Tj ET
+BT /F1 9.2 Tf 1.000 1.000 1.000 rg 64.00 528.89 Td (npm run build) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 498.89 Td (Depois de publicar, valide a loja, o login, a área da cliente, o carrinho, o checkout e o painel em computador e) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 483.89 Td (celular.) Tj ET
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 452.89 Td (12. Solução rápida de problemas) Tj ET
+0.773 0.545 0.224 RG 1 w 52 440.89 m 543.28 440.89 l S
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 420.89 Td (### Login administrativo volta para a área da cliente) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 397.89 Td (O usuário existe no Supabase Auth, mas não está autorizado em `public.admin_users`.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 374.89 Td (### A grade não aparece) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 351.89 Td (Execute `supabase/product-variants.sql`, recarregue o painel e edite novamente o produto.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 328.89 Td (### Produto não aparece na loja) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 305.89 Td (Confira se está ativo, se possui preço válido e se a consulta pública do Supabase permite a leitura.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 282.89 Td (### Pix não permite confirmar o pedido) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 259.89 Td (Primeiro altere o pagamento para “Pagamento confirmado”; depois confirme o pedido.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 236.89 Td (### Estoque não corresponde à grade) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 213.89 Td (Revise as variações ativas e seus estoques. O total é a soma das combinações ativas.) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 190.89 Td (### Pedido não aparece na conta da cliente) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 167.89 Td (Confirme se a compra foi feita enquanto ela estava conectada ou use “Vincular pedido anterior” com) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 152.89 Td (código e telefone corretos.) Tj ET
+BT /F2 16 Tf 0.541 0.365 0.169 rg 52.00 121.89 Td (13. Suporte e continuidade) Tj ET
+0.773 0.545 0.224 RG 1 w 52 109.88999999999999 m 543.28 109.88999999999999 l S
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 89.89 Td (O arquivo `CONTINUIDADE.md` registra o estado técnico e os próximos passos do projeto. Consulte-o) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 74.89 Td (antes de novas alterações.) Tj ET
+0.918 0.851 0.761 RG 0.5 w 52 39 m 543.28 39 l S
+BT /F1 8 Tf 0.420 0.384 0.357 rg 52.00 24.00 Td (Selleta Modas — Manual de Operação) Tj ET
+BT /F2 8 Tf 0.541 0.365 0.169 rg 501.28 24.00 Td (6) Tj ET
+endstream
+endobj
+15 0 obj
+<< /Type /Page /Parent 3 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 14 0 R >>
+endobj
+16 0 obj
+<< /Length 588 >>
+stream
+BT /F2 9 Tf 0.541 0.365 0.169 rg 52.00 774.89 Td (SELLETA MODAS) Tj ET
+0.918 0.851 0.761 RG 0.7 w 52 764.89 m 543.28 764.89 l S
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 742.89 Td (Prioridades futuras: Pix automático com webhook, cálculo de frete, páginas legais, galeria de imagens,) Tj ET
+BT /F1 10.4 Tf 0.184 0.161 0.141 rg 52.00 727.89 Td (analytics, monitoramento e testes E2E.) Tj ET
+0.918 0.851 0.761 RG 0.5 w 52 39 m 543.28 39 l S
+BT /F1 8 Tf 0.420 0.384 0.357 rg 52.00 24.00 Td (Selleta Modas — Manual de Operação) Tj ET
+BT /F2 8 Tf 0.541 0.365 0.169 rg 501.28 24.00 Td (7) Tj ET
+endstream
+endobj
+17 0 obj
+<< /Type /Page /Parent 3 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 1 0 R /F2 2 0 R >> >> /Contents 16 0 R >>
+endobj
+18 0 obj
+<< /Type /Catalog /Pages 3 0 R >>
+endobj
+19 0 obj
+<< /Title (Manual de Operação — Selleta Modas) /Author (Selleta Modas) /Subject (Manual administrativo e da área da cliente) /CreationDate (D:20260625) >>
+endobj
+xref
+0 20
+0000000000 65535 f 
+0000000015 00000 n 
+0000000112 00000 n 
+0000000214 00000 n 
+0000000311 00000 n 
+0000001508 00000 n 
+0000001650 00000 n 
+0000006692 00000 n 
+0000006834 00000 n 
+0000012098 00000 n 
+0000012240 00000 n 
+0000017229 00000 n 
+0000017373 00000 n 
+0000022731 00000 n 
+0000022875 00000 n 
+0000027050 00000 n 
+0000027194 00000 n 
+0000027834 00000 n 
+0000027978 00000 n 
+0000028028 00000 n 
+trailer
+<< /Size 20 /Root 18 0 R /Info 19 0 R >>
+startxref
+28199
+%%EOF

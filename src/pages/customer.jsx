@@ -134,15 +134,25 @@ export default function Customer() {
         <Link to="/">
           <img src={logoSelleta} alt="Selleta Modas" className="w-40" />
         </Link>
-        {session && (
-          <button
-            type="button"
-            onClick={() => supabase.auth.signOut()}
-            className="rounded-lg border px-4 py-2 font-semibold"
+        <div className="flex items-center gap-2">
+          <a
+            href="/docs/Manual-Selleta-Modas.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-lg border px-3 py-2 text-sm font-semibold text-[#8a5d2b]"
           >
-            Sair
-          </button>
-        )}
+            Manual
+          </a>
+          {session && (
+            <button
+              type="button"
+              onClick={() => supabase.auth.signOut()}
+              className="rounded-lg border px-4 py-2 font-semibold"
+            >
+              Sair
+            </button>
+          )}
+        </div>
       </header>
 
       {!session ? (

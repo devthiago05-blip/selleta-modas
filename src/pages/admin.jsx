@@ -341,12 +341,22 @@ export default function Admin() {
           </h1>
         </div>
 
-        <button
-          onClick={sair}
-          className="rounded-lg border border-red-200 px-4 py-2 font-semibold text-red-700 transition hover:bg-red-50"
-        >
-          Sair
-        </button>
+        <div className="flex items-center gap-2">
+          <a
+            href="/docs/Manual-Selleta-Modas.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-lg border px-4 py-2 font-semibold text-[#8a5d2b]"
+          >
+            Manual
+          </a>
+          <button
+            onClick={sair}
+            className="rounded-lg border border-red-200 px-4 py-2 font-semibold text-red-700 transition hover:bg-red-50"
+          >
+            Sair
+          </button>
+        </div>
       </header>
 
       {feedback && (

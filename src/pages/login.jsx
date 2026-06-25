@@ -75,6 +75,15 @@ export default function Login() {
         >
           {carregando ? "Entrando..." : "Entrar"}
         </button>
+
+        <a
+          href="/docs/Manual-Selleta-Modas.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-4 block text-center text-sm font-semibold text-[#8a5d2b] hover:underline"
+        >
+          Abrir manual de operação
+        </a>
       </form>
     </main>
   );
