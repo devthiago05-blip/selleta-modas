@@ -54,6 +54,8 @@ Depois de cada publicação:
 - Preparado painel de pedidos com confirmação de pagamento e evolução de status.
 - Criado `supabase/orders.sql`; o checkout permanece desativado até a migração e configuração.
 - Criado `supabase/orders-uuid-client-fix.sql` para corrigir instalações com `product_id bigint`.
+- Correção UUID executada com sucesso no Supabase em 25 de junho de 2026.
+- Pedido técnico Pix #2 criado e acompanhado com status `pending/received`, sem redução de estoque.
 - Adicionada área da cliente com cadastro, login, histórico e vínculo de pedidos anteriores.
 - Adicionados relatórios administrativos, filtros, métricas e exportação CSV.
 
@@ -78,7 +80,7 @@ No painel do Supabase, confirmar:
 1. Executar `supabase/product-commerce-fields.sql`.
 2. Revisar e executar `supabase/rls-policies.sql`; cadastrar o administrador e remover políticas antigas/permissivas do Storage.
 3. Executar `supabase/orders.sql`.
-4. Configurar `VITE_DIRECT_CHECKOUT_ENABLED=true`, `VITE_ORDERS_READY=true`, `VITE_PIX_KEY` e `VITE_PIX_RECEIVER` na Vercel.
+4. Configurar `VITE_DIRECT_CHECKOUT_ENABLED=true`, `VITE_PIX_KEY` e `VITE_PIX_RECEIVER` na Vercel.
 5. Adicionar estoque por combinação de tamanho e cor.
 6. Integrar provedor de Pix com webhook para confirmação automática.
 7. Configurar `VITE_WHATSAPP_NUMBER` também na Vercel.
