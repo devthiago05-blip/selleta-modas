@@ -198,6 +198,47 @@ if (!telefoneCliente.trim()) {
   }, [carrinho]);
 
   useEffect(() => {
+    const produtosAtivos = produtos.filter((produto) => produto.ativo !== false);
+
+    if (produtosAtivos.length === 0) return undefined;
+
+    const script = document.createElement("script");
+    script.id = "selleta-product-schema";
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      itemListElement: produtosAtivos.map((produto, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        item: {
+          "@type": "Product",
+          name: produto.products,
+          description: produto.descricao || undefined,
+          image: produto.imagem || undefined,
+          category: produto.categoria || undefined,
+          offers: {
+            "@type": "Offer",
+            url: window.location.origin,
+            priceCurrency: "BRL",
+            price: obterPrecoVenda(produto).toFixed(2),
+            availability:
+              Number(produto.estoque) > 0
+                ? "https://schema.org/InStock"
+                : "https://schema.org/OutOfStock",
+          },
+        },
+      })),
+    });
+
+    document.head.appendChild(script);
+
+    return () => {
+      script.remove();
+    };
+  }, [produtos]);
+
+  useEffect(() => {
     let ativo = true;
 
     async function carregarProdutos() {

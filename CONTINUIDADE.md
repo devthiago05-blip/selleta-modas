@@ -42,6 +42,8 @@ Depois de cada publicação:
 - Criado `supabase/rls-policies.sql` para proteger produtos e uploads por lista de administradores.
 - Criado `supabase/product-commerce-fields.sql` para preço promocional e status ativo.
 - Painel preparado para limpar imagens antigas após edição/exclusão.
+- Adicionados dados estruturados `ClothingStore`, `ItemList` e `Product`.
+- Adicionados testes unitários sem dependências novas para opções e preços.
 
 ## Esquema confirmado da tabela `products`
 
@@ -80,5 +82,6 @@ Envie este arquivo junto com o projeto e peça:
 npm install
 npm run dev
 npm run lint
+npm run test
 npm run build
 ```
