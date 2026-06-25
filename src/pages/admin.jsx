@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminOrders from "../components/AdminOrders";
+import ProductVariantsEditor from "../components/ProductVariantsEditor";
 import { temPrecoPromocional } from "../lib/product";
 import { removerImagemProduto } from "../lib/storage";
 import { supabase } from "../lib/supabase";
@@ -32,13 +33,28 @@ export default function Admin() {
   const [salvando, setSalvando] = useState(false);
   const [camposComerciaisDisponiveis, setCamposComerciaisDisponiveis] =
     useState(false);
+  const [gradeDisponivel, setGradeDisponivel] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [secao, setSecao] = useState("produtos");
   const navigate = useNavigate();
 
   const carregarProdutos = useCallback(async () => {
+    let resultadoProdutos = await supabase
+      .from("products")
+      .select("*, product_variants(*)")
+      .order("products");
+    let gradeAtiva = !resultadoProdutos.error;
+
+    if (resultadoProdutos.error) {
+      resultadoProdutos = await supabase
+        .from("products")
+        .select("*")
+        .order("products");
+      gradeAtiva = false;
+    }
+
     const [{ data, error }, { error: erroCamposComerciais }] = await Promise.all([
-      supabase.from("products").select("*").order("products"),
+      Promise.resolve(resultadoProdutos),
       supabase.from("products").select("preco_promocional,ativo").limit(1),
     ]);
 
@@ -52,6 +68,8 @@ export default function Admin() {
 
     setProdutos(data || []);
     setCamposComerciaisDisponiveis(!erroCamposComerciais);
+    setGradeDisponivel(gradeAtiva);
+    return data || [];
   }, []);
 
   function limparFormulario() {
@@ -126,14 +144,16 @@ export default function Admin() {
       ? Number(precoPromocional.replace(",", "."))
       : null;
     const estoqueFormatado = Number(estoque);
+    const produtoTemGrade =
+      produtoEditando?.product_variants?.length > 0;
 
     if (
       !nome.trim() ||
       !categoria ||
       !Number.isFinite(precoFormatado) ||
       precoFormatado <= 0 ||
-      !Number.isInteger(estoqueFormatado) ||
-      estoqueFormatado < 0
+      (!produtoTemGrade &&
+        (!Number.isInteger(estoqueFormatado) || estoqueFormatado < 0))
     ) {
       setFeedback({
         tipo: "erro",
@@ -206,12 +226,15 @@ export default function Admin() {
       products: nome.trim(),
       categoria,
       preco: precoFormatado,
-      estoque: estoqueFormatado,
       imagem: imagemUrl,
       descricao: descricao.trim(),
-      tamanhos: tamanhos.trim(),
-      cores: cores.trim(),
     };
+
+    if (!produtoTemGrade) {
+      dadosProduto.estoque = estoqueFormatado;
+      dadosProduto.tamanhos = tamanhos.trim();
+      dadosProduto.cores = cores.trim();
+    }
 
     if (camposComerciaisDisponiveis) {
       dadosProduto.preco_promocional = precoPromocionalFormatado;
@@ -417,7 +440,11 @@ export default function Admin() {
               </label>
 
               <label>
-                <span className="mb-1 block text-sm font-medium">Estoque</span>
+                <span className="mb-1 block text-sm font-medium">
+                  {produtoEditando?.product_variants?.length
+                    ? "Estoque total da grade"
+                    : "Estoque"}
+                </span>
                 <input
                   type="number"
                   min="0"
@@ -426,6 +453,7 @@ export default function Admin() {
                   onChange={(e) => setEstoque(e.target.value)}
                   placeholder="0"
                   required
+                  disabled={produtoEditando?.product_variants?.length > 0}
                   className={campoClasse}
                 />
               </label>
@@ -486,6 +514,7 @@ export default function Admin() {
                 value={tamanhos}
                 onChange={(e) => setTamanhos(e.target.value)}
                 placeholder="P,M,G,GG"
+                disabled={produtoEditando?.product_variants?.length > 0}
                 className={campoClasse}
               />
             </label>
@@ -496,9 +525,36 @@ export default function Admin() {
                 value={cores}
                 onChange={(e) => setCores(e.target.value)}
                 placeholder="Preto,Azul,Rosa"
+                disabled={produtoEditando?.product_variants?.length > 0}
                 className={campoClasse}
               />
             </label>
+
+            {produtoEditando ? (
+              <ProductVariantsEditor
+                key={`${produtoEditando.id}-${(produtoEditando.product_variants || [])
+                  .map((variacao) => `${variacao.id}:${variacao.stock}`)
+                  .join("|")}`}
+                produto={produtoEditando}
+                disponivel={gradeDisponivel}
+                onSaved={async () => {
+                  const atualizados = await carregarProdutos();
+                  const atualizado = atualizados.find(
+                    (produto) => produto.id === produtoEditando.id
+                  );
+                  if (atualizado) editarProduto(atualizado);
+                  setFeedback({
+                    tipo: "sucesso",
+                    mensagem: "Grade atualizada com sucesso.",
+                  });
+                }}
+              />
+            ) : (
+              <p className="rounded-lg bg-gray-50 p-3 text-sm text-gray-600">
+                Salve o produto e clique em Editar para cadastrar a grade por
+                tamanho, cor e estampa.
+              </p>
+            )}
 
             <label>
               <span className="mb-1 block text-sm font-medium">Imagem</span>
@@ -582,6 +638,11 @@ export default function Admin() {
                     <p className="text-sm text-gray-600">
                       Estoque: {produto.estoque}
                     </p>
+                    {produto.product_variants?.length > 0 && (
+                      <p className="text-xs text-gray-500">
+                        {produto.product_variants.length} combinação(ões) na grade
+                      </p>
+                    )}
                     {camposComerciaisDisponiveis && (
                       <span
                         className={`mt-2 inline-flex rounded-full px-2 py-1 text-xs font-semibold ${

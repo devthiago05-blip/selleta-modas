@@ -333,7 +333,8 @@ export default function AdminOrders() {
               <div className="mt-4 rounded-xl bg-gray-50 p-4 text-sm">
                 {pedido.order_items?.map((item) => (
                   <p key={item.id}>
-                    {item.quantity}× {item.product_name} — {item.size}/{item.color}
+                    {item.quantity}× {item.product_name} — {item.size}/
+                    {item.color}/{item.print || "Sem estampa"}
                   </p>
                 ))}
               </div>

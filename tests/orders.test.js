@@ -48,3 +48,15 @@ test("todos os estados comerciais possuem rótulos", () => {
     "card_on_delivery",
   ]);
 });
+
+test("migração de grade vincula a variação ao pedido", async () => {
+  const grade = await readFile(
+    new URL("../supabase/product-variants.sql", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(grade, /create table if not exists public\.product_variants/);
+  assert.match(grade, /add column if not exists variant_id uuid/);
+  assert.match(grade, /v_item->>'variant_id'/);
+  assert.match(grade, /private\.is_admin/);
+});

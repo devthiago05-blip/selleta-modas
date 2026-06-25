@@ -9,9 +9,9 @@ Atualizado em: 25 de junho de 2026.
 - URL de produção: https://selleta-modas.vercel.app/
 - `npm run lint`: aprovado.
 - `npm run build`: aprovado.
-- Em 25 de junho de 2026, a URL pública ainda exibia a versão antiga. As mudanças estão somente locais e precisam de commit, push e deploy.
-- O commit `96cc480` foi publicado e validado na URL principal em desktop e viewport mobile de 390 px.
-- A checagem visual automatizada em localhost foi bloqueada pelo navegador da sessão. Fazer uma revisão manual com `npm run dev`.
+- O painel administrativo está disponível em `/login` e protegido por Supabase Auth + `admin_users`.
+- Checkout próprio, área da cliente, pedidos, status e relatórios administrativos estão ativos.
+- A rodada de grade por tamanho, cor, estampa e estoque por combinação está implementada no código e depende da execução de `supabase/product-variants.sql`.
 
 ## Regra para próximas rodadas
 
@@ -58,10 +58,17 @@ Depois de cada publicação:
 - Pedido técnico Pix #2 criado e acompanhado com status `pending/received`, sem redução de estoque.
 - Adicionada área da cliente com cadastro, login, histórico e vínculo de pedidos anteriores.
 - Adicionados relatórios administrativos, filtros, métricas e exportação CSV.
+- Adicionado cadastro administrativo de grade com tamanho, cor, estampa, SKU, estoque e status por combinação.
+- Catálogo, carrinho, WhatsApp, checkout e pedidos passaram a transportar a estampa e o identificador da variação.
+- Estoque da grade é consolidado no produto e reservado/restaurado na combinação correta ao atualizar o pedido.
 
-## Esquema confirmado da tabela `products`
+## Esquema principal
 
 `id`, `products`, `preco`, `estoque`, `imagem`, `categoria`, `descricao`, `tamanhos`, `cores`.
+
+Após executar `supabase/product-variants.sql`, a tabela `product_variants` terá:
+
+`id`, `product_id`, `size`, `color`, `print`, `sku`, `stock`, `active`.
 
 ## Risco de segurança que precisa ser verificado
 
@@ -77,19 +84,18 @@ No painel do Supabase, confirmar:
 
 ## Próximas melhorias por prioridade
 
-1. Executar `supabase/product-commerce-fields.sql`.
-2. Revisar e executar `supabase/rls-policies.sql`; cadastrar o administrador e remover políticas antigas/permissivas do Storage.
-3. Executar `supabase/orders.sql`.
-4. Configurar `VITE_DIRECT_CHECKOUT_ENABLED=true`, `VITE_PIX_KEY` e `VITE_PIX_RECEIVER` na Vercel.
-5. Adicionar estoque por combinação de tamanho e cor.
-6. Integrar provedor de Pix com webhook para confirmação automática.
-7. Configurar `VITE_WHATSAPP_NUMBER` também na Vercel.
+1. Executar `supabase/product-variants.sql` no SQL Editor do Supabase.
+2. Entrar em `/login`, editar um produto e cadastrar sua grade.
+3. Testar um pedido com variação e confirmar/cancelar no painel para validar o estoque.
+4. Integrar provedor de Pix com QR Code e webhook para confirmação automática.
+5. Adicionar cálculo de frete/entrega e política de trocas/privacidade.
+6. Fazer auditoria final das políticas RLS, analytics, monitoramento e testes E2E.
 
 ## Como continuar em outro chat
 
 Envie este arquivo junto com o projeto e peça:
 
-> Leia `CONTINUIDADE.md`, revise as alterações atuais e continue pela execução validada das políticas RLS e pelos campos de promoção/status. Preserve o que já funciona, faça mudanças pequenas e valide com lint e build.
+> Leia `CONTINUIDADE.md`, execute e valide `supabase/product-variants.sql`, teste a grade no painel e continue pelas melhorias de Pix automático, frete e auditoria final. Preserve o que já funciona e valide com lint, testes e build.
 
 ## Comandos
 

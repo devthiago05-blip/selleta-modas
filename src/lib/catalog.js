@@ -6,21 +6,26 @@ export async function carregarCatalogo(signal) {
     throw new Error("Configuração do catálogo ausente.");
   }
 
-  const parametros = new URLSearchParams({
-    select: "*",
-    order: "products.asc",
-  });
+  const carregar = (select) => {
+    const parametros = new URLSearchParams({
+      select,
+      order: "products.asc",
+    });
 
-  const resposta = await fetch(
-    `${supabaseUrl}/rest/v1/products?${parametros.toString()}`,
-    {
+    return fetch(`${supabaseUrl}/rest/v1/products?${parametros.toString()}`, {
       signal,
       headers: {
         apikey: supabaseAnonKey,
         Authorization: `Bearer ${supabaseAnonKey}`,
       },
-    }
-  );
+    });
+  };
+
+  let resposta = await carregar("*,product_variants(*)");
+
+  if (!resposta.ok && resposta.status === 400) {
+    resposta = await carregar("*");
+  }
 
   if (!resposta.ok) {
     throw new Error("Não foi possível carregar o catálogo.");

@@ -150,11 +150,12 @@ export default function CheckoutModal({ carrinho, total, onClose, onSuccess }) {
               <div className="mt-3 space-y-2 text-sm text-gray-600">
                 {carrinho.map((item) => (
                   <div
-                    key={`${item.id}-${item.tamanho}-${item.cor}`}
+                    key={`${item.id}-${item.tamanho}-${item.cor}-${item.estampa || ""}`}
                     className="flex justify-between gap-3"
                   >
                     <span>
-                      {item.quantidade}× {item.products} — {item.tamanho}/{item.cor}
+                      {item.quantidade}× {item.products} — {item.tamanho}/
+                      {item.cor}/{item.estampa || "Sem estampa"}
                     </span>
                     <span>
                       {formatarPreco(

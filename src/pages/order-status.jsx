@@ -128,7 +128,9 @@ export default function OrderStatus() {
                       {item.quantity}× {item.product_name}
                     </strong>
                     <p className="text-gray-500">
-                      {item.size} · {item.color} · {formatarPreco(item.unit_price)}
+                      {item.size} · {item.color} ·{" "}
+                      {item.print || "Sem estampa"} ·{" "}
+                      {formatarPreco(item.unit_price)}
                     </p>
                   </div>
                 ))}

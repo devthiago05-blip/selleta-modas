@@ -12,9 +12,11 @@ export default function ProductModal({
   produto,
   tamanho,
   cor,
+  estampa,
   quantidade,
   onTamanhoChange,
   onCorChange,
+  onEstampaChange,
   onQuantidadeChange,
   onAdicionar,
   onClose,
@@ -97,9 +99,11 @@ export default function ProductModal({
                 produto={produto}
                 tamanho={tamanho}
                 cor={cor}
+                estampa={estampa}
                 quantidade={quantidade}
                 onTamanhoChange={onTamanhoChange}
                 onCorChange={onCorChange}
+                onEstampaChange={onEstampaChange}
                 onQuantidadeChange={onQuantidadeChange}
               />
             </div>

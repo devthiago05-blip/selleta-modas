@@ -7,8 +7,11 @@ import ProductModal from "../components/ProductModal";
 import SiteHeader from "../components/SiteHeader";
 import { carregarCatalogo } from "../lib/catalog";
 import {
-  obterOpcoes,
+  obterCoresProduto,
+  obterTamanhosProduto,
   obterPrecoVenda,
+  obterVariacaoSelecionada,
+  obterVariacoes,
 } from "../lib/product";
 
 const CHAVE_CARRINHO = "selleta-modas-carrinho";
@@ -41,6 +44,7 @@ export default function Loja() {
   const [produtoAberto, setProdutoAberto] = useState(null);
   const [tamanhoSelecionado, setTamanhoSelecionado] = useState({});
   const [corSelecionada, setCorSelecionada] = useState({});
+  const [estampaSelecionada, setEstampaSelecionada] = useState({});
   const [quantidadeSelecionada, setQuantidadeSelecionada] = useState({});
   const [nomeCliente, setNomeCliente] = useState("");
   const [telefoneCliente, setTelefoneCliente] = useState("");
@@ -56,87 +60,112 @@ export default function Loja() {
   const [feedback, setFeedback] = useState("");
   const fecharProduto = useCallback(() => setProdutoAberto(null), []);
 
+  function abrirProduto(produto) {
+    const variacoesComEstoque = obterVariacoes(produto).filter(
+      (variacao) => Number(variacao.stock) > 0
+    );
+    const primeiraVariacao = variacoesComEstoque[0];
+    const primeiroTamanho =
+      primeiraVariacao?.size || obterTamanhosProduto(produto)[0] || "";
+    const primeiraCor =
+      primeiraVariacao?.color || obterCoresProduto(produto)[0] || "";
+
+    setTamanhoSelecionado((selecoes) => ({
+      ...selecoes,
+      [produto.id]: selecoes[produto.id] || primeiroTamanho,
+    }));
+    setCorSelecionada((selecoes) => ({
+      ...selecoes,
+      [produto.id]: selecoes[produto.id] || primeiraCor,
+    }));
+    setEstampaSelecionada((selecoes) => ({
+      ...selecoes,
+      [produto.id]:
+        selecoes[produto.id] || primeiraVariacao?.print || "Sem estampa",
+    }));
+    setQuantidadeSelecionada((selecoes) => ({
+      ...selecoes,
+      [produto.id]: 1,
+    }));
+    setProdutoAberto(produto);
+  }
+
   function adicionarAoCarrinho(produto) {
-  const tamanhosProduto = obterOpcoes(produto.tamanhos);
-  const coresProduto = obterOpcoes(produto.cores);
+    const variacoes = obterVariacoes(produto);
+    const tamanho = tamanhoSelecionado[produto.id] || "Único";
+    const cor = corSelecionada[produto.id] || "Padrão";
+    const estampa = estampaSelecionada[produto.id] || "Sem estampa";
+    const quantidade = quantidadeSelecionada[produto.id] || 1;
+    const variacao = obterVariacaoSelecionada(
+      produto,
+      tamanho,
+      cor,
+      estampa
+    );
 
-  if (tamanhosProduto.length > 0 && !tamanhoSelecionado[produto.id]) {
-    setFeedback("Selecione um tamanho antes de adicionar.");
-    return;
-  }
+    if (obterTamanhosProduto(produto).length > 0 && !tamanhoSelecionado[produto.id]) {
+      setFeedback("Selecione um tamanho antes de adicionar.");
+      return;
+    }
 
-  if (coresProduto.length > 0 && !corSelecionada[produto.id]) {
-    setFeedback("Selecione uma cor antes de adicionar.");
-    return;
-  }
+    if (obterCoresProduto(produto).length > 0 && !corSelecionada[produto.id]) {
+      setFeedback("Selecione uma cor antes de adicionar.");
+      return;
+    }
 
-  if (
-  (quantidadeSelecionada[produto.id] || 1) >
-  produto.estoque
-) {
-  setFeedback("Quantidade maior que o estoque disponível.");
-  return;
-}
+    if (variacoes.length > 0 && !variacao) {
+      setFeedback("Selecione uma combinação disponível.");
+      return;
+    }
 
-  const itemCarrinho = {
-    ...produto,
-    tamanho: tamanhoSelecionado[produto.id] || "Único",
-    cor: corSelecionada[produto.id] || "Padrão",
-    quantidade:
-      quantidadeSelecionada[produto.id] || 1,
-  };
+    const estoqueDisponivel = Number(
+      variacoes.length ? variacao.stock : produto.estoque
+    );
 
-  const itemExistente = carrinho.find(
-    (item) =>
+    if (quantidade > estoqueDisponivel) {
+      setFeedback("Quantidade maior que o estoque disponível.");
+      return;
+    }
+
+    const itemCarrinho = {
+      ...produto,
+      variant_id: variacao?.id || null,
+      tamanho,
+      cor,
+      estampa,
+      estoque: estoqueDisponivel,
+      quantidade,
+    };
+    const mesmaVariacao = (item) =>
       item.id === itemCarrinho.id &&
       item.tamanho === itemCarrinho.tamanho &&
-      item.cor === itemCarrinho.cor
-  );
+      item.cor === itemCarrinho.cor &&
+      (item.estampa || "Sem estampa") === itemCarrinho.estampa;
+    const itemExistente = carrinho.find(mesmaVariacao);
 
-  if (
-    itemExistente &&
-    itemExistente.quantidade + itemCarrinho.quantidade > produto.estoque
-  ) {
-    setFeedback("A quantidade total ultrapassa o estoque disponível.");
-    return;
-  }
+    if (
+      itemExistente &&
+      itemExistente.quantidade + quantidade > estoqueDisponivel
+    ) {
+      setFeedback("A quantidade total ultrapassa o estoque disponível.");
+      return;
+    }
 
-  setCarrinho((itens) => {
+    setCarrinho((itens) => {
+      const itemAtual = itens.find(mesmaVariacao);
 
-  const itemAtual = itens.find(
-    (item) =>
-      item.id === itemCarrinho.id &&
-      item.tamanho === itemCarrinho.tamanho &&
-      item.cor === itemCarrinho.cor
-  );
-
-  if (itemAtual) {
-    return itens.map((item) => {
-
-      if (
-        item.id === itemCarrinho.id &&
-        item.tamanho === itemCarrinho.tamanho &&
-        item.cor === itemCarrinho.cor
-      ) {
-
-        const novaQuantidade =
-          item.quantidade +
-          itemCarrinho.quantidade;
-
-        return {
-          ...item,
-          quantidade: novaQuantidade,
-        };
+      if (itemAtual) {
+        return itens.map((item) =>
+          mesmaVariacao(item)
+            ? { ...item, quantidade: item.quantidade + quantidade }
+            : item
+        );
       }
 
-      return item;
+      return [...itens, itemCarrinho];
     });
+    setFeedback("Produto adicionado ao carrinho.");
   }
-
-  return [...itens, itemCarrinho];
-});
-  setFeedback("Produto adicionado ao carrinho.");
-}
 
 function removerDoCarrinho(indexRemover) {
   setCarrinho((itens) =>
@@ -180,6 +209,7 @@ if (!telefoneCliente.trim()) {
       `• ${item.products}\n` +
       `Tam: ${item.tamanho}\n` +
       `Cor: ${item.cor}\n` +
+      `Estampa: ${item.estampa || "Sem estampa"}\n` +
       `Qtd: ${item.quantidade}\n` +
       `Valor: ${formatarPreco(obterPrecoVenda(item) * item.quantidade)}\n\n`;
   });
@@ -278,10 +308,10 @@ if (!telefoneCliente.trim()) {
     ...new Set(produtos.map((produto) => produto.categoria).filter(Boolean)),
   ];
   const tamanhosDisponiveis = [
-    ...new Set(produtos.flatMap((produto) => obterOpcoes(produto.tamanhos))),
+    ...new Set(produtos.flatMap((produto) => obterTamanhosProduto(produto))),
   ];
   const coresDisponiveis = [
-    ...new Set(produtos.flatMap((produto) => obterOpcoes(produto.cores))),
+    ...new Set(produtos.flatMap((produto) => obterCoresProduto(produto))),
   ];
   const produtosFiltrados = produtos.filter((produto) => {
     const produtoAtivo = produto.ativo !== false;
@@ -291,9 +321,9 @@ if (!telefoneCliente.trim()) {
     const correspondeCategoria =
       !categoriaSelecionada || produto.categoria === categoriaSelecionada;
     const correspondeTamanho =
-      !tamanhoFiltro || obterOpcoes(produto.tamanhos).includes(tamanhoFiltro);
+      !tamanhoFiltro || obterTamanhosProduto(produto).includes(tamanhoFiltro);
     const correspondeCor =
-      !corFiltro || obterOpcoes(produto.cores).includes(corFiltro);
+      !corFiltro || obterCoresProduto(produto).includes(corFiltro);
     const correspondePreco =
       !precoMaximo || obterPrecoVenda(produto) <= Number(precoMaximo);
 
@@ -350,17 +380,50 @@ if (!telefoneCliente.trim()) {
           produto={produtoAberto}
           tamanho={tamanhoSelecionado[produtoAberto.id] || ""}
           cor={corSelecionada[produtoAberto.id] || ""}
+          estampa={estampaSelecionada[produtoAberto.id] || ""}
           quantidade={quantidadeSelecionada[produtoAberto.id] || 1}
-          onTamanhoChange={(tamanho) =>
+          onTamanhoChange={(tamanho) => {
+            const primeira = obterVariacoes(produtoAberto).find(
+              (variacao) =>
+                variacao.size === tamanho && Number(variacao.stock) > 0
+            );
             setTamanhoSelecionado((selecoes) => ({
               ...selecoes,
               [produtoAberto.id]: tamanho,
-            }))
-          }
-          onCorChange={(cor) =>
+            }));
+            if (primeira) {
+              setCorSelecionada((selecoes) => ({
+                ...selecoes,
+                [produtoAberto.id]: primeira.color,
+              }));
+              setEstampaSelecionada((selecoes) => ({
+                ...selecoes,
+                [produtoAberto.id]: primeira.print,
+              }));
+            }
+          }}
+          onCorChange={(cor) => {
+            const primeira = obterVariacoes(produtoAberto).find(
+              (variacao) =>
+                variacao.size === tamanhoSelecionado[produtoAberto.id] &&
+                variacao.color === cor &&
+                Number(variacao.stock) > 0
+            );
             setCorSelecionada((selecoes) => ({
               ...selecoes,
               [produtoAberto.id]: cor,
+            }));
+            if (primeira) {
+              setEstampaSelecionada((selecoes) => ({
+                ...selecoes,
+                [produtoAberto.id]: primeira.print,
+              }));
+            }
+          }}
+          onEstampaChange={(estampa) =>
+            setEstampaSelecionada((selecoes) => ({
+              ...selecoes,
+              [produtoAberto.id]: estampa,
             }))
           }
           onQuantidadeChange={(quantidade) =>
@@ -446,7 +509,7 @@ if (!telefoneCliente.trim()) {
 
   {carrinho.map((item, index) => (
     <div
-  key={`${item.id}-${item.tamanho}-${item.cor}`}
+  key={`${item.id}-${item.tamanho}-${item.cor}-${item.estampa || ""}`}
   className="flex justify-between items-center py-2"
 >
   <div>
@@ -459,6 +522,10 @@ if (!telefoneCliente.trim()) {
 
   <div className="text-sm text-gray-500">
     Cor: {item.cor}
+  </div>
+
+  <div className="text-sm text-gray-500">
+    Estampa: {item.estampa || "Sem estampa"}
   </div>
 
   <div className="flex items-center gap-2 mt-1">
@@ -751,7 +818,7 @@ if (!telefoneCliente.trim()) {
           <ProductCard
             key={produto.id}
             produto={produto}
-            onOpen={() => setProdutoAberto(produto)}
+            onOpen={() => abrirProduto(produto)}
           />
         ))}
       </div>

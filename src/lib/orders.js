@@ -32,8 +32,10 @@ export function criarPedido({ cliente, pagamento, itens, accessToken }) {
       p_payment_method: pagamento,
       p_items: itens.map((item) => ({
         product_id: item.id,
+        variant_id: item.variant_id || null,
         size: item.tamanho,
         color: item.cor,
+        print: item.estampa,
         quantity: item.quantidade,
       })),
     },

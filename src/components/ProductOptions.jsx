@@ -1,4 +1,10 @@
-import { obterOpcoes } from "../lib/product";
+import {
+  obterCoresProduto,
+  obterEstampasProduto,
+  obterTamanhosProduto,
+  obterVariacaoSelecionada,
+  obterVariacoes,
+} from "../lib/product";
 
 const mapaCores = {
   preto: "#000000",
@@ -19,14 +25,49 @@ export default function ProductOptions({
   produto,
   tamanho,
   cor,
+  estampa,
   quantidade,
   onTamanhoChange,
   onCorChange,
+  onEstampaChange,
   onQuantidadeChange,
 }) {
-  const tamanhos = obterOpcoes(produto.tamanhos);
-  const cores = obterOpcoes(produto.cores);
-  const estoque = Math.max(0, Number(produto.estoque) || 0);
+  const variacoes = obterVariacoes(produto);
+  const tamanhos = obterTamanhosProduto(produto);
+  const cores = variacoes.length
+    ? [
+        ...new Set(
+          variacoes
+            .filter((variacao) => !tamanho || variacao.size === tamanho)
+            .map((variacao) => variacao.color)
+        ),
+      ]
+    : obterCoresProduto(produto);
+  const estampas = variacoes.length
+    ? [
+        ...new Set(
+          variacoes
+            .filter(
+              (variacao) =>
+                (!tamanho || variacao.size === tamanho) &&
+                (!cor || variacao.color === cor)
+            )
+            .map((variacao) => variacao.print)
+        ),
+      ]
+    : obterEstampasProduto(produto);
+  const variacaoSelecionada = obterVariacaoSelecionada(
+    produto,
+    tamanho,
+    cor,
+    estampa
+  );
+  const estoque = Math.max(
+    0,
+    Number(
+      variacoes.length ? variacaoSelecionada?.stock : produto.estoque
+    ) || 0
+  );
 
   return (
     <div className="space-y-4">
@@ -84,6 +125,29 @@ export default function ProductOptions({
         </fieldset>
       )}
 
+      {estampas.length > 0 && (
+        <fieldset>
+          <legend className="mb-2 font-semibold">Estampa</legend>
+          <div className="flex flex-wrap gap-2">
+            {estampas.map((opcao) => (
+              <button
+                type="button"
+                key={opcao}
+                onClick={() => onEstampaChange(opcao)}
+                aria-pressed={estampa === opcao}
+                className={`rounded-lg border px-3 py-2 text-sm transition ${
+                  estampa === opcao
+                    ? "border-[#8a5d2b] bg-[#8a5d2b] text-white"
+                    : "hover:border-[#C58B39]"
+                }`}
+              >
+                {opcao}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      )}
+
       <div>
         <p className="mb-2 font-semibold">Quantidade</p>
         <div className="flex items-center gap-3">
@@ -108,7 +172,11 @@ export default function ProductOptions({
           </button>
         </div>
         <p className="mt-2 text-sm text-gray-500">
-          {estoque > 0 ? `Estoque disponível: ${estoque}` : "Produto esgotado"}
+          {variacoes.length > 0 && !variacaoSelecionada
+            ? "Selecione a combinação para consultar o estoque"
+            : estoque > 0
+              ? `Estoque disponível: ${estoque}`
+              : "Produto esgotado"}
         </p>
       </div>
     </div>

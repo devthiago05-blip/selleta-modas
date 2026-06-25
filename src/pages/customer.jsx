@@ -254,7 +254,8 @@ export default function Customer() {
                     <div className="mt-4 space-y-1 border-t pt-3 text-sm">
                       {pedido.order_items?.map((item) => (
                         <p key={item.id}>
-                          {item.quantity}× {item.product_name}
+                          {item.quantity}× {item.product_name} — {item.size}/
+                          {item.color}/{item.print || "Sem estampa"}
                         </p>
                       ))}
                     </div>
