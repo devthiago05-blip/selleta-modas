@@ -372,6 +372,15 @@ export default function Admin() {
         </div>
       )}
 
+      {!gradeDisponivel && (
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          <strong className="block">Grade por tamanho, cor e estampa pendente.</strong>
+          Execute o arquivo <code>supabase/product-variants.sql</code> no SQL
+          Editor do Supabase. Enquanto isso, o painel continua usando estoque,
+          tamanhos e cores simples do produto.
+        </div>
+      )}
+
       <nav className="mb-8 flex gap-2 border-b" aria-label="Seções do painel">
         <button
           type="button"

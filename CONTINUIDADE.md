@@ -9,6 +9,7 @@ Atualizado em: 25 de junho de 2026.
 - URL de produção: https://selleta-modas.vercel.app/
 - `npm run lint`: aprovado.
 - `npm run build`: aprovado.
+- Verificação atual: `public.product_variants` ainda não aparece no cache REST do Supabase.
 - O painel administrativo está disponível em `/login` e protegido por Supabase Auth + `admin_users`.
 - Checkout próprio, área da cliente, pedidos, status e relatórios administrativos estão ativos.
 - A rodada de grade por tamanho, cor, estampa e estoque por combinação está implementada no código e depende da execução de `supabase/product-variants.sql`.

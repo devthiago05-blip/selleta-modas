@@ -31,7 +31,9 @@ export default function ProductVariantsEditor({
   if (!disponivel) {
     return (
       <div className="rounded-xl bg-amber-50 p-4 text-sm text-amber-800">
-        Execute <code>supabase/product-variants.sql</code> para liberar a grade.
+        Execute o arquivo completo <code>supabase/product-variants.sql</code> no
+        SQL Editor do Supabase e aguarde o cache do schema atualizar para
+        liberar a grade.
       </div>
     );
   }
