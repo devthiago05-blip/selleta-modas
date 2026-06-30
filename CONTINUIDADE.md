@@ -1,6 +1,6 @@
 # Continuidade do projeto Selleta Modas
 
-Atualizado em: 25 de junho de 2026.
+Atualizado em: 30 de junho de 2026.
 
 ## Estado atual
 
@@ -9,10 +9,11 @@ Atualizado em: 25 de junho de 2026.
 - URL de produção: https://selleta-modas.vercel.app/
 - `npm run lint`: aprovado.
 - `npm run build`: aprovado.
-- Verificação atual: `public.product_variants` ainda não aparece no cache REST do Supabase.
+- Verificação atual: `public.product_variants` está acessível pela API REST do Supabase.
 - O painel administrativo está disponível em `/login` e protegido por Supabase Auth + `admin_users`.
 - Checkout próprio, área da cliente, pedidos, status e relatórios administrativos estão ativos.
-- A rodada de grade por tamanho, cor, estampa e estoque por combinação está implementada no código e depende da execução de `supabase/product-variants.sql`.
+- A grade por tamanho, cor, estampa e estoque por combinação está ativa no código e no Supabase.
+- Auditoria do Supabase confirmou RLS nas tabelas principais e corrigiu privilégios anônimos das funções administrativas.
 
 ## Regra para próximas rodadas
 
@@ -70,7 +71,7 @@ Depois de cada publicação:
 
 `id`, `products`, `preco`, `estoque`, `imagem`, `categoria`, `descricao`, `tamanhos`, `cores`.
 
-Após executar `supabase/product-variants.sql`, a tabela `product_variants` terá:
+A tabela `product_variants` contém:
 
 `id`, `product_id`, `size`, `color`, `print`, `sku`, `stock`, `active`.
 
@@ -85,21 +86,22 @@ No painel do Supabase, confirmar:
 3. Upload no bucket `produtos` exige autenticação.
 4. Não existe chave `service_role` no front-end ou na Vercel com prefixo `VITE_`.
 5. Há somente contas administrativas conhecidas no Supabase Auth.
+6. Ativar a proteção contra senhas vazadas em Authentication > Password Security.
 
 ## Próximas melhorias por prioridade
 
-1. Executar `supabase/product-variants.sql` no SQL Editor do Supabase.
-2. Entrar em `/login`, editar um produto e cadastrar sua grade.
-3. Testar um pedido com variação e confirmar/cancelar no painel para validar o estoque.
-4. Integrar provedor de Pix com QR Code e webhook para confirmação automática.
-5. Adicionar cálculo de frete/entrega e política de trocas/privacidade.
-6. Fazer auditoria final das políticas RLS, analytics, monitoramento e testes E2E.
+1. Entrar em `/login`, editar um produto e cadastrar sua grade.
+2. Testar um pedido com variação e confirmar/cancelar no painel para validar o estoque.
+3. Integrar provedor de Pix com QR Code e webhook para confirmação automática.
+4. Fazer auditoria final das políticas RLS, analytics, monitoramento e testes E2E.
+
+O cálculo de frete ficará fora do escopo por enquanto. O checkout não soma frete ao subtotal.
 
 ## Como continuar em outro chat
 
 Envie este arquivo junto com o projeto e peça:
 
-> Leia `CONTINUIDADE.md`, execute e valide `supabase/product-variants.sql`, teste a grade no painel e continue pelas melhorias de Pix automático, frete e auditoria final. Preserve o que já funciona e valide com lint, testes e build.
+> Leia `CONTINUIDADE.md`, teste a grade no painel e continue pelas melhorias de Pix automático e auditoria final. Mantenha o cálculo de frete fora do escopo, preserve o que já funciona e valide com lint, testes e build.
 
 ## Comandos
 

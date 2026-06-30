@@ -106,6 +106,7 @@ using ((select private.is_admin()));
 drop policy if exists "admin_produtos_storage_insert" on storage.objects;
 drop policy if exists "admin_produtos_storage_update" on storage.objects;
 drop policy if exists "admin_produtos_storage_delete" on storage.objects;
+drop policy if exists "Permitir visualização 1ifiba2_0" on storage.objects;
 
 create policy "admin_produtos_storage_insert"
 on storage.objects

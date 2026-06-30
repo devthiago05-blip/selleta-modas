@@ -225,8 +225,10 @@ begin
 end;
 $$;
 
-revoke all on function public.create_order(text, text, text, text, text, jsonb) from public;
-revoke all on function public.claim_order(uuid, text) from public;
+revoke all on function public.create_order(text, text, text, text, text, jsonb)
+from public, anon, authenticated;
+revoke all on function public.claim_order(uuid, text)
+from public, anon, authenticated;
 
 grant execute on function public.create_order(text, text, text, text, text, jsonb)
 to anon, authenticated;
