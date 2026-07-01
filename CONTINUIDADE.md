@@ -18,7 +18,8 @@ Atualizado em: 1 de julho de 2026.
 
 ## Regra para próximas rodadas
 
-Depois de cada publicação:
+Toda rodada com alteração deve terminar com commit, push para `main` e
+verificação da publicação no Vercel. Depois de cada publicação:
 
 1. Abrir `https://selleta-modas.vercel.app/`.
 2. Confirmar visualmente a funcionalidade alterada.
@@ -68,6 +69,7 @@ Depois de cada publicação:
 - Criada a página `/politicas` com regras de troca, entrega, privacidade e compra.
 - Checkout passou a informar que o frete não está no subtotal e exige aceite das políticas.
 - Grade passou a impedir salvamento totalmente zerado, gerar combinações e mostrar miniaturas somente quando o produto possui estampa.
+- Removida a tabela vazia e não utilizada `public.grade_templates`, eliminando o erro crítico de RLS apontado pelo Supabase.
 
 ## Esquema principal
 
@@ -89,7 +91,6 @@ No painel do Supabase, confirmar:
 4. Não existe chave `service_role` no front-end ou na Vercel com prefixo `VITE_`.
 5. Há somente contas administrativas conhecidas no Supabase Auth.
 6. Ativar a proteção contra senhas vazadas em Authentication > Password Security.
-7. A tabela vazia `public.grade_templates`, criada fora do projeto, precisa ser removida ou receber RLS antes de ser usada.
 
 ## Próximas melhorias por prioridade
 
