@@ -9,6 +9,11 @@ import {
   obterVariacaoSelecionada,
   temPrecoPromocional,
 } from "../src/lib/product.js";
+import {
+  CORES_COMUNS,
+  gerarCombinacoesGrade,
+  TAMANHOS_PADRAO,
+} from "../src/lib/variants.js";
 
 test("normaliza opções separadas por vírgula", () => {
   assert.deepEqual(obterOpcoes(" P, M, ,G "), ["P", "M", "G"]);
@@ -51,4 +56,23 @@ test("usa grade estruturada quando existem variações", () => {
     obterVariacaoSelecionada(produto, "P", "Preto", "Floral")?.id,
     "1"
   );
+});
+
+test("oferece grade padrão e 30 cores comuns", () => {
+  assert.deepEqual(TAMANHOS_PADRAO, ["P", "M", "G", "GG"]);
+  assert.equal(CORES_COMUNS.length, 30);
+});
+
+test("gera combinações de tamanho, cor e estampa", () => {
+  const grade = gerarCombinacoesGrade({
+    tamanhos: ["P", "M"],
+    cores: ["Preto", "Rosa"],
+    estampas: [{ nome: "Floral", imagemUrl: "https://exemplo.com/floral.jpg" }],
+    estoqueInicial: 2,
+  });
+
+  assert.equal(grade.length, 4);
+  assert.equal(grade[0].stock, "2");
+  assert.equal(grade[0].print, "Floral");
+  assert.equal(grade[0].print_image_url, "https://exemplo.com/floral.jpg");
 });

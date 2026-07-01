@@ -130,10 +130,15 @@ Depois:
 
 1. Salve o produto normalmente.
 2. Na lista de produtos, clique em “Editar”.
-3. Na seção “Grade de variações”, clique em “+ Adicionar”.
-4. Informe tamanho, cor, estampa, SKU opcional, estoque e situação ativa.
-5. Crie uma linha para cada combinação comercial.
-6. Clique em “Salvar grade”.
+3. Na seção “Grade de variações”, selecione os tamanhos P, M, G e GG desejados.
+4. Selecione uma ou mais das 30 cores cadastradas.
+5. Informe o estoque inicial de cada combinação e clique em “Gerar combinações”.
+6. Revise o estoque e o SKU opcional de cada linha.
+7. Clique em “Salvar grade”.
+
+Quando o produto tiver estampa, marque “Este produto possui estampa”, informe
+o nome e selecione uma imagem para cada estampa antes de gerar as combinações.
+A seleção de estampa, com sua miniatura, só aparece na loja nesses produtos.
 
 Exemplo:
 
@@ -143,6 +148,7 @@ Exemplo:
 
 Não repita exatamente a mesma combinação de tamanho, cor e estampa. Quando há
 grade, o estoque total do produto é calculado pela soma das variações ativas.
+O painel não permite salvar uma grade totalmente zerada por engano.
 
 Ao confirmar um pedido, o sistema reduz o estoque da combinação vendida. Ao
 cancelar um pedido que já reservou estoque, a quantidade é devolvida.

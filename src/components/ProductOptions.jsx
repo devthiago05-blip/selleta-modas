@@ -5,21 +5,7 @@ import {
   obterVariacaoSelecionada,
   obterVariacoes,
 } from "../lib/product";
-
-const mapaCores = {
-  preto: "#000000",
-  branco: "#FFFFFF",
-  vermelho: "#EF4444",
-  azul: "#3B82F6",
-  rosa: "#EC4899",
-  verde: "#22C55E",
-  amarelo: "#EAB308",
-  bege: "#D6C6A5",
-  marrom: "#92400E",
-  cinza: "#6B7280",
-  laranja: "#F97316",
-  roxo: "#9333EA",
-};
+import { normalizarOpcao, obterHexCor, SEM_ESTAMPA } from "../lib/variants";
 
 export default function ProductOptions({
   produto,
@@ -56,6 +42,17 @@ export default function ProductOptions({
         ),
       ]
     : obterEstampasProduto(produto);
+  const possuiEstampa = estampas.some(
+    (opcao) => normalizarOpcao(opcao) !== normalizarOpcao(SEM_ESTAMPA)
+  );
+  const imagemPorEstampa = new Map(
+    variacoes
+      .filter((variacao) => variacao.print_image_url)
+      .map((variacao) => [
+        normalizarOpcao(variacao.print),
+        variacao.print_image_url,
+      ])
+  );
   const variacaoSelecionada = obterVariacaoSelecionada(
     produto,
     tamanho,
@@ -99,8 +96,6 @@ export default function ProductOptions({
           <legend className="mb-2 font-semibold">Cor</legend>
           <div className="flex flex-wrap gap-2">
             {cores.map((opcao) => {
-              const corNormalizada = opcao.toLowerCase();
-
               return (
                 <button
                   type="button"
@@ -114,7 +109,7 @@ export default function ProductOptions({
                       : "border-gray-300"
                   }`}
                   style={{
-                    backgroundColor: mapaCores[corNormalizada] || "#cccccc",
+                    backgroundColor: obterHexCor(opcao),
                   }}
                   title={opcao}
                 />
@@ -125,25 +120,36 @@ export default function ProductOptions({
         </fieldset>
       )}
 
-      {estampas.length > 0 && (
+      {possuiEstampa && (
         <fieldset>
           <legend className="mb-2 font-semibold">Estampa</legend>
           <div className="flex flex-wrap gap-2">
-            {estampas.map((opcao) => (
-              <button
-                type="button"
-                key={opcao}
-                onClick={() => onEstampaChange(opcao)}
-                aria-pressed={estampa === opcao}
-                className={`rounded-lg border px-3 py-2 text-sm transition ${
-                  estampa === opcao
-                    ? "border-[#8a5d2b] bg-[#8a5d2b] text-white"
-                    : "hover:border-[#C58B39]"
-                }`}
-              >
-                {opcao}
-              </button>
-            ))}
+            {estampas.map((opcao) => {
+              const imagem = imagemPorEstampa.get(normalizarOpcao(opcao));
+              return (
+                <button
+                  type="button"
+                  key={opcao}
+                  onClick={() => onEstampaChange(opcao)}
+                  aria-pressed={estampa === opcao}
+                  className={`overflow-hidden rounded-xl border text-left text-sm transition ${
+                    estampa === opcao
+                      ? "border-[#8a5d2b] ring-2 ring-[#C58B39]/30"
+                      : "hover:border-[#C58B39]"
+                  }`}
+                >
+                  {imagem && (
+                    <img
+                      src={imagem}
+                      alt={`Estampa ${opcao}`}
+                      loading="lazy"
+                      className="h-16 w-20 object-cover"
+                    />
+                  )}
+                  <span className="block px-3 py-2">{opcao}</span>
+                </button>
+              );
+            })}
           </div>
         </fieldset>
       )}

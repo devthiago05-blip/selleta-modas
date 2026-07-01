@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AdminOrders from "../components/AdminOrders";
 import ProductVariantsEditor from "../components/ProductVariantsEditor";
 import { temPrecoPromocional } from "../lib/product";
-import { removerImagemProduto } from "../lib/storage";
+import { enviarImagemProduto, removerImagemProduto } from "../lib/storage";
 import { supabase } from "../lib/supabase";
 
 const campoClasse =
@@ -192,18 +192,7 @@ export default function Admin() {
     let novaImagemUrl = null;
 
     if (imagem) {
-      const nomeSeguro = imagem.name
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-zA-Z0-9._-]/g, "-");
-      const nomeArquivo = `${Date.now()}-${nomeSeguro}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("produtos")
-        .upload(nomeArquivo, imagem, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      const { data, error: uploadError } = await enviarImagemProduto(imagem);
 
       if (uploadError) {
         setFeedback({
@@ -213,10 +202,6 @@ export default function Admin() {
         setSalvando(false);
         return;
       }
-
-      const { data } = supabase.storage
-        .from("produtos")
-        .getPublicUrl(nomeArquivo);
 
       imagemUrl = data.publicUrl;
       novaImagemUrl = data.publicUrl;

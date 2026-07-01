@@ -58,5 +58,6 @@ test("migração de grade vincula a variação ao pedido", async () => {
   assert.match(grade, /create table if not exists public\.product_variants/);
   assert.match(grade, /add column if not exists variant_id uuid/);
   assert.match(grade, /v_item->>'variant_id'/);
+  assert.match(grade, /print_image_url/);
   assert.match(grade, /private\.is_admin/);
 });

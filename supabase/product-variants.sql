@@ -10,6 +10,8 @@ create table if not exists public.product_variants (
   color text not null check (char_length(trim(color)) between 1 and 50),
   print text not null default 'Sem estampa'
     check (char_length(trim(print)) between 1 and 80),
+  print_image_url text
+    check (print_image_url is null or char_length(print_image_url) <= 2048),
   sku text,
   stock integer not null default 0 check (stock >= 0),
   active boolean not null default true,
@@ -174,13 +176,14 @@ begin
   for v_variant in select * from jsonb_array_elements(p_variants)
   loop
     insert into public.product_variants (
-      product_id, size, color, print, sku, stock, active
+      product_id, size, color, print, print_image_url, sku, stock, active
     )
     values (
       p_product_id,
       left(coalesce(nullif(trim(v_variant->>'size'), ''), 'Único'), 30),
       left(coalesce(nullif(trim(v_variant->>'color'), ''), 'Padrão'), 50),
       left(coalesce(nullif(trim(v_variant->>'print'), ''), 'Sem estampa'), 80),
+      nullif(left(trim(coalesce(v_variant->>'print_image_url', '')), 2048), ''),
       nullif(left(trim(coalesce(v_variant->>'sku', '')), 80), ''),
       greatest(0, least(999999, coalesce((v_variant->>'stock')::integer, 0))),
       coalesce((v_variant->>'active')::boolean, true)

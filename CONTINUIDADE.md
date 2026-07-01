@@ -1,6 +1,6 @@
 # Continuidade do projeto Selleta Modas
 
-Atualizado em: 30 de junho de 2026.
+Atualizado em: 1 de julho de 2026.
 
 ## Estado atual
 
@@ -14,6 +14,7 @@ Atualizado em: 30 de junho de 2026.
 - Checkout próprio, área da cliente, pedidos, status e relatórios administrativos estão ativos.
 - A grade por tamanho, cor, estampa e estoque por combinação está ativa no código e no Supabase.
 - Auditoria do Supabase confirmou RLS nas tabelas principais e corrigiu privilégios anônimos das funções administrativas.
+- O editor de grade oferece P/M/G/GG, 30 cores comuns, gerador de combinações e imagem opcional por estampa.
 
 ## Regra para próximas rodadas
 
@@ -66,6 +67,7 @@ Depois de cada publicação:
 - Criado `public/docs/Manual-Selleta-Modas.pdf`, acompanhado da versão editável em Markdown.
 - Criada a página `/politicas` com regras de troca, entrega, privacidade e compra.
 - Checkout passou a informar que o frete não está no subtotal e exige aceite das políticas.
+- Grade passou a impedir salvamento totalmente zerado, gerar combinações e mostrar miniaturas somente quando o produto possui estampa.
 
 ## Esquema principal
 
@@ -73,7 +75,7 @@ Depois de cada publicação:
 
 A tabela `product_variants` contém:
 
-`id`, `product_id`, `size`, `color`, `print`, `sku`, `stock`, `active`.
+`id`, `product_id`, `size`, `color`, `print`, `print_image_url`, `sku`, `stock`, `active`.
 
 ## Risco de segurança que precisa ser verificado
 
@@ -87,6 +89,7 @@ No painel do Supabase, confirmar:
 4. Não existe chave `service_role` no front-end ou na Vercel com prefixo `VITE_`.
 5. Há somente contas administrativas conhecidas no Supabase Auth.
 6. Ativar a proteção contra senhas vazadas em Authentication > Password Security.
+7. A tabela vazia `public.grade_templates`, criada fora do projeto, precisa ser removida ou receber RLS antes de ser usada.
 
 ## Próximas melhorias por prioridade
 
