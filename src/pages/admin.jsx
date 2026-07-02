@@ -441,6 +441,7 @@ export default function Admin() {
                 className={campoClasse}
               >
                 <option value="">Selecione</option>
+                <option>Conjunto</option>
                 <option>Vestido</option>
                 <option>Short</option>
                 <option>Saia</option>
