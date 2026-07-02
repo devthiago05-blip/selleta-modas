@@ -61,3 +61,16 @@ test("migração de grade vincula a variação ao pedido", async () => {
   assert.match(grade, /print_image_url/);
   assert.match(grade, /private\.is_admin/);
 });
+
+test("balanço de estoque exige administrador e mantém histórico", async () => {
+  const balanco = await readFile(
+    new URL("../supabase/inventory-balance.sql", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(balanco, /create table if not exists public\.inventory_adjustments/);
+  assert.match(balanco, /enable row level security/);
+  assert.match(balanco, /public\.admin_balance_product_stock/);
+  assert.match(balanco, /private\.is_admin/);
+  assert.match(balanco, /array\['P', 'M', 'G', 'GG'\]/);
+});

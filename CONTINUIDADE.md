@@ -1,6 +1,6 @@
 # Continuidade do projeto Selleta Modas
 
-Atualizado em: 1 de julho de 2026.
+Atualizado em: 2 de julho de 2026.
 
 ## Estado atual
 
@@ -15,6 +15,7 @@ Atualizado em: 1 de julho de 2026.
 - A grade por tamanho, cor, estampa e estoque por combinação está ativa no código e no Supabase.
 - Auditoria do Supabase confirmou RLS nas tabelas principais e corrigiu privilégios anônimos das funções administrativas.
 - O editor de grade oferece P/M/G/GG, 30 cores comuns, gerador de combinações e imagem opcional por estampa.
+- O painel possui Balanço de estoque por referência, cor, estampa e quantidades P/M/G/GG, com histórico auditável.
 
 ## Regra para próximas rodadas
 
@@ -70,6 +71,8 @@ verificação da publicação no Vercel. Depois de cada publicação:
 - Checkout passou a informar que o frete não está no subtotal e exige aceite das políticas.
 - Grade passou a impedir salvamento totalmente zerado, gerar combinações e mostrar miniaturas somente quando o produto possui estampa.
 - Removida a tabela vazia e não utilizada `public.grade_templates`, eliminando o erro crítico de RLS apontado pelo Supabase.
+- Corrigido o erro de grade causado pela tentativa de salvar um produto já excluído; o editor agora prepara P/M/G/GG por padrão.
+- Adicionada a guia Balanço para substituir quantidades por tamanho e registrar cada diferença de estoque.
 
 ## Esquema principal
 

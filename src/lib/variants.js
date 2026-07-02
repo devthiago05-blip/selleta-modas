@@ -74,3 +74,54 @@ export function gerarCombinacoesGrade({
     )
   );
 }
+
+export function completarGradePadrao(variacoes = [], corPadrao = "Preto") {
+  const existentes = Array.isArray(variacoes) ? variacoes : [];
+  const grupos = new Map();
+
+  for (const variacao of existentes) {
+    const chave = [variacao.color, variacao.print || SEM_ESTAMPA]
+      .map(normalizarOpcao)
+      .join("|");
+    if (!grupos.has(chave)) {
+      grupos.set(chave, {
+        color: variacao.color,
+        print: variacao.print || SEM_ESTAMPA,
+        print_image_url: variacao.print_image_url || null,
+      });
+    }
+  }
+
+  if (grupos.size === 0) {
+    grupos.set(normalizarOpcao(corPadrao), {
+      color: corPadrao,
+      print: SEM_ESTAMPA,
+      print_image_url: null,
+    });
+  }
+
+  const resultado = [...existentes];
+  for (const grupo of grupos.values()) {
+    for (const size of TAMANHOS_PADRAO) {
+      const existe = existentes.some(
+        (variacao) =>
+          chaveVariacao(variacao.size, variacao.color, variacao.print) ===
+          chaveVariacao(size, grupo.color, grupo.print)
+      );
+
+      if (!existe) {
+        resultado.push({
+          size,
+          color: grupo.color,
+          print: grupo.print,
+          print_image_url: grupo.print_image_url,
+          sku: "",
+          stock: 0,
+          active: true,
+        });
+      }
+    }
+  }
+
+  return resultado;
+}

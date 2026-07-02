@@ -5,6 +5,7 @@ import { supabase } from "../lib/supabase";
 import {
   chaveVariacao,
   CORES_COMUNS,
+  completarGradePadrao,
   gerarCombinacoesGrade,
   normalizarOpcao,
   SEM_ESTAMPA,
@@ -31,10 +32,15 @@ const corCadastrada = (cor) =>
   )?.nome || cor;
 
 function variacoesIniciais(produto) {
-  return (produto?.product_variants || []).map((variacao) =>
+  const corPadrao =
+    produto?.product_variants?.[0]?.color ||
+    produto?.cores?.split(",").map((cor) => cor.trim()).find(Boolean) ||
+    "Preto";
+
+  return completarGradePadrao(produto?.product_variants || [], corPadrao).map((variacao) =>
     novaVariacao({
       ...variacao,
-      key: variacao.id,
+      key: variacao.id || crypto.randomUUID(),
       stock: String(variacao.stock ?? 0),
     })
   );
@@ -404,7 +410,11 @@ export default function ProductVariantsEditor({
     if (error) {
       await Promise.all(imagensEnviadas.map(removerImagemProduto));
       setSalvando(false);
-      setErro("Não foi possível salvar a grade.");
+      setErro(
+        error.message?.includes("Produto não encontrado")
+          ? "Este produto foi excluído. Feche a edição e selecione um produto existente."
+          : "Não foi possível salvar a grade. Atualize a página e tente novamente."
+      );
       return;
     }
 

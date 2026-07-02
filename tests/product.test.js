@@ -11,6 +11,7 @@ import {
 } from "../src/lib/product.js";
 import {
   CORES_COMUNS,
+  completarGradePadrao,
   gerarCombinacoesGrade,
   TAMANHOS_PADRAO,
 } from "../src/lib/variants.js";
@@ -75,4 +76,17 @@ test("gera combinações de tamanho, cor e estampa", () => {
   assert.equal(grade[0].stock, "2");
   assert.equal(grade[0].print, "Floral");
   assert.equal(grade[0].print_image_url, "https://exemplo.com/floral.jpg");
+});
+
+test("completa P, M, G e GG sem perder estoque existente", () => {
+  const grade = completarGradePadrao([
+    { id: "1", size: "M", color: "Vermelho", print: "Sem estampa", stock: 3 },
+  ]);
+
+  assert.deepEqual(
+    grade.map((variacao) => variacao.size).sort(),
+    ["G", "GG", "M", "P"]
+  );
+  assert.equal(grade.find((variacao) => variacao.size === "M").stock, 3);
+  assert.equal(grade.find((variacao) => variacao.size === "P").stock, 0);
 });

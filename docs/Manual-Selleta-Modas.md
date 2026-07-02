@@ -153,6 +153,18 @@ O painel não permite salvar uma grade totalmente zerada por engano.
 Ao confirmar um pedido, o sistema reduz o estoque da combinação vendida. Ao
 cancelar um pedido que já reservou estoque, a quantidade é devolvida.
 
+### Balanço rápido de estoque
+
+Use a guia “Balanço” quando precisar conferir a quantidade física da loja:
+
+1. Selecione a peça ou referência.
+2. Escolha a cor e, quando existir, a estampa.
+3. Informe as quantidades encontradas nos tamanhos P, M, G e GG.
+4. Descreva o motivo e clique em “Salvar balanço”.
+
+As quantidades informadas substituem o estoque atual. Cada alteração fica
+registrada no histórico com quantidade anterior, atual, diferença e data.
+
 ## 8. Pedidos, pagamentos e estoque no painel
 
 Na guia “Pedidos”, é possível:

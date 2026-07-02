@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminOrders from "../components/AdminOrders";
+import InventoryBalance from "../components/InventoryBalance";
 import ProductVariantsEditor from "../components/ProductVariantsEditor";
 import { temPrecoPromocional } from "../lib/product";
 import { enviarImagemProduto, removerImagemProduto } from "../lib/storage";
@@ -123,6 +124,9 @@ export default function Admin() {
     }
 
     setProdutoParaExcluir(null);
+    if (produtoEditando?.id === produtoExcluido.id) {
+      limparFormulario();
+    }
     const { error: erroImagem } = await removerImagemProduto(
       produtoExcluido.imagem
     );
@@ -366,7 +370,10 @@ export default function Admin() {
         </div>
       )}
 
-      <nav className="mb-8 flex gap-2 border-b" aria-label="Seções do painel">
+      <nav
+        className="mb-8 flex gap-2 overflow-x-auto border-b"
+        aria-label="Seções do painel"
+      >
         <button
           type="button"
           onClick={() => setSecao("produtos")}
@@ -377,6 +384,17 @@ export default function Admin() {
           }`}
         >
           Produtos
+        </button>
+        <button
+          type="button"
+          onClick={() => setSecao("balanco")}
+          className={`whitespace-nowrap border-b-2 px-4 py-3 font-semibold ${
+            secao === "balanco"
+              ? "border-[#8a5d2b] text-[#8a5d2b]"
+              : "border-transparent text-gray-500"
+          }`}
+        >
+          Balanço
         </button>
         <button
           type="button"
@@ -681,6 +699,8 @@ export default function Admin() {
           )}
         </div>
       </section>
+      ) : secao === "balanco" ? (
+        <InventoryBalance produtos={produtos} onSaved={carregarProdutos} />
       ) : (
         <AdminOrders />
       )}
