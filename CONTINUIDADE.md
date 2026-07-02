@@ -16,6 +16,8 @@ Atualizado em: 2 de julho de 2026.
 - Auditoria do Supabase confirmou RLS nas tabelas principais e corrigiu privilégios anônimos das funções administrativas.
 - O editor de grade oferece P/M/G/GG, 30 cores comuns, gerador de combinações e imagem opcional por estampa.
 - O painel possui Balanço de estoque por referência, cor, estampa e quantidades P/M/G/GG, com histórico auditável.
+- A vitrine foi modularizada, ganhou hero profissional, filtros responsivos, cards com tamanhos/cores e comunicação coerente entre checkout e WhatsApp.
+- SEO técnico inclui favicon da marca, manifesto, sitemap e metadados sociais; o layout possui proteção global contra rolagem horizontal.
 
 ## Regra para próximas rodadas
 
@@ -73,6 +75,7 @@ verificação da publicação no Vercel. Depois de cada publicação:
 - Removida a tabela vazia e não utilizada `public.grade_templates`, eliminando o erro crítico de RLS apontado pelo Supabase.
 - Corrigido o erro de grade causado pela tentativa de salvar um produto já excluído; o editor agora prepara P/M/G/GG por padrão.
 - Adicionada a guia Balanço para substituir quantidades por tamanho e registrar cada diferença de estoque.
+- Frontend da loja reorganizado em componentes reutilizáveis, com rodapé comercial, guia de compra atualizado e refinamento mobile-first.
 
 ## Esquema principal
 

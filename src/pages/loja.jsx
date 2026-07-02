@@ -1,10 +1,17 @@
 
-import logoSelleta from "../assets/logo-selleta.png";
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import CatalogFilters from "../components/CatalogFilters";
 import ProductCard from "../components/ProductCard";
 import ProductModal from "../components/ProductModal";
 import SiteHeader from "../components/SiteHeader";
+import {
+  FloatingWhatsApp,
+  PurchaseGuide,
+  StoreBenefits,
+  StoreFooter,
+  StoreHero,
+} from "../components/StorefrontSections";
 import { carregarCatalogo } from "../lib/catalog";
 import {
   obterCoresProduto,
@@ -27,6 +34,18 @@ const formatarPreco = (valor) =>
     style: "currency",
     currency: "BRL",
   });
+
+const normalizarOpcaoFiltro = (valor) =>
+  String(valor || "").trim().toLocaleLowerCase("pt-BR");
+
+const obterOpcoesUnicas = (opcoes) => [
+  ...new Map(
+    opcoes
+      .filter(Boolean)
+      .map((opcao) => [normalizarOpcaoFiltro(opcao), opcao])
+  ).values(),
+];
+const ordemTamanhos = ["PP", "P", "M", "G", "GG", "XG"];
 
 export default function Loja() {
   const [produtos, setProdutos] = useState([]);
@@ -307,12 +326,18 @@ if (!telefoneCliente.trim()) {
   const categorias = [
     ...new Set(produtos.map((produto) => produto.categoria).filter(Boolean)),
   ];
-  const tamanhosDisponiveis = [
-    ...new Set(produtos.flatMap((produto) => obterTamanhosProduto(produto))),
-  ];
-  const coresDisponiveis = [
-    ...new Set(produtos.flatMap((produto) => obterCoresProduto(produto))),
-  ];
+  const tamanhosDisponiveis = obterOpcoesUnicas(
+    produtos
+      .flatMap((produto) => obterTamanhosProduto(produto))
+      .map((tamanho) => tamanho.toLocaleUpperCase("pt-BR"))
+  ).sort((tamanhoA, tamanhoB) => {
+    const indiceA = ordemTamanhos.indexOf(tamanhoA);
+    const indiceB = ordemTamanhos.indexOf(tamanhoB);
+    return (indiceA < 0 ? 99 : indiceA) - (indiceB < 0 ? 99 : indiceB);
+  });
+  const coresDisponiveis = obterOpcoesUnicas(
+    produtos.flatMap((produto) => obterCoresProduto(produto))
+  );
   const produtosFiltrados = produtos.filter((produto) => {
     const produtoAtivo = produto.ativo !== false;
     const correspondeBusca = produto.products
@@ -321,9 +346,16 @@ if (!telefoneCliente.trim()) {
     const correspondeCategoria =
       !categoriaSelecionada || produto.categoria === categoriaSelecionada;
     const correspondeTamanho =
-      !tamanhoFiltro || obterTamanhosProduto(produto).includes(tamanhoFiltro);
+      !tamanhoFiltro ||
+      obterTamanhosProduto(produto).some(
+        (tamanho) =>
+          normalizarOpcaoFiltro(tamanho) === normalizarOpcaoFiltro(tamanhoFiltro)
+      );
     const correspondeCor =
-      !corFiltro || obterCoresProduto(produto).includes(corFiltro);
+      !corFiltro ||
+      obterCoresProduto(produto).some(
+        (cor) => normalizarOpcaoFiltro(cor) === normalizarOpcaoFiltro(corFiltro)
+      );
     const correspondePreco =
       !precoMaximo || obterPrecoVenda(produto) <= Number(precoMaximo);
 
@@ -352,13 +384,13 @@ if (!telefoneCliente.trim()) {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-x-clip">
       <SiteHeader
         quantidadeCarrinho={quantidadeCarrinho}
         onOpenCart={() => setCarrinhoAberto(true)}
       />
 
-    <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
+    <main className="mx-auto min-w-0 max-w-7xl overflow-x-clip px-4 py-6 sm:px-6 sm:py-10">
       {feedback && (
         <div
           role="status"
@@ -451,7 +483,7 @@ if (!telefoneCliente.trim()) {
         </Suspense>
       )}
 
-      <div className="mb-10"> {carrinhoAberto && ( 
+      {carrinhoAberto && (
         <>
   <div
     className="
@@ -634,166 +666,28 @@ if (!telefoneCliente.trim()) {
 </div>
 </>
 )}
-  <div id="inicio" className="mb-10 text-center">
-  <section className="relative mb-8 overflow-hidden rounded-3xl bg-gradient-to-br from-[#70491f] via-[#8a5d2b] to-[#C58B39] px-6 py-12 text-center text-white shadow-xl sm:px-10 sm:py-20">
-    <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-white/10" />
-    <div className="absolute -bottom-32 -left-20 h-72 w-72 rounded-full bg-black/10" />
-    <div className="relative">
-    <p className="mb-2 text-sm font-semibold uppercase tracking-[0.2em]">
-      Novidades Selleta
-    </p>
-    <h1 className="text-3xl font-bold sm:text-5xl">
-      Elegância e estilo para todas as ocasiões
-    </h1>
-    <p className="mx-auto mt-4 max-w-2xl text-white/90">
-      Descubra peças femininas selecionadas e compre com atendimento
-      personalizado pelo WhatsApp.
-    </p>
-    <a
-      href="#catalogo"
-      className="mt-6 inline-flex rounded-full bg-white px-6 py-3 font-bold text-[#8a5d2b] transition hover:-translate-y-0.5"
-    >
-      Ver coleção
-    </a>
-    </div>
-  </section>
+      <StoreHero whatsappNumero={whatsappNumero} />
+      <StoreBenefits />
 
-</div>
-</div>
-
-      <section
-        id="beneficios"
-        aria-label="Diferenciais da loja"
-        className="mb-12 grid gap-3 text-center sm:grid-cols-3"
-      >
-        <div className="rounded-2xl border border-[#8a5d2b]/10 bg-white p-5 shadow-sm">
-          <strong>Atendimento próximo</strong>
-          <p className="mt-1 text-sm text-gray-500">Pedido fácil pelo WhatsApp</p>
-        </div>
-        <div className="rounded-2xl border border-[#8a5d2b]/10 bg-white p-5 shadow-sm">
-          <strong>Compra segura</strong>
-          <p className="mt-1 text-sm text-gray-500">Confirmação antes de finalizar</p>
-        </div>
-        <div className="rounded-2xl border border-[#8a5d2b]/10 bg-white p-5 shadow-sm">
-          <strong>Troca facilitada</strong>
-          <p className="mt-1 text-sm text-gray-500">Consulte as condições no atendimento</p>
-        </div>
-      </section>
-
-      <section id="catalogo" aria-labelledby="titulo-catalogo">
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-[#8a5d2b]">
-              Catálogo
-            </p>
-            <h2 id="titulo-catalogo" className="text-3xl font-bold">
-              Encontre seu próximo look
-            </h2>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-            <input
-              type="search"
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              placeholder="Buscar produto"
-              aria-label="Buscar produto"
-              className="rounded-lg border bg-white px-4 py-3 outline-none focus:border-[#C58B39]"
-            />
-            <select
-              value={categoriaSelecionada}
-              onChange={(e) => setCategoriaSelecionada(e.target.value)}
-              aria-label="Filtrar por categoria"
-              className="rounded-lg border bg-white px-4 py-3 outline-none focus:border-[#C58B39]"
-            >
-              <option value="">Todas as categorias</option>
-              {categorias.map((categoria) => (
-                <option key={categoria} value={categoria}>
-                  {categoria}
-                </option>
-              ))}
-            </select>
-            <select
-              value={tamanhoFiltro}
-              onChange={(e) => setTamanhoFiltro(e.target.value)}
-              aria-label="Filtrar por tamanho"
-              className="rounded-lg border bg-white px-4 py-3 outline-none focus:border-[#C58B39]"
-            >
-              <option value="">Todos os tamanhos</option>
-              {tamanhosDisponiveis.map((tamanho) => (
-                <option key={tamanho} value={tamanho}>
-                  {tamanho}
-                </option>
-              ))}
-            </select>
-            <select
-              value={corFiltro}
-              onChange={(e) => setCorFiltro(e.target.value)}
-              aria-label="Filtrar por cor"
-              className="rounded-lg border bg-white px-4 py-3 outline-none focus:border-[#C58B39]"
-            >
-              <option value="">Todas as cores</option>
-              {coresDisponiveis.map((cor) => (
-                <option key={cor} value={cor}>
-                  {cor}
-                </option>
-              ))}
-            </select>
-            <input
-              type="number"
-              min="0"
-              step="10"
-              value={precoMaximo}
-              onChange={(e) => setPrecoMaximo(e.target.value)}
-              placeholder="Preço máximo"
-              aria-label="Filtrar por preço máximo"
-              className="rounded-lg border bg-white px-4 py-3 outline-none focus:border-[#C58B39]"
-            />
-          </div>
-        </div>
-
-      {categorias.length > 0 && (
-        <div className="mb-6 flex gap-2 overflow-x-auto pb-2">
-          <button
-            type="button"
-            onClick={() => setCategoriaSelecionada("")}
-            className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-semibold transition ${
-              !categoriaSelecionada
-                ? "border-[#8a5d2b] bg-[#8a5d2b] text-white"
-                : "bg-white text-gray-600"
-            }`}
-          >
-            Ver tudo
-          </button>
-          {categorias.map((categoria) => (
-            <button
-              type="button"
-              key={categoria}
-              onClick={() => setCategoriaSelecionada(categoria)}
-              className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-semibold transition ${
-                categoriaSelecionada === categoria
-                  ? "border-[#8a5d2b] bg-[#8a5d2b] text-white"
-                  : "bg-white text-gray-600"
-              }`}
-            >
-              {categoria}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {filtrosAtivos && (
-        <div className="mb-5 flex items-center justify-between rounded-xl bg-[#fff7ed] px-4 py-3 text-sm">
-          <span>{produtosFiltrados.length} produto(s) encontrado(s)</span>
-          <button
-            type="button"
-            onClick={limparFiltros}
-            className="font-semibold text-[#8a5d2b] hover:underline"
-          >
-            Limpar filtros
-          </button>
-        </div>
-      )}
+      <section id="catalogo" aria-labelledby="titulo-catalogo" className="min-w-0">
+        <CatalogFilters
+          busca={busca}
+          categoriaSelecionada={categoriaSelecionada}
+          tamanhoFiltro={tamanhoFiltro}
+          corFiltro={corFiltro}
+          precoMaximo={precoMaximo}
+          categorias={categorias}
+          tamanhos={tamanhosDisponiveis}
+          cores={coresDisponiveis}
+          filtrosAtivos={Boolean(filtrosAtivos)}
+          totalEncontrado={produtosFiltrados.length}
+          onBuscaChange={setBusca}
+          onCategoriaChange={setCategoriaSelecionada}
+          onTamanhoChange={setTamanhoFiltro}
+          onCorChange={setCorFiltro}
+          onPrecoChange={setPrecoMaximo}
+          onLimpar={limparFiltros}
+        />
 
       {carregando && (
         <div className="rounded-2xl border bg-white p-10 text-center text-gray-500">
@@ -813,7 +707,7 @@ if (!telefoneCliente.trim()) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {produtosFiltrados.map((produto) => (
           <ProductCard
             key={produto.id}
@@ -824,93 +718,9 @@ if (!telefoneCliente.trim()) {
       </div>
       </section>
 
-      <section
-        id="como-comprar"
-        className="mt-20 rounded-3xl bg-[#2f2924] px-6 py-10 text-white sm:px-10"
-      >
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#e8bd7a]">
-            Simples e pessoal
-          </p>
-          <h2 className="mt-2 text-3xl font-bold">Como comprar na Selleta</h2>
-          <p className="mt-3 text-white/70">
-            Você escolhe com calma e nossa equipe confirma cada detalhe antes
-            de finalizar.
-          </p>
-        </div>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {[
-            ["1", "Escolha sua peça", "Veja detalhes, tamanhos, cores e estoque."],
-            ["2", "Monte seu pedido", "Adicione as opções desejadas ao carrinho."],
-            ["3", "Finalize no WhatsApp", "Confirme entrega e pagamento com a equipe."],
-          ].map(([numero, titulo, texto]) => (
-            <div key={numero} className="rounded-2xl bg-white/10 p-5">
-              <span className="grid h-9 w-9 place-items-center rounded-full bg-[#C58B39] font-bold">
-                {numero}
-              </span>
-              <h3 className="mt-4 font-bold">{titulo}</h3>
-              <p className="mt-1 text-sm leading-relaxed text-white/70">{texto}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <a
-        href={`https://wa.me/${whatsappNumero}?text=${encodeURIComponent(
-          "Olá! Gostaria de conhecer as novidades da Selleta Modas."
-        )}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label="Falar com a Selleta Modas pelo WhatsApp"
-        className="fixed bottom-4 right-4 z-30 rounded-full bg-green-600 px-5 py-3 font-bold text-white shadow-xl transition hover:bg-green-700"
-      >
-        WhatsApp
-      </a>
-
-      <footer className="mt-20 border-t pt-8 pb-6 text-center text-gray-600">
-
-  <img
-    src={logoSelleta}
-    alt="Selleta Modas"
-    className="mx-auto w-24 mb-4 opacity-80"
-  />
-
-  <p className="font-semibold text-[#C58B39]">
-    Selleta Modas
-  </p>
-
-  <p className="mt-2">
-    Moda feminina para todos os estilos
-  </p>
-
-  <div className="mt-4 text-sm">
-
-    <p>
-      Desenvolvido por <a
-  href="https://wa.me/5585987433260"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="text-[#C58B39] hover:underline"
->
-  Thiago Maia
-</a>
-    </p>
-    <Link
-      to="/pedido"
-      className="mt-3 inline-flex font-semibold text-[#8a5d2b] hover:underline"
-    >
-      Acompanhar pedido
-    </Link>
-    <span className="mx-2 text-gray-300">·</span>
-    <Link
-      to="/politicas"
-      className="mt-3 inline-flex font-semibold text-[#8a5d2b] hover:underline"
-    >
-      Trocas, entrega e privacidade
-    </Link>
-  </div>
-
-</footer>
+      <PurchaseGuide checkoutDiretoAtivo={checkoutDiretoAtivo} />
+      <FloatingWhatsApp whatsappNumero={whatsappNumero} />
+      <StoreFooter whatsappNumero={whatsappNumero} />
     </main>
     </div>
   );

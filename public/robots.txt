@@ -5,3 +5,5 @@ Disallow: /admin
 Disallow: /login
 Disallow: /cliente
 Disallow: /pedido
+
+Sitemap: https://selleta-modas.vercel.app/sitemap.xml

@@ -1,5 +1,10 @@
 import logoSelleta from "../assets/logo-selleta.png";
-import { obterPrecoVenda, temPrecoPromocional } from "../lib/product";
+import {
+  obterCoresProduto,
+  obterPrecoVenda,
+  obterTamanhosProduto,
+  temPrecoPromocional,
+} from "../lib/product";
 
 const formatarPreco = (valor) =>
   Number(valor || 0).toLocaleString("pt-BR", {
@@ -8,8 +13,12 @@ const formatarPreco = (valor) =>
   });
 
 export default function ProductCard({ produto, onOpen }) {
+  const tamanhos = obterTamanhosProduto(produto).slice(0, 4);
+  const quantidadeCores = obterCoresProduto(produto).length;
+  const emEstoque = Number(produto.estoque || 0) > 0;
+
   return (
-    <article className="group flex overflow-hidden rounded-2xl border border-[#8a5d2b]/10 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <article className="group flex min-w-0 overflow-hidden rounded-2xl border border-[#8a5d2b]/10 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       <div className="flex w-full flex-col">
         <button
           type="button"
@@ -41,6 +50,15 @@ export default function ProductCard({ produto, onOpen }) {
               Oferta
             </span>
           )}
+          <span
+            className={`absolute right-3 top-3 rounded-full px-3 py-1 text-xs font-bold ${
+              emEstoque
+                ? "bg-white/90 text-emerald-700"
+                : "bg-gray-900/80 text-white"
+            }`}
+          >
+            {emEstoque ? "Em estoque" : "Esgotado"}
+          </span>
         </button>
 
         <div className="flex flex-1 flex-col p-4">
@@ -51,6 +69,24 @@ export default function ProductCard({ produto, onOpen }) {
           <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-500">
             {produto.descricao || "Peça selecionada pela Selleta Modas."}
           </p>
+
+          {(tamanhos.length > 0 || quantidadeCores > 0) && (
+            <div className="mt-3 flex min-h-7 flex-wrap items-center gap-1.5 text-xs text-gray-500">
+              {tamanhos.map((tamanho) => (
+                <span
+                  key={tamanho}
+                  className="grid min-w-7 place-items-center rounded-md border border-gray-200 bg-gray-50 px-1.5 py-1 font-semibold uppercase text-gray-700"
+                >
+                  {tamanho}
+                </span>
+              ))}
+              {quantidadeCores > 0 && (
+                <span className="ml-1">
+                  {quantidadeCores} {quantidadeCores === 1 ? "cor" : "cores"}
+                </span>
+              )}
+            </div>
+          )}
 
           <div className="mt-4">
             {temPrecoPromocional(produto) && (
@@ -68,7 +104,7 @@ export default function ProductCard({ produto, onOpen }) {
             onClick={onOpen}
             className="mt-5 w-full rounded-xl bg-[#8a5d2b] p-3 font-semibold text-white transition hover:bg-[#70491f]"
           >
-            {produto.estoque > 0 ? "Escolher opções" : "Ver produto"}
+            {emEstoque ? "Escolher opções" : "Consultar produto"}
           </button>
         </div>
       </div>

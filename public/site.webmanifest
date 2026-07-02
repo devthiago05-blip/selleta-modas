@@ -1,0 +1,19 @@
+{
+  "name": "Selleta Modas",
+  "short_name": "Selleta",
+  "description": "Moda feminina com compra online e atendimento personalizado.",
+  "lang": "pt-BR",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fffaf5",
+  "theme_color": "#8a5d2b",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

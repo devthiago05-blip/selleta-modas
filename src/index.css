@@ -13,6 +13,20 @@ html {
   scroll-behavior: smooth;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 body {
   min-width: 320px;
   min-height: 100vh;
@@ -36,4 +50,9 @@ button {
 button:disabled {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+img,
+svg {
+  max-width: 100%;
 }
