@@ -24,6 +24,7 @@ export default function Admin() {
   const [estoque, setEstoque] = useState("");
   const [ativoProduto, setAtivoProduto] = useState(true);
   const [imagem, setImagem] = useState(null);
+  const [imagemUrlManual, setImagemUrlManual] = useState("");
   const [descricao, setDescricao] = useState("");
   const [tamanhos, setTamanhos] = useState("");
   const [cores, setCores] = useState("");
@@ -81,6 +82,7 @@ export default function Admin() {
     setEstoque("");
     setAtivoProduto(true);
     setImagem(null);
+    setImagemUrlManual("");
     setDescricao("");
     setTamanhos("");
     setCores("");
@@ -99,6 +101,7 @@ export default function Admin() {
     );
     setEstoque(String(produto.estoque ?? ""));
     setAtivoProduto(produto.ativo !== false);
+    setImagemUrlManual(produto.imagem || "");
     setDescricao(produto.descricao || "");
     setTamanhos(produto.tamanhos || "");
     setCores(produto.cores || "");
@@ -191,8 +194,20 @@ export default function Admin() {
       return;
     }
 
+    if (
+      imagemUrlManual.trim() &&
+      !imagemUrlManual.trim().startsWith("/") &&
+      !imagemUrlManual.trim().startsWith("https://")
+    ) {
+      setFeedback({
+        tipo: "erro",
+        mensagem: "Use uma URL HTTPS ou um caminho interno iniciado por /.",
+      });
+      return;
+    }
+
     setSalvando(true);
-    let imagemUrl = produtoEditando?.imagem || null;
+    let imagemUrl = imagemUrlManual.trim() || produtoEditando?.imagem || null;
     let novaImagemUrl = null;
 
     if (imagem) {
@@ -589,6 +604,22 @@ export default function Admin() {
               />
               <span className="mt-1 block text-xs text-gray-500">
                 PNG, JPG ou WebP de até 5 MB.
+              </span>
+            </label>
+
+            <label>
+              <span className="mb-1 block text-sm font-medium">
+                URL da imagem
+              </span>
+              <input
+                type="url"
+                value={imagemUrlManual}
+                onChange={(e) => setImagemUrlManual(e.target.value)}
+                placeholder="/products/produto.jpg ou https://..."
+                className={campoClasse}
+              />
+              <span className="mt-1 block text-xs text-gray-500">
+                Opcional. O arquivo selecionado acima tem prioridade.
               </span>
             </label>
 
