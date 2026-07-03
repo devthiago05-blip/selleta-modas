@@ -205,6 +205,14 @@ export function StoreFooter({ whatsappNumero }) {
             >
               Falar pelo WhatsApp
             </a>
+            <a
+              href="https://www.instagram.com/atelieselletamoda/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#8a5d2b]"
+            >
+              Instagram @atelieselletamoda
+            </a>
             <Link to="/cliente" className="hover:text-[#8a5d2b]">Minha conta</Link>
             <Link to="/pedido" className="hover:text-[#8a5d2b]">Acompanhar pedido</Link>
           </div>

@@ -18,6 +18,7 @@ Atualizado em: 2 de julho de 2026.
 - O painel possui Balanço de estoque por referência, cor, estampa e quantidades P/M/G/GG, com histórico auditável.
 - A vitrine foi modularizada, ganhou hero profissional, filtros responsivos, cards com tamanhos/cores e comunicação coerente entre checkout e WhatsApp.
 - SEO técnico inclui favicon da marca, manifesto, sitemap e metadados sociais; o layout possui proteção global contra rolagem horizontal.
+- O produto temporário `teste`, sem imagem e sem histórico de pedidos, foi removido; o Instagram oficial está disponível no rodapé.
 
 ## Regra para próximas rodadas
 
