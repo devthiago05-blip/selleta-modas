@@ -20,6 +20,8 @@ Atualizado em: 3 de julho de 2026.
 - SEO técnico inclui favicon da marca, manifesto, sitemap e metadados sociais; o layout possui proteção global contra rolagem horizontal.
 - O produto temporário `teste`, sem imagem e sem histórico de pedidos, foi removido; o Instagram oficial está disponível no rodapé.
 - O painel possui importação de `.xlsx` com instruções das colunas A–O, validação, prévia e criação automática da grade P/M/G/GG.
+- Três novas peças do Instagram oficial foram adicionadas: Vestido Longo Cacau, Conjunto Short Solar e Vestido Curto Poá Menta.
+- O primeiro bloco de segurança remove o upload anônimo do Storage e limita o bucket `produtos` a JPEG/PNG/WebP de até 5 MB.
 
 ## Regra para próximas rodadas
 
