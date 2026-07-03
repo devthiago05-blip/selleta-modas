@@ -102,6 +102,8 @@ No painel do Supabase, confirmar:
 5. Há somente contas administrativas conhecidas no Supabase Auth.
 6. Ativar a proteção contra senhas vazadas em Authentication > Password Security.
 
+O upload do bucket `produtos` já foi restringido a administradores autenticados, com limite de 5 MB e MIME JPEG, PNG ou WebP. Os headers de segurança da Vercel também foram configurados. Para continuar a auditoria com orientação passo a passo, use `docs/Guia-Seguranca-ChatGPT.md`.
+
 ## Próximas melhorias por prioridade
 
 1. Entrar em `/login`, editar um produto e cadastrar sua grade.
