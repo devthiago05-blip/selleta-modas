@@ -120,6 +120,29 @@ precisa permanecer no histórico operacional.
 
 Produtos inativos ficam ocultos na loja, mas continuam cadastrados.
 
+### Importação por Excel
+
+Na guia “Produtos”, clique em “Importar produtos por Excel”. Antes de escolher
+o arquivo, o painel mostra as colunas obrigatórias e permite copiar o cabeçalho.
+Use um arquivo `.xlsx` de até 5 MB com no máximo 500 linhas:
+
+1. A: Nome;
+2. B: Preço;
+3. C, D, E e F: Estoque P, M, G e GG;
+4. G: Cor;
+5. H: Categoria;
+6. I: Preço promocional, quando existir;
+7. J: Estampa ou “Sem estampa”;
+8. K: URL HTTPS da imagem do produto;
+9. L: URL HTTPS da imagem da estampa, quando existir;
+10. M: Descrição;
+11. N: SKU base;
+12. O: Ativo, usando “Sim” ou “Não”.
+
+Repita o mesmo nome em outras linhas para cadastrar cores ou estampas da mesma
+peça. O painel bloqueia produtos já cadastrados, valida todas as linhas e mostra
+uma prévia antes da confirmação. Nenhum item é gravado enquanto houver erro.
+
 ## 7. Grade, cores, estampas e estoque
 
 Antes de usar a grade, execute no SQL Editor do Supabase:

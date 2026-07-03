@@ -1,6 +1,6 @@
 # Continuidade do projeto Selleta Modas
 
-Atualizado em: 2 de julho de 2026.
+Atualizado em: 3 de julho de 2026.
 
 ## Estado atual
 
@@ -19,6 +19,7 @@ Atualizado em: 2 de julho de 2026.
 - A vitrine foi modularizada, ganhou hero profissional, filtros responsivos, cards com tamanhos/cores e comunicação coerente entre checkout e WhatsApp.
 - SEO técnico inclui favicon da marca, manifesto, sitemap e metadados sociais; o layout possui proteção global contra rolagem horizontal.
 - O produto temporário `teste`, sem imagem e sem histórico de pedidos, foi removido; o Instagram oficial está disponível no rodapé.
+- O painel possui importação de `.xlsx` com instruções das colunas A–O, validação, prévia e criação automática da grade P/M/G/GG.
 
 ## Regra para próximas rodadas
 

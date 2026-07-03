@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminOrders from "../components/AdminOrders";
 import InventoryBalance from "../components/InventoryBalance";
+import ProductSpreadsheetImport from "../components/ProductSpreadsheetImport";
 import ProductVariantsEditor from "../components/ProductVariantsEditor";
 import { temPrecoPromocional } from "../lib/product";
 import { enviarImagemProduto, removerImagemProduto } from "../lib/storage";
@@ -425,6 +426,12 @@ export default function Admin() {
       </nav>
 
       {secao === "produtos" ? (
+      <>
+      <ProductSpreadsheetImport
+        produtos={produtos}
+        gradeDisponivel={gradeDisponivel}
+        onImported={carregarProdutos}
+      />
       <section className="grid gap-8 lg:grid-cols-[minmax(0,420px)_1fr]">
         <form
           onSubmit={salvarProduto}
@@ -731,6 +738,7 @@ export default function Admin() {
           )}
         </div>
       </section>
+      </>
       ) : secao === "balanco" ? (
         <InventoryBalance produtos={produtos} onSaved={carregarProdutos} />
       ) : (
