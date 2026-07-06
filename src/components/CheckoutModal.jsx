@@ -6,6 +6,22 @@ import { supabase } from "../lib/supabase";
 
 const pixKey = import.meta.env.VITE_PIX_KEY || "";
 const pixReceiver = import.meta.env.VITE_PIX_RECEIVER || "Selleta Modas";
+const chaveAcompanhamento = "selleta-last-order";
+
+function salvarAcompanhamento(pedido) {
+  try {
+    sessionStorage.setItem(
+      chaveAcompanhamento,
+      JSON.stringify({
+        public_token: pedido.public_token,
+        telefone: pedido.telefone,
+      })
+    );
+    localStorage.removeItem(chaveAcompanhamento);
+  } catch {
+    // O pedido continua disponível na tela mesmo sem armazenamento local.
+  }
+}
 
 const formatarPreco = (valor) =>
   Number(valor || 0).toLocaleString("pt-BR", {
@@ -58,10 +74,7 @@ export default function CheckoutModal({ carrinho, total, onClose, onSuccess }) {
         pagamento,
       };
 
-      localStorage.setItem(
-        "selleta-last-order",
-        JSON.stringify(dadosPedido)
-      );
+      salvarAcompanhamento(dadosPedido);
       setPedido(dadosPedido);
       onSuccess();
     } catch (error) {

@@ -14,15 +14,37 @@ const formatarPreco = (valor) =>
     currency: "BRL",
   });
 
+const chaveAcompanhamento = "selleta-last-order";
+
+function carregarAcompanhamento() {
+  try {
+    const salvo = JSON.parse(
+      sessionStorage.getItem(chaveAcompanhamento) ||
+        localStorage.getItem(chaveAcompanhamento)
+    );
+
+    localStorage.removeItem(chaveAcompanhamento);
+    if (!salvo?.public_token || !salvo?.telefone) return null;
+
+    const acompanhamento = {
+      public_token: salvo.public_token,
+      telefone: salvo.telefone,
+    };
+    sessionStorage.setItem(
+      chaveAcompanhamento,
+      JSON.stringify(acompanhamento)
+    );
+    return acompanhamento;
+  } catch {
+    localStorage.removeItem(chaveAcompanhamento);
+    sessionStorage.removeItem(chaveAcompanhamento);
+    return null;
+  }
+}
+
 export default function OrderStatus() {
   const [searchParams] = useSearchParams();
-  const [pedidoSalvo] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("selleta-last-order"));
-    } catch {
-      return null;
-    }
-  });
+  const [pedidoSalvo] = useState(carregarAcompanhamento);
   const [token, setToken] = useState(
     () => searchParams.get("token") || pedidoSalvo?.public_token || ""
   );
