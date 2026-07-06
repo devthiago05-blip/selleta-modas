@@ -83,7 +83,9 @@ export default function Customer() {
       });
 
       if (error) {
-        setFeedback(error.message);
+        setFeedback(
+          "Não foi possível criar a conta. Verifique os dados e tente novamente."
+        );
         return;
       }
 
@@ -119,8 +121,8 @@ export default function Customer() {
       setTokenPedido("");
       setTelefonePedido("");
       await carregarPedidos();
-    } catch (error) {
-      setFeedback(error.message);
+    } catch {
+      setFeedback("Pedido não encontrado ou dados incorretos.");
     }
   }
 

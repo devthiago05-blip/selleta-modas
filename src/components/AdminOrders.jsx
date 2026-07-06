@@ -179,8 +179,8 @@ export default function AdminOrders() {
         session?.access_token
       );
       await carregarPedidos();
-    } catch (error) {
-      setErro(error.message);
+    } catch {
+      setErro("Não foi possível atualizar o pedido. Tente novamente.");
     } finally {
       setSalvandoId(null);
     }

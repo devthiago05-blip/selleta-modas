@@ -66,9 +66,10 @@ export default function CheckoutModal({ carrinho, total, onClose, onSuccess }) {
       onSuccess();
     } catch (error) {
       setErro(
-        error.message.includes("Could not find the function")
+        error?.code === "PGRST202" ||
+          error?.message?.includes("Could not find the function")
           ? "Checkout em configuração. Finalize pelo WhatsApp por enquanto."
-          : error.message
+          : "Não foi possível criar o pedido. Tente novamente ou finalize pelo WhatsApp."
       );
     } finally {
       setEnviando(false);

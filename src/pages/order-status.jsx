@@ -42,8 +42,8 @@ export default function OrderStatus() {
       const resultado = await acompanharPedido(token, telefone);
       if (!resultado) throw new Error("Pedido não encontrado.");
       setPedido(resultado);
-    } catch (error) {
-      setErro(error.message);
+    } catch {
+      setErro("Pedido não encontrado ou dados incorretos.");
       setPedido(null);
     } finally {
       setCarregando(false);
