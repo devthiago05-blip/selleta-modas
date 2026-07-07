@@ -26,6 +26,7 @@ export default function Admin() {
   const [estoque, setEstoque] = useState("");
   const [ativoProduto, setAtivoProduto] = useState(true);
   const [imagem, setImagem] = useState(null);
+  const [imagemPreview, setImagemPreview] = useState("");
   const [imagemUrlManual, setImagemUrlManual] = useState("");
   const [descricao, setDescricao] = useState("");
   const [tamanhos, setTamanhos] = useState("");
@@ -41,6 +42,17 @@ export default function Admin() {
   const [feedback, setFeedback] = useState(null);
   const [secao, setSecao] = useState("produtos");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    return () => {
+      if (imagemPreview) URL.revokeObjectURL(imagemPreview);
+    };
+  }, [imagemPreview]);
+
+  function selecionarImagem(arquivo) {
+    setImagem(arquivo);
+    setImagemPreview(arquivo ? URL.createObjectURL(arquivo) : "");
+  }
 
   const carregarProdutos = useCallback(async () => {
     let resultadoProdutos = await supabase
@@ -84,6 +96,7 @@ export default function Admin() {
     setEstoque("");
     setAtivoProduto(true);
     setImagem(null);
+    setImagemPreview("");
     setImagemUrlManual("");
     setDescricao("");
     setTamanhos("");
@@ -609,16 +622,26 @@ export default function Admin() {
             )}
 
             <label>
-              <span className="mb-1 block text-sm font-medium">Imagem</span>
+              <span className="mb-1 block text-sm font-medium">
+                Enviar foto do computador
+              </span>
               <input
                 type="file"
                 accept="image/png,image/jpeg,image/webp"
-                onChange={(e) => setImagem(e.target.files?.[0] || null)}
+                onChange={(e) => selecionarImagem(e.target.files?.[0] || null)}
                 className={campoClasse}
               />
               <span className="mt-1 block text-xs text-gray-500">
-                PNG, JPG ou WebP de até 5 MB.
+                PNG, JPG ou WebP de até 5 MB. A foto será padronizada em 4:5,
+                otimizada e salva como WebP sem cortar a peça.
               </span>
+              {(imagemPreview || produtoEditando?.imagem) && (
+                <img
+                  src={imagemPreview || produtoEditando.imagem}
+                  alt="Prévia da foto do produto"
+                  className="mt-3 aspect-[4/5] w-full max-w-56 rounded-xl border bg-[#f8f6f3] object-contain"
+                />
+              )}
             </label>
 
             <label>

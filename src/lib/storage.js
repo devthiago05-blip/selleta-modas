@@ -1,22 +1,11 @@
 import { supabase } from "./supabase";
+import {
+  padronizarImagemProduto,
+  validarImagemProduto,
+} from "./product-image";
 
 const BUCKET_PRODUTOS = "produtos";
-const TAMANHO_MAXIMO_IMAGEM = 5 * 1024 * 1024;
-const TIPOS_IMAGEM_PERMITIDOS = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-]);
-
-export function validarImagemProduto(arquivo) {
-  if (!arquivo || !TIPOS_IMAGEM_PERMITIDOS.has(arquivo.type)) {
-    return "A imagem deve ser JPEG, PNG ou WebP.";
-  }
-  if (arquivo.size > TAMANHO_MAXIMO_IMAGEM) {
-    return "A imagem deve ter no máximo 5 MB.";
-  }
-  return null;
-}
+export { validarImagemProduto } from "./product-image";
 
 export async function enviarImagemProduto(arquivo, pasta = "") {
   const erroValidacao = validarImagemProduto(arquivo);
@@ -24,7 +13,14 @@ export async function enviarImagemProduto(arquivo, pasta = "") {
     return { data: null, error: new Error(erroValidacao) };
   }
 
-  const nomeSeguro = arquivo.name
+  let arquivoPadronizado;
+  try {
+    arquivoPadronizado = await padronizarImagemProduto(arquivo);
+  } catch (error) {
+    return { data: null, error };
+  }
+
+  const nomeSeguro = arquivoPadronizado.name
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-zA-Z0-9._-]/g, "-");
@@ -32,7 +28,7 @@ export async function enviarImagemProduto(arquivo, pasta = "") {
   const nomeArquivo = `${prefixo}${Date.now()}-${crypto.randomUUID()}-${nomeSeguro}`;
   const { error } = await supabase.storage
     .from(BUCKET_PRODUTOS)
-    .upload(nomeArquivo, arquivo, {
+    .upload(nomeArquivo, arquivoPadronizado, {
       cacheControl: "3600",
       upsert: false,
     });
