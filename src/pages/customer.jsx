@@ -7,6 +7,12 @@ import {
   pagamentoLabels,
   pedidoLabels,
 } from "../lib/order-status";
+import {
+  consultarBloqueioLogin,
+  limparFalhasLogin,
+  registrarFalhaLogin,
+  registrarSessaoAtual,
+} from "../lib/auth-security";
 import { supabase } from "../lib/supabase";
 
 const formatarPreco = (valor) =>
@@ -26,6 +32,7 @@ export default function Customer() {
   const [telefonePedido, setTelefonePedido] = useState("");
   const [feedback, setFeedback] = useState("");
   const [carregando, setCarregando] = useState(true);
+  const [autenticando, setAutenticando] = useState(false);
 
   const carregarPedidos = useCallback(async () => {
     const { data, error } = await supabase
@@ -48,19 +55,27 @@ export default function Customer() {
   useEffect(() => {
     let ativo = true;
 
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(async ({ data }) => {
       if (!ativo) return;
-      setSession(data.session);
+      const sessaoValida = data.session
+        ? await registrarSessaoAtual(supabase)
+        : false;
+
+      if (data.session && !sessaoValida) {
+        await supabase.auth.signOut({ scope: "local" });
+        setFeedback("Esta conta foi acessada em outro dispositivo.");
+      }
+
+      setSession(sessaoValida ? data.session : null);
       setCarregando(false);
-      if (data.session) carregarPedidos();
+      if (sessaoValida) carregarPedidos();
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_evento, novaSession) => {
       setSession(novaSession);
-      if (novaSession) carregarPedidos();
-      else setPedidos([]);
+      if (!novaSession) setPedidos([]);
     });
 
     return () => {
@@ -72,6 +87,7 @@ export default function Customer() {
   async function autenticar(evento) {
     evento.preventDefault();
     setFeedback("");
+    setAutenticando(true);
 
     if (modo === "cadastro") {
       const { data, error } = await supabase.auth.signUp({
@@ -86,6 +102,14 @@ export default function Customer() {
         setFeedback(
           "Não foi possível criar a conta. Verifique os dados e tente novamente."
         );
+        setAutenticando(false);
+        return;
+      }
+
+      if (data.session && !(await registrarSessaoAtual(supabase))) {
+        await supabase.auth.signOut({ scope: "local" });
+        setFeedback("Não foi possível validar esta sessão.");
+        setAutenticando(false);
         return;
       }
 
@@ -94,15 +118,46 @@ export default function Customer() {
           ? "Conta criada com sucesso."
           : "Conta criada. Confira seu e-mail para confirmar o cadastro."
       );
+      setAutenticando(false);
       return;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const bloqueio = consultarBloqueioLogin();
+    if (bloqueio.bloqueado) {
+      setFeedback(
+        `Muitas tentativas. Aguarde ${bloqueio.minutosRestantes} minuto(s).`
+      );
+      setAutenticando(false);
+      return;
+    }
+
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password: senha,
     });
 
-    if (error) setFeedback("E-mail ou senha inválidos.");
+    if (error) {
+      const falha = registrarFalhaLogin();
+      setFeedback(
+        falha.bloqueado
+          ? `Muitas tentativas. Aguarde ${falha.minutosRestantes} minuto(s).`
+          : `E-mail ou senha inválidos. Restam ${falha.tentativasRestantes} tentativa(s).`
+      );
+      setAutenticando(false);
+      return;
+    }
+
+    if (!(await registrarSessaoAtual(supabase))) {
+      await supabase.auth.signOut({ scope: "local" });
+      setFeedback("Não foi possível validar esta sessão. Tente novamente.");
+      setAutenticando(false);
+      return;
+    }
+
+    limparFalhasLogin();
+    setSession(data.session);
+    await carregarPedidos();
+    setAutenticando(false);
   }
 
   async function reivindicarPedido(evento) {
@@ -198,8 +253,15 @@ export default function Customer() {
               className="w-full rounded-xl border p-3"
               required
             />
-            <button className="w-full rounded-xl bg-[#8a5d2b] p-3 font-bold text-white">
-              {modo === "login" ? "Entrar" : "Criar conta"}
+            <button
+              disabled={autenticando}
+              className="w-full rounded-xl bg-[#8a5d2b] p-3 font-bold text-white disabled:opacity-60"
+            >
+              {autenticando
+                ? "Aguarde..."
+                : modo === "login"
+                  ? "Entrar"
+                  : "Criar conta"}
             </button>
           </form>
 

@@ -1,5 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  consultarBloqueioLogin,
+  limparFalhasLogin,
+  registrarFalhaLogin,
+  registrarSessaoAtual,
+} from "../lib/auth-security";
 import { supabase } from "../lib/supabase";
 
 export default function Login() {
@@ -12,6 +18,15 @@ export default function Login() {
   async function fazerLogin(e) {
     e.preventDefault();
     setErro("");
+
+    const bloqueio = consultarBloqueioLogin();
+    if (bloqueio.bloqueado) {
+      setErro(
+        `Muitas tentativas. Aguarde ${bloqueio.minutosRestantes} minuto(s).`
+      );
+      return;
+    }
+
     setCarregando(true);
 
     const { error } =
@@ -21,10 +36,24 @@ export default function Login() {
       });
 
     if (error) {
-      setErro("E-mail ou senha inválidos.");
+      const falha = registrarFalhaLogin();
+      setErro(
+        falha.bloqueado
+          ? `Muitas tentativas. Aguarde ${falha.minutosRestantes} minuto(s).`
+          : `E-mail ou senha inválidos. Restam ${falha.tentativasRestantes} tentativa(s).`
+      );
       setCarregando(false);
       return;
     }
+
+    if (!(await registrarSessaoAtual(supabase))) {
+      await supabase.auth.signOut({ scope: "local" });
+      setErro("Não foi possível validar esta sessão. Tente novamente.");
+      setCarregando(false);
+      return;
+    }
+
+    limparFalhasLogin();
 
     navigate("/admin", { replace: true });
   }

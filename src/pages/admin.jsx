@@ -7,6 +7,7 @@ import ProductVariantsEditor from "../components/ProductVariantsEditor";
 import { temPrecoPromocional } from "../lib/product";
 import { enviarImagemProduto, removerImagemProduto } from "../lib/storage";
 import { supabase } from "../lib/supabase";
+import { registrarSessaoAtual } from "../lib/auth-security";
 
 const campoClasse =
   "w-full rounded-lg border border-gray-300 bg-white p-3 outline-none transition focus:border-[#C58B39] focus:ring-2 focus:ring-[#C58B39]/20";
@@ -300,6 +301,12 @@ export default function Admin() {
       if (!ativo) return;
 
       if (!session) {
+        navigate("/login", { replace: true });
+        return;
+      }
+
+      if (!(await registrarSessaoAtual(supabase))) {
+        await supabase.auth.signOut({ scope: "local" });
         navigate("/login", { replace: true });
         return;
       }
