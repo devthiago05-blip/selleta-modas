@@ -38,6 +38,27 @@ export const obterVariacaoSelecionada = (produto, tamanho, cor, estampa) =>
       variacao.print === estampa
   );
 
+export const obterImagensProduto = (produto) => {
+  const imagens = Array.isArray(produto?.imagens)
+    ? produto.imagens
+    : [];
+
+  return [
+    ...new Set(
+      [
+        produto?.imagem,
+        ...imagens,
+      ]
+        .filter((imagem) => typeof imagem === "string")
+        .map((imagem) => imagem.trim())
+        .filter(Boolean)
+    ),
+  ];
+};
+
+export const obterImagemPrincipal = (produto) =>
+  obterImagensProduto(produto)[0] || "";
+
 export const temPrecoPromocional = (produto) => {
   const preco = Number(produto?.preco);
   const promocional = Number(produto?.preco_promocional);

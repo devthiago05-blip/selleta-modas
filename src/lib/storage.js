@@ -42,6 +42,23 @@ export async function enviarImagemProduto(arquivo, pasta = "") {
   return { data: { publicUrl: data.publicUrl }, error: null };
 }
 
+export async function enviarImagensProduto(arquivos, pasta = "") {
+  const publicUrls = [];
+
+  for (const arquivo of arquivos) {
+    const { data, error } = await enviarImagemProduto(arquivo, pasta);
+
+    if (error) {
+      await Promise.all(publicUrls.map((url) => removerImagemProduto(url)));
+      return { data: null, error };
+    }
+
+    publicUrls.push(data.publicUrl);
+  }
+
+  return { data: { publicUrls }, error: null };
+}
+
 export function obterCaminhoImagemProduto(url) {
   if (!url) return null;
 
@@ -64,4 +81,14 @@ export async function removerImagemProduto(url) {
   if (!caminho) return { error: null };
 
   return supabase.storage.from(BUCKET_PRODUTOS).remove([caminho]);
+}
+
+export async function removerImagensProduto(urls) {
+  const caminhos = [
+    ...new Set((urls || []).map(obterCaminhoImagemProduto).filter(Boolean)),
+  ];
+
+  if (caminhos.length === 0) return { error: null };
+
+  return supabase.storage.from(BUCKET_PRODUTOS).remove(caminhos);
 }

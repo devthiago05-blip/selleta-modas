@@ -1,6 +1,10 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProductOptions from "./ProductOptions";
-import { obterPrecoVenda, temPrecoPromocional } from "../lib/product";
+import {
+  obterImagensProduto,
+  obterPrecoVenda,
+  temPrecoPromocional,
+} from "../lib/product";
 
 const formatarPreco = (valor) =>
   Number(valor || 0).toLocaleString("pt-BR", {
@@ -19,8 +23,12 @@ export default function ProductModal({
   onEstampaChange,
   onQuantidadeChange,
   onAdicionar,
+  adicionado,
   onClose,
 }) {
+  const imagens = useMemo(() => obterImagensProduto(produto), [produto]);
+  const [imagemAtiva, setImagemAtiva] = useState(imagens[0] || "");
+
   useEffect(() => {
     function fecharComEscape(evento) {
       if (evento.key === "Escape") onClose();
@@ -60,15 +68,39 @@ export default function ProductModal({
 
         <div className="grid gap-6 px-5 pb-7 md:grid-cols-2 md:px-8 md:pb-10">
           <div>
-            {produto.imagem ? (
+            {imagemAtiva ? (
               <img
-                src={produto.imagem}
+                src={imagemAtiva}
                 alt={produto.products}
-                className="aspect-square w-full rounded-2xl border object-cover"
+                className="aspect-[4/5] w-full rounded-2xl border bg-[#f8f6f3] object-contain"
               />
             ) : (
-              <div className="grid aspect-square place-items-center rounded-2xl bg-gray-100 text-gray-500">
+              <div className="grid aspect-[4/5] place-items-center rounded-2xl bg-gray-100 text-gray-500">
                 Imagem indisponível
+              </div>
+            )}
+
+            {imagens.length > 1 && (
+              <div className="mt-3 grid grid-cols-4 gap-2">
+                {imagens.map((imagem, index) => (
+                  <button
+                    key={imagem}
+                    type="button"
+                    onClick={() => setImagemAtiva(imagem)}
+                    aria-label={`Ver foto ${index + 1} de ${produto.products}`}
+                    className={`rounded-xl border bg-[#f8f6f3] p-1 ${
+                      imagem === imagemAtiva
+                        ? "border-[#8a5d2b] ring-2 ring-[#8a5d2b]/20"
+                        : "border-gray-200"
+                    }`}
+                  >
+                    <img
+                      src={imagem}
+                      alt=""
+                      className="aspect-[4/5] w-full rounded-lg object-contain"
+                    />
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -112,9 +144,17 @@ export default function ProductModal({
               type="button"
               onClick={onAdicionar}
               disabled={produto.estoque <= 0}
-              className="w-full rounded-xl bg-[#8a5d2b] p-4 font-bold text-white transition hover:bg-[#70491f]"
+              className={`w-full rounded-xl p-4 font-bold text-white transition ${
+                adicionado
+                  ? "scale-[1.02] bg-emerald-600"
+                  : "bg-[#8a5d2b] hover:bg-[#70491f]"
+              }`}
             >
-              {produto.estoque > 0 ? "Adicionar ao carrinho" : "Produto esgotado"}
+              {produto.estoque > 0
+                ? adicionado
+                  ? "✓ Adicionado ao carrinho"
+                  : "Adicionar ao carrinho"
+                : "Produto esgotado"}
             </button>
 
             <div className="mt-6 grid gap-3 text-sm text-gray-600 sm:grid-cols-2">

@@ -1,16 +1,25 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminOrders from "../components/AdminOrders";
 import InventoryBalance from "../components/InventoryBalance";
 import ProductSpreadsheetImport from "../components/ProductSpreadsheetImport";
 import ProductVariantsEditor from "../components/ProductVariantsEditor";
-import { temPrecoPromocional } from "../lib/product";
-import { enviarImagemProduto, removerImagemProduto } from "../lib/storage";
+import {
+  obterImagemPrincipal,
+  obterImagensProduto,
+  temPrecoPromocional,
+} from "../lib/product";
+import {
+  enviarImagensProduto,
+  removerImagensProduto,
+} from "../lib/storage";
 import { supabase } from "../lib/supabase";
 import { registrarSessaoAtual } from "../lib/auth-security";
 
 const campoClasse =
   "w-full rounded-lg border border-gray-300 bg-white p-3 outline-none transition focus:border-[#C58B39] focus:ring-2 focus:ring-[#C58B39]/20";
+
+const MAX_IMAGENS_PRODUTO = 8;
 
 const formatarPreco = (valor) =>
   Number(valor || 0).toLocaleString("pt-BR", {
@@ -25,8 +34,9 @@ export default function Admin() {
   const [precoPromocional, setPrecoPromocional] = useState("");
   const [estoque, setEstoque] = useState("");
   const [ativoProduto, setAtivoProduto] = useState(true);
-  const [imagem, setImagem] = useState(null);
-  const [imagemPreview, setImagemPreview] = useState("");
+  const [imagensSelecionadas, setImagensSelecionadas] = useState([]);
+  const [imagensPreview, setImagensPreview] = useState([]);
+  const [imagensAtuais, setImagensAtuais] = useState([]);
   const [imagemUrlManual, setImagemUrlManual] = useState("");
   const [descricao, setDescricao] = useState("");
   const [tamanhos, setTamanhos] = useState("");
@@ -39,19 +49,73 @@ export default function Admin() {
   const [camposComerciaisDisponiveis, setCamposComerciaisDisponiveis] =
     useState(false);
   const [gradeDisponivel, setGradeDisponivel] = useState(false);
+  const [imagensDisponiveis, setImagensDisponiveis] = useState(false);
   const [feedback, setFeedback] = useState(null);
   const [secao, setSecao] = useState("produtos");
+  const [destaqueFormulario, setDestaqueFormulario] = useState(false);
+  const formularioRef = useRef(null);
+  const imagensPreviewRef = useRef([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    return () => {
-      if (imagemPreview) URL.revokeObjectURL(imagemPreview);
-    };
-  }, [imagemPreview]);
+    imagensPreviewRef.current = imagensPreview;
+  }, [imagensPreview]);
 
-  function selecionarImagem(arquivo) {
-    setImagem(arquivo);
-    setImagemPreview(arquivo ? URL.createObjectURL(arquivo) : "");
+  useEffect(() => {
+    return () => {
+      imagensPreviewRef.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!feedback) return undefined;
+
+    const temporizador = setTimeout(() => setFeedback(null), 4500);
+
+    return () => clearTimeout(temporizador);
+  }, [feedback]);
+
+  function selecionarImagens(arquivos) {
+    imagensPreview.forEach((url) => URL.revokeObjectURL(url));
+
+    const arquivosSelecionados = Array.from(arquivos || []).slice(
+      0,
+      Math.max(0, MAX_IMAGENS_PRODUTO - imagensAtuais.length)
+    );
+
+    if (arquivos?.length > arquivosSelecionados.length) {
+      setFeedback({
+        tipo: "erro",
+        mensagem: `Use no máximo ${MAX_IMAGENS_PRODUTO} fotos por produto.`,
+      });
+    }
+
+    setImagensSelecionadas(arquivosSelecionados);
+    setImagensPreview(
+      arquivosSelecionados.map((arquivo) => URL.createObjectURL(arquivo))
+    );
+  }
+
+  function removerImagemAtual(urlRemover) {
+    setImagensAtuais((imagens) =>
+      imagens.filter((url) => url !== urlRemover)
+    );
+  }
+
+  function removerImagemSelecionada(indexRemover) {
+    URL.revokeObjectURL(imagensPreview[indexRemover]);
+    setImagensSelecionadas((arquivos) =>
+      arquivos.filter((_, index) => index !== indexRemover)
+    );
+    setImagensPreview((previews) =>
+      previews.filter((_, index) => index !== indexRemover)
+    );
+  }
+
+  function limparImagensSelecionadas() {
+    imagensPreview.forEach((url) => URL.revokeObjectURL(url));
+    setImagensSelecionadas([]);
+    setImagensPreview([]);
   }
 
   const carregarProdutos = useCallback(async () => {
@@ -69,9 +133,14 @@ export default function Admin() {
       gradeAtiva = false;
     }
 
-    const [{ data, error }, { error: erroCamposComerciais }] = await Promise.all([
+    const [
+      { data, error },
+      { error: erroCamposComerciais },
+      { error: erroImagens },
+    ] = await Promise.all([
       Promise.resolve(resultadoProdutos),
       supabase.from("products").select("preco_promocional,ativo").limit(1),
+      supabase.from("products").select("imagens").limit(1),
     ]);
 
     if (error) {
@@ -84,6 +153,7 @@ export default function Admin() {
 
     setProdutos(data || []);
     setCamposComerciaisDisponiveis(!erroCamposComerciais);
+    setImagensDisponiveis(!erroImagens);
     setGradeDisponivel(gradeAtiva);
     return data || [];
   }, []);
@@ -95,13 +165,14 @@ export default function Admin() {
     setPrecoPromocional("");
     setEstoque("");
     setAtivoProduto(true);
-    setImagem(null);
-    setImagemPreview("");
+    limparImagensSelecionadas();
+    setImagensAtuais([]);
     setImagemUrlManual("");
     setDescricao("");
     setTamanhos("");
     setCores("");
     setProdutoEditando(null);
+    setDestaqueFormulario(false);
   }
 
   function editarProduto(produto) {
@@ -116,12 +187,21 @@ export default function Admin() {
     );
     setEstoque(String(produto.estoque ?? ""));
     setAtivoProduto(produto.ativo !== false);
-    setImagemUrlManual(produto.imagem || "");
+    limparImagensSelecionadas();
+    setImagensAtuais(obterImagensProduto(produto));
+    setImagemUrlManual("");
     setDescricao(produto.descricao || "");
     setTamanhos(produto.tamanhos || "");
     setCores(produto.cores || "");
     setFeedback(null);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setDestaqueFormulario(true);
+    requestAnimationFrame(() => {
+      formularioRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+    setTimeout(() => setDestaqueFormulario(false), 1800);
   }
 
   async function confirmarExclusao() {
@@ -145,8 +225,8 @@ export default function Admin() {
     if (produtoEditando?.id === produtoExcluido.id) {
       limparFormulario();
     }
-    const { error: erroImagem } = await removerImagemProduto(
-      produtoExcluido.imagem
+    const { error: erroImagem } = await removerImagensProduto(
+      obterImagensProduto(produtoExcluido)
     );
     setFeedback({
       tipo: erroImagem ? "erro" : "sucesso",
@@ -198,21 +278,38 @@ export default function Admin() {
       return;
     }
 
+    const urlManualInformada = imagemUrlManual.trim();
+
     if (
-      imagem &&
-      (!imagem.type.startsWith("image/") || imagem.size > 5 * 1024 * 1024)
+      imagensAtuais.length +
+        imagensSelecionadas.length +
+        (urlManualInformada ? 1 : 0) >
+      MAX_IMAGENS_PRODUTO
     ) {
       setFeedback({
         tipo: "erro",
-        mensagem: "A imagem deve ser válida e ter no máximo 5 MB.",
+        mensagem: `Use no máximo ${MAX_IMAGENS_PRODUTO} fotos por produto.`,
+      });
+      return;
+    }
+
+    const imagemInvalida = imagensSelecionadas.find(
+      (arquivo) =>
+        !arquivo.type.startsWith("image/") || arquivo.size > 5 * 1024 * 1024
+    );
+
+    if (imagemInvalida) {
+      setFeedback({
+        tipo: "erro",
+        mensagem: "Cada imagem deve ser PNG, JPG ou WebP de até 5 MB.",
       });
       return;
     }
 
     if (
-      imagemUrlManual.trim() &&
-      !imagemUrlManual.trim().startsWith("/") &&
-      !imagemUrlManual.trim().startsWith("https://")
+      urlManualInformada &&
+      !urlManualInformada.startsWith("/") &&
+      !urlManualInformada.startsWith("https://")
     ) {
       setFeedback({
         tipo: "erro",
@@ -222,24 +319,38 @@ export default function Admin() {
     }
 
     setSalvando(true);
-    let imagemUrl = imagemUrlManual.trim() || produtoEditando?.imagem || null;
-    let novaImagemUrl = null;
+    const imagensAnteriores = produtoEditando
+      ? obterImagensProduto(produtoEditando)
+      : [];
+    let imagensEnviadas = [];
 
-    if (imagem) {
-      const { data, error: uploadError } = await enviarImagemProduto(imagem);
+    if (imagensSelecionadas.length > 0) {
+      const { data, error: uploadError } = await enviarImagensProduto(
+        imagensSelecionadas
+      );
 
       if (uploadError) {
         setFeedback({
           tipo: "erro",
-          mensagem: "Não foi possível enviar a imagem.",
+          mensagem: "Não foi possível enviar uma das imagens.",
         });
         setSalvando(false);
         return;
       }
 
-      imagemUrl = data.publicUrl;
-      novaImagemUrl = data.publicUrl;
+      imagensEnviadas = data.publicUrls;
     }
+
+    const imagensFinais = [
+      ...new Set(
+        [
+          ...imagensAtuais,
+          urlManualInformada,
+          ...imagensEnviadas,
+        ].filter(Boolean)
+      ),
+    ].slice(0, MAX_IMAGENS_PRODUTO);
+    const imagemUrl = imagensFinais[0] || null;
 
     const dadosProduto = {
       products: nome.trim(),
@@ -248,6 +359,10 @@ export default function Admin() {
       imagem: imagemUrl,
       descricao: descricao.trim(),
     };
+
+    if (imagensDisponiveis) {
+      dadosProduto.imagens = imagensFinais;
+    }
 
     if (!produtoTemGrade) {
       dadosProduto.estoque = estoqueFormatado;
@@ -268,8 +383,8 @@ export default function Admin() {
       : await supabase.from("products").insert(dadosProduto);
 
     if (resultado.error) {
-      if (novaImagemUrl) {
-        await removerImagemProduto(novaImagemUrl);
+      if (imagensEnviadas.length > 0) {
+        await removerImagensProduto(imagensEnviadas);
       }
       setFeedback({
         tipo: "erro",
@@ -279,12 +394,11 @@ export default function Admin() {
       return;
     }
 
-    if (
-      produtoEditando?.imagem &&
-      novaImagemUrl &&
-      produtoEditando.imagem !== novaImagemUrl
-    ) {
-      await removerImagemProduto(produtoEditando.imagem);
+    if (produtoEditando) {
+      const imagensRemovidas = imagensAnteriores.filter(
+        (url) => !imagensFinais.includes(url)
+      );
+      await removerImagensProduto(imagensRemovidas);
     }
 
     setFeedback({
@@ -387,13 +501,21 @@ export default function Admin() {
       {feedback && (
         <div
           role="status"
-          className={`mb-6 rounded-lg p-3 text-sm ${
+          className={`fixed right-4 top-4 z-[80] flex w-[calc(100%-2rem)] max-w-sm items-start justify-between gap-3 rounded-xl p-4 text-sm shadow-xl ${
             feedback.tipo === "erro"
-              ? "bg-red-50 text-red-700"
-              : "bg-green-50 text-green-700"
+              ? "bg-red-600 text-white"
+              : "bg-emerald-600 text-white"
           }`}
         >
-          {feedback.mensagem}
+          <span>{feedback.mensagem}</span>
+          <button
+            type="button"
+            onClick={() => setFeedback(null)}
+            aria-label="Fechar mensagem"
+            className="text-lg leading-none"
+          >
+            ×
+          </button>
         </div>
       )}
 
@@ -454,8 +576,11 @@ export default function Admin() {
       />
       <section className="grid gap-8 lg:grid-cols-[minmax(0,420px)_1fr]">
         <form
+          ref={formularioRef}
           onSubmit={salvarProduto}
-          className="h-fit rounded-2xl border border-[#C58B39]/20 bg-white p-5 shadow-sm sm:p-6"
+          className={`h-fit rounded-2xl border border-[#C58B39]/20 bg-white p-5 shadow-sm transition sm:p-6 lg:sticky lg:top-6 ${
+            destaqueFormulario ? "ring-2 ring-[#C58B39]" : ""
+          }`}
         >
           <h2 className="mb-5 text-xl font-bold">
             {produtoEditando ? "Editar produto" : "Novo produto"}
@@ -621,32 +746,66 @@ export default function Admin() {
               </p>
             )}
 
-            <label>
-              <span className="mb-1 block text-sm font-medium">
-                Enviar foto do computador
-              </span>
-              <input
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                onChange={(e) => selecionarImagem(e.target.files?.[0] || null)}
-                className={campoClasse}
-              />
-              <span className="mt-1 block text-xs text-gray-500">
-                PNG, JPG ou WebP de até 5 MB. A foto será padronizada em 4:5,
-                otimizada e salva como WebP sem cortar a peça.
-              </span>
-              {(imagemPreview || produtoEditando?.imagem) && (
-                <img
-                  src={imagemPreview || produtoEditando.imagem}
-                  alt="Prévia da foto do produto"
-                  className="mt-3 aspect-[4/5] w-full max-w-56 rounded-xl border bg-[#f8f6f3] object-contain"
+            <div>
+              <label>
+                <span className="mb-1 block text-sm font-medium">
+                  Fotos do produto
+                </span>
+                <input
+                  type="file"
+                  multiple
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={(e) => selecionarImagens(e.target.files)}
+                  className={campoClasse}
                 />
+              </label>
+              <span className="mt-1 block text-xs text-gray-500">
+                Selecione até {MAX_IMAGENS_PRODUTO} fotos PNG, JPG ou WebP de até 5 MB.
+                As fotos enviadas serão padronizadas em 4:5 e salvas como WebP.
+              </span>
+
+              {(imagensAtuais.length > 0 || imagensPreview.length > 0) && (
+                <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {imagensAtuais.map((url, index) => (
+                    <div key={url} className="rounded-xl border bg-[#f8f6f3] p-2">
+                      <img
+                        src={url}
+                        alt={`Foto ${index + 1} do produto`}
+                        className="aspect-[4/5] w-full rounded-lg object-contain"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removerImagemAtual(url)}
+                        className="mt-2 w-full rounded-lg bg-red-50 px-2 py-1 text-xs font-semibold text-red-700"
+                      >
+                        Remover
+                      </button>
+                    </div>
+                  ))}
+
+                  {imagensPreview.map((url, index) => (
+                    <div key={url} className="rounded-xl border bg-[#f8f6f3] p-2">
+                      <img
+                        src={url}
+                        alt={`Prévia ${index + 1} da foto do produto`}
+                        className="aspect-[4/5] w-full rounded-lg object-contain"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removerImagemSelecionada(index)}
+                        className="mt-2 w-full rounded-lg bg-gray-100 px-2 py-1 text-xs font-semibold text-gray-700"
+                      >
+                        Remover prévia
+                      </button>
+                    </div>
+                  ))}
+                </div>
               )}
-            </label>
+            </div>
 
             <label>
               <span className="mb-1 block text-sm font-medium">
-                URL da imagem
+                URL de imagem extra
               </span>
               <input
                 type="url"
@@ -656,7 +815,7 @@ export default function Admin() {
                 className={campoClasse}
               />
               <span className="mt-1 block text-xs text-gray-500">
-                Opcional. O arquivo selecionado acima tem prioridade.
+                Opcional para imagem já hospedada. Ela entra na galeria junto com as fotos enviadas.
               </span>
             </label>
 
@@ -695,17 +854,21 @@ export default function Admin() {
             </div>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
-              {produtos.map((produto) => (
+              {produtos.map((produto) => {
+                const imagemPrincipal = obterImagemPrincipal(produto);
+                const totalImagens = obterImagensProduto(produto).length;
+
+                return (
                 <article
                   key={produto.id}
                   className="overflow-hidden rounded-2xl border bg-white shadow-sm"
                 >
-                  {produto.imagem && (
+                  {imagemPrincipal && (
                     <img
-                      src={produto.imagem}
+                      src={imagemPrincipal}
                       alt={produto.products}
                       loading="lazy"
-                      className="aspect-square w-full object-cover"
+                      className="aspect-[4/5] w-full bg-[#f8f6f3] object-contain"
                     />
                   )}
 
@@ -732,6 +895,11 @@ export default function Admin() {
                     {produto.product_variants?.length > 0 && (
                       <p className="text-xs text-gray-500">
                         {produto.product_variants.length} combinação(ões) na grade
+                      </p>
+                    )}
+                    {totalImagens > 0 && (
+                      <p className="text-xs text-gray-500">
+                        {totalImagens} foto{totalImagens > 1 ? "s" : ""} na galeria
                       </p>
                     )}
                     {camposComerciaisDisponiveis && (
@@ -763,7 +931,8 @@ export default function Admin() {
                     </div>
                   </div>
                 </article>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

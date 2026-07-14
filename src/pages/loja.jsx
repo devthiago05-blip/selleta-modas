@@ -15,6 +15,7 @@ import {
 import { carregarCatalogo } from "../lib/catalog";
 import {
   obterCoresProduto,
+  obterImagensProduto,
   obterTamanhosProduto,
   obterPrecoVenda,
   obterVariacaoSelecionada,
@@ -77,6 +78,7 @@ export default function Loja() {
   const [carregando, setCarregando] = useState(true);
   const [erroProdutos, setErroProdutos] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [produtoAdicionado, setProdutoAdicionado] = useState(null);
   const fecharProduto = useCallback(() => setProdutoAberto(null), []);
 
   function abrirProduto(produto) {
@@ -183,6 +185,7 @@ export default function Loja() {
 
       return [...itens, itemCarrinho];
     });
+    setProdutoAdicionado(produto.id);
     setFeedback("Produto adicionado ao carrinho.");
   }
 
@@ -252,6 +255,22 @@ if (!telefoneCliente.trim()) {
   }, [carrinho]);
 
   useEffect(() => {
+    if (!feedback) return undefined;
+
+    const temporizador = setTimeout(() => setFeedback(""), 3500);
+
+    return () => clearTimeout(temporizador);
+  }, [feedback]);
+
+  useEffect(() => {
+    if (!produtoAdicionado) return undefined;
+
+    const temporizador = setTimeout(() => setProdutoAdicionado(null), 1800);
+
+    return () => clearTimeout(temporizador);
+  }, [produtoAdicionado]);
+
+  useEffect(() => {
     const produtosAtivos = produtos.filter((produto) => produto.ativo !== false);
 
     if (produtosAtivos.length === 0) return undefined;
@@ -269,7 +288,7 @@ if (!telefoneCliente.trim()) {
           "@type": "Product",
           name: produto.products,
           description: produto.descricao || undefined,
-          image: produto.imagem || undefined,
+          image: obterImagensProduto(produto),
           category: produto.categoria || undefined,
           offers: {
             "@type": "Offer",
@@ -409,6 +428,7 @@ if (!telefoneCliente.trim()) {
 
       {produtoAberto && (
         <ProductModal
+          key={produtoAberto.id}
           produto={produtoAberto}
           tamanho={tamanhoSelecionado[produtoAberto.id] || ""}
           cor={corSelecionada[produtoAberto.id] || ""}
@@ -465,6 +485,7 @@ if (!telefoneCliente.trim()) {
             }))
           }
           onAdicionar={() => adicionarAoCarrinho(produtoAberto)}
+          adicionado={produtoAdicionado === produtoAberto.id}
           onClose={fecharProduto}
         />
       )}

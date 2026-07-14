@@ -169,6 +169,7 @@ export function analisarPlanilhaProdutos(linhas, nomesExistentes = []) {
         preco_promocional: grupo.precoPromocional,
         estoque: estoqueTotal,
         imagem: grupo.imagemProduto,
+        imagens: [grupo.imagemProduto],
         categoria: grupo.categoria,
         descricao: grupo.descricao,
         tamanhos: TAMANHOS.join(","),

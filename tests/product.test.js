@@ -3,6 +3,8 @@ import assert from "node:assert/strict";
 import {
   obterCoresProduto,
   obterEstampasProduto,
+  obterImagemPrincipal,
+  obterImagensProduto,
   obterOpcoes,
   obterPrecoVenda,
   obterTamanhosProduto,
@@ -19,6 +21,19 @@ import {
 test("normaliza opções separadas por vírgula", () => {
   assert.deepEqual(obterOpcoes(" P, M, ,G "), ["P", "M", "G"]);
   assert.deepEqual(obterOpcoes(null), []);
+});
+
+test("normaliza galeria mantendo imagem principal", () => {
+  const produto = {
+    imagem: "/products/principal.webp",
+    imagens: ["/products/principal.webp", "/products/detalhe.webp"],
+  };
+
+  assert.deepEqual(obterImagensProduto(produto), [
+    "/products/principal.webp",
+    "/products/detalhe.webp",
+  ]);
+  assert.equal(obterImagemPrincipal(produto), "/products/principal.webp");
 });
 
 test("usa preço promocional válido", () => {

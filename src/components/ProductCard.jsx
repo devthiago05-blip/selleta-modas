@@ -1,6 +1,7 @@
 import logoSelleta from "../assets/logo-selleta.png";
 import {
   obterCoresProduto,
+  obterImagemPrincipal,
   obterPrecoVenda,
   obterTamanhosProduto,
   temPrecoPromocional,
@@ -16,6 +17,7 @@ export default function ProductCard({ produto, onOpen }) {
   const tamanhos = obterTamanhosProduto(produto).slice(0, 4);
   const quantidadeCores = obterCoresProduto(produto).length;
   const emEstoque = Number(produto.estoque || 0) > 0;
+  const imagemPrincipal = obterImagemPrincipal(produto);
 
   return (
     <article className="group flex min-w-0 overflow-hidden rounded-2xl border border-[#8a5d2b]/10 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -26,9 +28,9 @@ export default function ProductCard({ produto, onOpen }) {
           className="relative block overflow-hidden text-left"
           aria-label={`Ver detalhes de ${produto.products}`}
         >
-          {produto.imagem ? (
+          {imagemPrincipal ? (
             <img
-              src={produto.imagem}
+              src={imagemPrincipal}
               alt={produto.products}
               loading="lazy"
               decoding="async"
