@@ -1,11 +1,11 @@
 import logoSelleta from "../assets/logo-selleta.png";
 import {
-  obterCoresProduto,
   obterImagemPrincipal,
+  obterOpcoesDisponiveisProduto,
   obterPrecoVenda,
-  obterTamanhosProduto,
   temPrecoPromocional,
 } from "../lib/product";
+import { normalizarOpcao, obterHexCor, SEM_ESTAMPA } from "../lib/variants";
 
 const formatarPreco = (valor) =>
   Number(valor || 0).toLocaleString("pt-BR", {
@@ -13,11 +13,28 @@ const formatarPreco = (valor) =>
     currency: "BRL",
   });
 
-export default function ProductCard({ produto, onOpen }) {
-  const tamanhos = obterTamanhosProduto(produto).slice(0, 4);
-  const quantidadeCores = obterCoresProduto(produto).length;
-  const emEstoque = Number(produto.estoque || 0) > 0;
+export default function ProductCard({
+  produto,
+  tamanho,
+  cor,
+  estampa,
+  adicionado,
+  onTamanhoChange,
+  onCorChange,
+  onEstampaChange,
+  onAdicionar,
+  onOpen,
+}) {
+  const opcoes = obterOpcoesDisponiveisProduto(produto, {
+    tamanho,
+    cor,
+    estampa,
+  });
+  const emEstoque = opcoes.estoque > 0;
   const imagemPrincipal = obterImagemPrincipal(produto);
+  const possuiEstampa = opcoes.estampas.some(
+    (opcao) => normalizarOpcao(opcao) !== normalizarOpcao(SEM_ESTAMPA)
+  );
 
   return (
     <article className="group flex min-w-0 overflow-hidden rounded-2xl border border-[#8a5d2b]/10 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -72,24 +89,6 @@ export default function ProductCard({ produto, onOpen }) {
             {produto.descricao || "Peça selecionada pela Selleta Modas."}
           </p>
 
-          {(tamanhos.length > 0 || quantidadeCores > 0) && (
-            <div className="mt-3 flex min-h-7 flex-wrap items-center gap-1.5 text-xs text-gray-500">
-              {tamanhos.map((tamanho) => (
-                <span
-                  key={tamanho}
-                  className="grid min-w-7 place-items-center rounded-md border border-gray-200 bg-gray-50 px-1.5 py-1 font-semibold uppercase text-gray-700"
-                >
-                  {tamanho}
-                </span>
-              ))}
-              {quantidadeCores > 0 && (
-                <span className="ml-1">
-                  {quantidadeCores} {quantidadeCores === 1 ? "cor" : "cores"}
-                </span>
-              )}
-            </div>
-          )}
-
           <div className="mt-4">
             {temPrecoPromocional(produto) && (
               <p className="text-sm text-gray-400 line-through">
@@ -101,12 +100,101 @@ export default function ProductCard({ produto, onOpen }) {
             </p>
           </div>
 
+          <div className="mt-4 space-y-3">
+            {opcoes.tamanhos.length > 0 && (
+              <fieldset>
+                <legend className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Tamanho
+                </legend>
+                <div className="flex flex-wrap gap-1.5">
+                  {opcoes.tamanhos.map((opcao) => (
+                    <button
+                      key={opcao}
+                      type="button"
+                      onClick={() => onTamanhoChange(opcao)}
+                      aria-pressed={opcoes.tamanho === opcao}
+                      className={`grid min-w-9 place-items-center rounded-lg border px-2.5 py-2 text-sm font-bold uppercase transition ${
+                        opcoes.tamanho === opcao
+                          ? "border-[#8a5d2b] bg-[#8a5d2b] text-white"
+                          : "border-gray-200 bg-white text-gray-700 hover:border-[#C58B39]"
+                      }`}
+                    >
+                      {opcao}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            )}
+
+            {opcoes.cores.length > 0 && (
+              <fieldset>
+                <legend className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Cor
+                </legend>
+                <div className="flex flex-wrap items-center gap-2">
+                  {opcoes.cores.map((opcao) => (
+                    <button
+                      key={opcao}
+                      type="button"
+                      onClick={() => onCorChange(opcao)}
+                      aria-label={`Selecionar cor ${opcao}`}
+                      aria-pressed={opcoes.cor === opcao}
+                      title={opcao}
+                      className={`h-8 w-8 rounded-full border-2 shadow-sm transition ${
+                        opcoes.cor === opcao
+                          ? "scale-110 border-[#8a5d2b] ring-2 ring-[#C58B39]/30"
+                          : "border-gray-300"
+                      }`}
+                      style={{ backgroundColor: obterHexCor(opcao) }}
+                    />
+                  ))}
+                  {opcoes.cor && (
+                    <span className="text-xs text-gray-500">{opcoes.cor}</span>
+                  )}
+                </div>
+              </fieldset>
+            )}
+
+            {possuiEstampa && opcoes.estampas.length > 1 && (
+              <label className="block">
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Estampa
+                </span>
+                <select
+                  value={opcoes.estampa}
+                  onChange={(evento) => onEstampaChange(evento.target.value)}
+                  className="w-full rounded-lg border border-gray-200 bg-white p-2 text-sm outline-none focus:border-[#C58B39]"
+                >
+                  {opcoes.estampas.map((opcao) => (
+                    <option key={opcao}>{opcao}</option>
+                  ))}
+                </select>
+              </label>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={emEstoque ? onAdicionar : onOpen}
+            className={`mt-5 w-full rounded-xl p-3 font-semibold text-white transition ${
+              adicionado
+                ? "scale-[1.02] bg-emerald-600"
+                : "bg-[#8a5d2b] hover:bg-[#70491f]"
+            }`}
+          >
+            {emEstoque
+              ? adicionado
+                ? "✓ Adicionado"
+                : "Adicionar ao carrinho"
+              : "Consultar produto"}
+          </button>
+
           <button
             type="button"
             onClick={onOpen}
-            className="mt-5 w-full rounded-xl bg-[#8a5d2b] p-3 font-semibold text-white transition hover:bg-[#70491f]"
+            className="mt-2 text-sm font-semibold text-[#8a5d2b] hover:underline"
           >
-            {emEstoque ? "Escolher opções" : "Consultar produto"}
+            Ver detalhes
           </button>
         </div>
       </div>

@@ -1,4 +1,4 @@
-
+﻿
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CatalogFilters from "../components/CatalogFilters";
@@ -16,9 +16,9 @@ import { carregarCatalogo } from "../lib/catalog";
 import {
   obterCoresProduto,
   obterImagensProduto,
+  obterOpcoesDisponiveisProduto,
   obterTamanhosProduto,
   obterPrecoVenda,
-  obterVariacaoSelecionada,
   obterVariacoes,
 } from "../lib/product";
 
@@ -81,55 +81,66 @@ export default function Loja() {
   const [produtoAdicionado, setProdutoAdicionado] = useState(null);
   const fecharProduto = useCallback(() => setProdutoAberto(null), []);
 
-  function abrirProduto(produto) {
-    const variacoesComEstoque = obterVariacoes(produto).filter(
-      (variacao) => Number(variacao.stock) > 0
-    );
-    const primeiraVariacao = variacoesComEstoque[0];
-    const primeiroTamanho =
-      primeiraVariacao?.size || obterTamanhosProduto(produto)[0] || "";
-    const primeiraCor =
-      primeiraVariacao?.color || obterCoresProduto(produto)[0] || "";
-
+  function aplicarSelecaoProduto(produto, selecao) {
     setTamanhoSelecionado((selecoes) => ({
       ...selecoes,
-      [produto.id]: selecoes[produto.id] || primeiroTamanho,
+      [produto.id]: selecao.tamanho,
     }));
     setCorSelecionada((selecoes) => ({
       ...selecoes,
-      [produto.id]: selecoes[produto.id] || primeiraCor,
+      [produto.id]: selecao.cor,
     }));
     setEstampaSelecionada((selecoes) => ({
       ...selecoes,
-      [produto.id]:
-        selecoes[produto.id] || primeiraVariacao?.print || "Sem estampa",
+      [produto.id]: selecao.estampa,
     }));
     setQuantidadeSelecionada((selecoes) => ({
       ...selecoes,
-      [produto.id]: 1,
+      [produto.id]: Math.min(selecoes[produto.id] || 1, selecao.estoque || 1),
     }));
+  }
+
+  function obterSelecaoAtual(produto, sobrescrever = {}) {
+    return obterOpcoesDisponiveisProduto(produto, {
+      tamanho: tamanhoSelecionado[produto.id],
+      cor: corSelecionada[produto.id],
+      estampa: estampaSelecionada[produto.id],
+      ...sobrescrever,
+    });
+  }
+
+  function selecionarTamanhoProduto(produto, tamanho) {
+    aplicarSelecaoProduto(produto, obterSelecaoAtual(produto, { tamanho }));
+  }
+
+  function selecionarCorProduto(produto, cor) {
+    aplicarSelecaoProduto(produto, obterSelecaoAtual(produto, { cor }));
+  }
+
+  function selecionarEstampaProduto(produto, estampa) {
+    aplicarSelecaoProduto(produto, obterSelecaoAtual(produto, { estampa }));
+  }
+
+  function abrirProduto(produto) {
+    aplicarSelecaoProduto(produto, obterSelecaoAtual(produto));
     setProdutoAberto(produto);
   }
 
   function adicionarAoCarrinho(produto) {
     const variacoes = obterVariacoes(produto);
-    const tamanho = tamanhoSelecionado[produto.id] || "Único";
-    const cor = corSelecionada[produto.id] || "Padrão";
-    const estampa = estampaSelecionada[produto.id] || "Sem estampa";
+    const selecao = obterSelecaoAtual(produto);
+    const tamanho = selecao.tamanho || "Único";
+    const cor = selecao.cor || "Padrão";
+    const estampa = selecao.estampa || "Sem estampa";
     const quantidade = quantidadeSelecionada[produto.id] || 1;
-    const variacao = obterVariacaoSelecionada(
-      produto,
-      tamanho,
-      cor,
-      estampa
-    );
+    const variacao = selecao.variacao;
 
-    if (obterTamanhosProduto(produto).length > 0 && !tamanhoSelecionado[produto.id]) {
+    if (obterTamanhosProduto(produto).length > 0 && !tamanho) {
       setFeedback("Selecione um tamanho antes de adicionar.");
       return;
     }
 
-    if (obterCoresProduto(produto).length > 0 && !corSelecionada[produto.id]) {
+    if (obterCoresProduto(produto).length > 0 && !cor) {
       setFeedback("Selecione uma cor antes de adicionar.");
       return;
     }
@@ -140,7 +151,7 @@ export default function Loja() {
     }
 
     const estoqueDisponivel = Number(
-      variacoes.length ? variacao.stock : produto.estoque
+      variacoes.length ? variacao.stock : selecao.estoque
     );
 
     if (quantidade > estoqueDisponivel) {
@@ -185,10 +196,10 @@ export default function Loja() {
 
       return [...itens, itemCarrinho];
     });
+    aplicarSelecaoProduto(produto, selecao);
     setProdutoAdicionado(produto.id);
     setFeedback("Produto adicionado ao carrinho.");
   }
-
 function removerDoCarrinho(indexRemover) {
   setCarrinho((itens) =>
     itens.filter((_, index) => index !== indexRemover)
@@ -733,6 +744,18 @@ if (!telefoneCliente.trim()) {
           <ProductCard
             key={produto.id}
             produto={produto}
+            tamanho={tamanhoSelecionado[produto.id]}
+            cor={corSelecionada[produto.id]}
+            estampa={estampaSelecionada[produto.id]}
+            adicionado={produtoAdicionado === produto.id}
+            onTamanhoChange={(tamanho) =>
+              selecionarTamanhoProduto(produto, tamanho)
+            }
+            onCorChange={(cor) => selecionarCorProduto(produto, cor)}
+            onEstampaChange={(estampa) =>
+              selecionarEstampaProduto(produto, estampa)
+            }
+            onAdicionar={() => adicionarAoCarrinho(produto)}
             onOpen={() => abrirProduto(produto)}
           />
         ))}

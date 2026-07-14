@@ -5,6 +5,7 @@ import {
   obterEstampasProduto,
   obterImagemPrincipal,
   obterImagensProduto,
+  obterOpcoesDisponiveisProduto,
   obterOpcoes,
   obterPrecoVenda,
   obterTamanhosProduto,
@@ -104,4 +105,35 @@ test("completa P, M, G e GG sem perder estoque existente", () => {
   );
   assert.equal(grade.find((variacao) => variacao.size === "M").stock, 3);
   assert.equal(grade.find((variacao) => variacao.size === "P").stock, 0);
+});
+
+test("seleciona primeira combinacao com estoque para compra rapida", () => {
+  const produto = {
+    estoque: 0,
+    product_variants: [
+      {
+        id: "1",
+        size: "P",
+        color: "Preto",
+        print: "Sem estampa",
+        stock: 0,
+        active: true,
+      },
+      {
+        id: "2",
+        size: "M",
+        color: "Rosa",
+        print: "Sem estampa",
+        stock: 3,
+        active: true,
+      },
+    ],
+  };
+
+  const opcoes = obterOpcoesDisponiveisProduto(produto);
+
+  assert.equal(opcoes.tamanho, "M");
+  assert.equal(opcoes.cor, "Rosa");
+  assert.equal(opcoes.variacao.id, "2");
+  assert.equal(opcoes.estoque, 3);
 });
