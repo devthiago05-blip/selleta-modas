@@ -42,11 +42,10 @@ export default function ProductCard({
   return (
     <article className="group flex min-w-0 overflow-hidden rounded-2xl border border-[#8a5d2b]/10 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       <div className="flex w-full flex-col">
-        <button
-          type="button"
-          onClick={onOpen}
+        <Link
+          to={obterUrlProduto(produto)}
           className="relative block overflow-hidden text-left"
-          aria-label={`Ver detalhes de ${produto.products}`}
+          aria-label={`Abrir página de ${produto.products}`}
         >
           {imagemPrincipal ? (
             <img
@@ -81,13 +80,17 @@ export default function ProductCard({
           >
             {emEstoque ? "Em estoque" : "Esgotado"}
           </span>
-        </button>
+        </Link>
 
         <div className="flex flex-1 flex-col p-4">
-          <p className="text-xs font-semibold uppercase tracking-wider text-[#8a5d2b]">
-            {produto.categoria || "Moda feminina"}
-          </p>
-          <h3 className="mt-1 text-lg font-bold">{produto.products}</h3>
+          <Link to={obterUrlProduto(produto)} className="group/title">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#8a5d2b]">
+              {produto.categoria || "Moda feminina"}
+            </p>
+            <h3 className="mt-1 text-lg font-bold group-hover/title:text-[#8a5d2b]">
+              {produto.products}
+            </h3>
+          </Link>
           <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-500">
             {produto.descricao || "Peça selecionada pela Selleta Modas."}
           </p>
