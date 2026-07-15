@@ -137,17 +137,17 @@ export default function Loja() {
 
     if (obterTamanhosProduto(produto).length > 0 && !tamanho) {
       setFeedback("Selecione um tamanho antes de adicionar.");
-      return;
+      return false;
     }
 
     if (obterCoresProduto(produto).length > 0 && !cor) {
       setFeedback("Selecione uma cor antes de adicionar.");
-      return;
+      return false;
     }
 
     if (variacoes.length > 0 && !variacao) {
       setFeedback("Selecione uma combinação disponível.");
-      return;
+      return false;
     }
 
     const estoqueDisponivel = Number(
@@ -156,7 +156,7 @@ export default function Loja() {
 
     if (quantidade > estoqueDisponivel) {
       setFeedback("Quantidade maior que o estoque disponível.");
-      return;
+      return false;
     }
 
     const itemCarrinho = {
@@ -180,7 +180,7 @@ export default function Loja() {
       itemExistente.quantidade + quantidade > estoqueDisponivel
     ) {
       setFeedback("A quantidade total ultrapassa o estoque disponível.");
-      return;
+      return false;
     }
 
     setCarrinho((itens) => {
@@ -199,6 +199,13 @@ export default function Loja() {
     aplicarSelecaoProduto(produto, selecao);
     setProdutoAdicionado(produto.id);
     setFeedback("Produto adicionado ao carrinho.");
+    return true;
+  }
+
+  function comprarAgora(produto) {
+    if (adicionarAoCarrinho(produto)) {
+      setCarrinhoAberto(true);
+    }
   }
 function removerDoCarrinho(indexRemover) {
   setCarrinho((itens) =>
@@ -756,6 +763,7 @@ if (!telefoneCliente.trim()) {
               selecionarEstampaProduto(produto, estampa)
             }
             onAdicionar={() => adicionarAoCarrinho(produto)}
+            onComprarAgora={() => comprarAgora(produto)}
             onOpen={() => abrirProduto(produto)}
           />
         ))}

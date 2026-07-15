@@ -23,6 +23,7 @@ export default function ProductCard({
   onCorChange,
   onEstampaChange,
   onAdicionar,
+  onComprarAgora,
   onOpen,
 }) {
   const opcoes = obterOpcoesDisponiveisProduto(produto, {
@@ -173,21 +174,37 @@ export default function ProductCard({
             )}
           </div>
 
-          <button
-            type="button"
-            onClick={emEstoque ? onAdicionar : onOpen}
-            className={`mt-5 w-full rounded-xl p-3 font-semibold text-white transition ${
-              adicionado
-                ? "scale-[1.02] bg-emerald-600"
-                : "bg-[#8a5d2b] hover:bg-[#70491f]"
-            }`}
-          >
-            {emEstoque
-              ? adicionado
-                ? "✓ Adicionado"
-                : "Adicionar ao carrinho"
-              : "Consultar produto"}
-          </button>
+          {emEstoque ? (
+            <div className="mt-5 grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={onAdicionar}
+                className={`rounded-xl border p-3 text-sm font-semibold transition ${
+                  adicionado
+                    ? "border-emerald-600 bg-emerald-50 text-emerald-700"
+                    : "border-[#8a5d2b]/25 text-[#8a5d2b] hover:bg-[#fff7ed]"
+                }`}
+              >
+                {adicionado ? "✓ Adicionado" : "Adicionar"}
+              </button>
+
+              <button
+                type="button"
+                onClick={onComprarAgora}
+                className="rounded-xl bg-[#8a5d2b] p-3 text-sm font-semibold text-white transition hover:bg-[#70491f]"
+              >
+                Comprar agora
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={onOpen}
+              className="mt-5 w-full rounded-xl bg-[#8a5d2b] p-3 font-semibold text-white transition hover:bg-[#70491f]"
+            >
+              Consultar produto
+            </button>
+          )}
 
           <button
             type="button"
