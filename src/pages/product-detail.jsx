@@ -28,6 +28,31 @@ function lerCarrinho() {
   }
 }
 
+function definirMeta(seletor, atributos) {
+  let meta = document.querySelector(seletor);
+
+  if (!meta) {
+    meta = document.createElement("meta");
+    document.head.appendChild(meta);
+  }
+
+  Object.entries(atributos).forEach(([chave, valor]) => {
+    meta.setAttribute(chave, valor);
+  });
+}
+
+function definirCanonical(href) {
+  let link = document.querySelector('link[rel="canonical"]');
+
+  if (!link) {
+    link = document.createElement("link");
+    link.setAttribute("rel", "canonical");
+    document.head.appendChild(link);
+  }
+
+  link.setAttribute("href", href);
+}
+
 export default function ProductDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -85,16 +110,40 @@ export default function ProductDetail() {
   useEffect(() => {
     if (!produto) return;
 
+    const urlProduto = window.location.href;
     document.title = `${produto.products} | Selleta Modas`;
     const descricao =
       produto.descricao || "Produto feminino selecionado pela Selleta Modas.";
-    let meta = document.querySelector('meta[name="description"]');
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.setAttribute("name", "description");
-      document.head.appendChild(meta);
+    const descricaoCurta = descricao.slice(0, 155);
+    const imagem = obterImagensProduto(produto)[0];
+
+    definirMeta('meta[name="description"]', {
+      name: "description",
+      content: descricaoCurta,
+    });
+    definirMeta('meta[property="og:title"]', {
+      property: "og:title",
+      content: `${produto.products} | Selleta Modas`,
+    });
+    definirMeta('meta[property="og:description"]', {
+      property: "og:description",
+      content: descricaoCurta,
+    });
+    definirMeta('meta[property="og:url"]', {
+      property: "og:url",
+      content: urlProduto,
+    });
+    definirMeta('meta[property="og:type"]', {
+      property: "og:type",
+      content: "product",
+    });
+    if (imagem) {
+      definirMeta('meta[property="og:image"]', {
+        property: "og:image",
+        content: imagem,
+      });
     }
-    meta.setAttribute("content", descricao.slice(0, 155));
+    definirCanonical(urlProduto);
   }, [produto]);
 
   function selecionarTamanho(novoTamanho) {
@@ -180,6 +229,15 @@ export default function ProductDetail() {
     }
   }
 
+  async function copiarLinkProduto() {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setFeedback("Link do produto copiado.");
+    } catch {
+      setFeedback("Não foi possível copiar automaticamente. Copie o link da barra do navegador.");
+    }
+  }
+
   if (carregando) {
     return (
       <main className="grid min-h-screen place-items-center text-gray-500">
@@ -219,9 +277,18 @@ export default function ProductDetail() {
       />
 
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
-        <Link to="/#catalogo" className="text-sm font-semibold text-[#8a5d2b]">
-          ← Voltar ao catálogo
-        </Link>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <Link to="/#catalogo" className="text-sm font-semibold text-[#8a5d2b]">
+            ← Voltar ao catálogo
+          </Link>
+          <button
+            type="button"
+            onClick={copiarLinkProduto}
+            className="rounded-full border border-[#8a5d2b]/20 px-4 py-2 text-sm font-semibold text-[#8a5d2b] transition hover:bg-[#fff7ed]"
+          >
+            Copiar link do produto
+          </button>
+        </div>
 
         <section className="mt-6 grid gap-8 rounded-[2rem] bg-white p-4 shadow-sm md:grid-cols-[1fr_0.9fr] md:p-8">
           <div>
