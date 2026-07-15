@@ -18,6 +18,7 @@ import {
   obterImagensProduto,
   obterOpcoesDisponiveisProduto,
   obterTamanhosProduto,
+  obterUrlProduto,
   obterPrecoVenda,
   obterVariacoes,
 } from "../lib/product";
@@ -58,8 +59,13 @@ export default function Loja() {
       return [];
     }
   });
-  const [carrinhoAberto, setCarrinhoAberto] =
-  useState(false);
+  const [carrinhoAberto, setCarrinhoAberto] = useState(() => {
+    try {
+      return new URLSearchParams(window.location.search).get("carrinho") === "1";
+    } catch {
+      return false;
+    }
+  });
   const [checkoutAberto, setCheckoutAberto] = useState(false);
   const [produtoAberto, setProdutoAberto] = useState(null);
   const [tamanhoSelecionado, setTamanhoSelecionado] = useState({});
@@ -273,6 +279,12 @@ if (!telefoneCliente.trim()) {
   }, [carrinho]);
 
   useEffect(() => {
+    if (window.location.search.includes("carrinho=1")) {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!feedback) return undefined;
 
     const temporizador = setTimeout(() => setFeedback(""), 3500);
@@ -310,7 +322,7 @@ if (!telefoneCliente.trim()) {
           category: produto.categoria || undefined,
           offers: {
             "@type": "Offer",
-            url: window.location.origin,
+            url: `${window.location.origin}${obterUrlProduto(produto)}`,
             priceCurrency: "BRL",
             price: obterPrecoVenda(produto).toFixed(2),
             availability:

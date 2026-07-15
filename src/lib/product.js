@@ -134,3 +134,18 @@ export const obterPrecoVenda = (produto) =>
   temPrecoPromocional(produto)
     ? Number(produto.preco_promocional)
     : Number(produto?.preco || 0);
+
+export const gerarSlugProduto = (produto) => {
+  const nome = typeof produto === "string" ? produto : produto?.products;
+  const slugBase = String(nome || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+  return slugBase || "produto";
+};
+
+export const obterUrlProduto = (produto) =>
+  `/produto/${gerarSlugProduto(produto)}`;

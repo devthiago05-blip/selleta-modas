@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
 import logoSelleta from "../assets/logo-selleta.png";
 import {
   obterImagemPrincipal,
   obterOpcoesDisponiveisProduto,
   obterPrecoVenda,
+  obterUrlProduto,
   temPrecoPromocional,
 } from "../lib/product";
 import { normalizarOpcao, obterHexCor, SEM_ESTAMPA } from "../lib/variants";
@@ -206,13 +208,12 @@ export default function ProductCard({
             </button>
           )}
 
-          <button
-            type="button"
-            onClick={onOpen}
+          <Link
+            to={obterUrlProduto(produto)}
             className="mt-2 text-sm font-semibold text-[#8a5d2b] hover:underline"
           >
             Ver detalhes
-          </button>
+          </Link>
         </div>
       </div>
     </article>

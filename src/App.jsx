@@ -13,6 +13,7 @@ const Admin = lazy(() => import("./pages/admin"));
 const OrderStatus = lazy(() => import("./pages/order-status"));
 const Customer = lazy(() => import("./pages/customer"));
 const Policies = lazy(() => import("./pages/policies"));
+const ProductDetail = lazy(() => import("./pages/product-detail"));
 
 function CarregandoPagina() {
   return (
@@ -73,6 +74,15 @@ function App() {
           element={
             <Suspense fallback={<CarregandoPagina />}>
               <Policies />
+            </Suspense>
+          }
+        />
+
+        <Route
+          path="/produto/:slug"
+          element={
+            <Suspense fallback={<CarregandoPagina />}>
+              <ProductDetail />
             </Suspense>
           }
         />

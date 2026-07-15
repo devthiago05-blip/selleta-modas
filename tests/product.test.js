@@ -5,7 +5,9 @@ import {
   obterEstampasProduto,
   obterImagemPrincipal,
   obterImagensProduto,
+  gerarSlugProduto,
   obterOpcoesDisponiveisProduto,
+  obterUrlProduto,
   obterOpcoes,
   obterPrecoVenda,
   obterTamanhosProduto,
@@ -136,4 +138,11 @@ test("seleciona primeira combinacao com estoque para compra rapida", () => {
   assert.equal(opcoes.cor, "Rosa");
   assert.equal(opcoes.variacao.id, "2");
   assert.equal(opcoes.estoque, 3);
+});
+
+test("gera url amigavel de produto", () => {
+  const produto = { products: "Vestido Poá Menta GG" };
+
+  assert.equal(gerarSlugProduto(produto), "vestido-poa-menta-gg");
+  assert.equal(obterUrlProduto(produto), "/produto/vestido-poa-menta-gg");
 });
