@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import logoSelleta from "../assets/logo-selleta.png";
 
-export default function SiteHeader({ quantidadeCarrinho, onOpenCart }) {
+export default function SiteHeader({
+  quantidadeCarrinho,
+  onOpenCart,
+  cartButtonRef,
+}) {
   return (
     <header className="sticky top-0 z-30 w-full border-b border-[#8a5d2b]/10 bg-[#fffaf5]/95 backdrop-blur">
       <div className="mx-auto flex min-w-0 max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6">
@@ -55,16 +59,17 @@ export default function SiteHeader({ quantidadeCarrinho, onOpenCart }) {
           </Link>
 
           <button
+            ref={cartButtonRef}
             type="button"
             onClick={onOpenCart}
             aria-label={`Abrir carrinho com ${quantidadeCarrinho} item(ns)`}
-            className="relative grid h-10 w-10 place-items-center rounded-full bg-[#8a5d2b] text-white shadow-md transition hover:bg-[#70491f] sm:h-11 sm:w-11"
+            className="relative grid h-11 w-11 place-items-center rounded-full bg-gradient-to-br from-[#9b672f] to-[#5f3b19] text-white shadow-lg shadow-[#8a5d2b]/25 ring-1 ring-white/50 transition hover:-translate-y-0.5 hover:shadow-xl sm:h-12 sm:w-12"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
-              strokeWidth={2}
+              strokeWidth={1.8}
               stroke="currentColor"
               className="h-6 w-6"
               aria-hidden="true"
@@ -72,12 +77,17 @@ export default function SiteHeader({ quantidadeCarrinho, onOpenCart }) {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M2.25 3h1.386a1.5 1.5 0 011.415 1.026L5.76 6.75m0 0h13.74l-1.125 6.75H7.125m-1.365-6.75L7.125 13.5m0 0a2.25 2.25 0 104.5 0m4.5 0a2.25 2.25 0 104.5 0"
+                d="M7.25 8.25h9.5c.9 0 1.6.77 1.5 1.66l-.7 6.35A2.25 2.25 0 0115.31 18.25H8.69a2.25 2.25 0 01-2.24-1.99l-.7-6.35a1.5 1.5 0 011.5-1.66z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M9 8.25a3 3 0 016 0M9.5 12h5"
               />
             </svg>
 
             {quantidadeCarrinho > 0 && (
-              <span className="absolute -right-2 -top-2 grid h-6 min-w-6 place-items-center rounded-full bg-red-600 px-1 text-xs font-bold">
+              <span className="absolute -right-2 -top-2 grid h-6 min-w-6 place-items-center rounded-full border-2 border-white bg-red-600 px-1 text-xs font-bold shadow">
                 {quantidadeCarrinho}
               </span>
             )}
