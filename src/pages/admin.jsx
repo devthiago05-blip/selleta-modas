@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AdminDashboard from "../components/AdminDashboard";
 import AdminOrders from "../components/AdminOrders";
 import InventoryBalance from "../components/InventoryBalance";
 import ProductSpreadsheetImport from "../components/ProductSpreadsheetImport";
@@ -51,7 +52,7 @@ export default function Admin() {
   const [gradeDisponivel, setGradeDisponivel] = useState(false);
   const [imagensDisponiveis, setImagensDisponiveis] = useState(false);
   const [feedback, setFeedback] = useState(null);
-  const [secao, setSecao] = useState("produtos");
+  const [secao, setSecao] = useState("resumo");
   const [destaqueFormulario, setDestaqueFormulario] = useState(false);
   const formularioRef = useRef(null);
   const imagensPreviewRef = useRef([]);
@@ -534,6 +535,17 @@ export default function Admin() {
       >
         <button
           type="button"
+          onClick={() => setSecao("resumo")}
+          className={`border-b-2 px-4 py-3 font-semibold ${
+            secao === "resumo"
+              ? "border-[#8a5d2b] text-[#8a5d2b]"
+              : "border-transparent text-gray-500"
+          }`}
+        >
+          Resumo
+        </button>
+        <button
+          type="button"
           onClick={() => setSecao("produtos")}
           className={`border-b-2 px-4 py-3 font-semibold ${
             secao === "produtos"
@@ -567,7 +579,16 @@ export default function Admin() {
         </button>
       </nav>
 
-      {secao === "produtos" ? (
+      {secao === "resumo" ? (
+        <AdminDashboard
+          produtos={produtos}
+          onIrParaSecao={setSecao}
+          onEditarProduto={(produto) => {
+            setSecao("produtos");
+            editarProduto(produto);
+          }}
+        />
+      ) : secao === "produtos" ? (
       <>
       <ProductSpreadsheetImport
         produtos={produtos}
