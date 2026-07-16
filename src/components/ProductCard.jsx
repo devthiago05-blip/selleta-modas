@@ -53,7 +53,7 @@ export default function ProductCard({
               alt={produto.products}
               loading="lazy"
               decoding="async"
-              className="h-80 w-full object-cover transition duration-500 group-hover:scale-[1.03] sm:h-[22rem] lg:h-[21rem] xl:h-[20rem]"
+              className="h-80 w-full bg-[#f8f1e9] object-contain transition duration-500 group-hover:scale-[1.03] sm:h-[22rem] lg:h-[21rem] xl:h-[20rem]"
             />
           ) : (
             <div className="grid h-80 place-items-center bg-[#fff7ed] sm:h-[22rem] lg:h-[21rem] xl:h-[20rem]">
