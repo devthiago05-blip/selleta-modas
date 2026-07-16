@@ -40,8 +40,8 @@ export default function ProductCard({
   );
 
   return (
-    <article className="group flex min-w-0 overflow-hidden rounded-2xl border border-[#8a5d2b]/10 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <div className="flex w-full flex-col">
+    <article className="group flex h-full min-w-0 overflow-hidden rounded-2xl border border-[#8a5d2b]/10 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+      <div className="flex h-full w-full flex-col">
         <Link
           to={obterUrlProduto(produto)}
           className="relative block overflow-hidden text-left"
@@ -53,10 +53,10 @@ export default function ProductCard({
               alt={produto.products}
               loading="lazy"
               decoding="async"
-              className="aspect-[4/5] w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+              className="h-80 w-full object-cover transition duration-500 group-hover:scale-[1.03] sm:h-[22rem] lg:h-[21rem] xl:h-[20rem]"
             />
           ) : (
-            <div className="grid aspect-[4/5] place-items-center bg-[#fff7ed]">
+            <div className="grid h-80 place-items-center bg-[#fff7ed] sm:h-[22rem] lg:h-[21rem] xl:h-[20rem]">
               <img
                 src={logoSelleta}
                 alt=""
@@ -87,15 +87,15 @@ export default function ProductCard({
             <p className="text-xs font-semibold uppercase tracking-wider text-[#8a5d2b]">
               {produto.categoria || "Moda feminina"}
             </p>
-            <h3 className="mt-1 text-lg font-bold group-hover/title:text-[#8a5d2b]">
+            <h3 className="mt-1 line-clamp-2 min-h-[3.5rem] text-lg font-bold leading-snug group-hover/title:text-[#8a5d2b]">
               {produto.products}
             </h3>
           </Link>
-          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-gray-500">
+          <p className="mt-2 line-clamp-2 min-h-[2.75rem] text-sm leading-relaxed text-gray-500">
             {produto.descricao || "Peça selecionada pela Selleta Modas."}
           </p>
 
-          <div className="mt-4">
+          <div className="mt-4 min-h-[3.75rem]">
             {temPrecoPromocional(produto) && (
               <p className="text-sm text-gray-400 line-through">
                 {formatarPreco(produto.preco)}
@@ -106,7 +106,7 @@ export default function ProductCard({
             </p>
           </div>
 
-          <div className="mt-4 space-y-3">
+          <div className="mt-4 min-h-[9.75rem] space-y-3">
             {opcoes.tamanhos.length > 0 && (
               <fieldset>
                 <legend className="mb-1 text-xs font-semibold uppercase tracking-wide text-gray-500">
@@ -180,7 +180,7 @@ export default function ProductCard({
           </div>
 
           {emEstoque ? (
-            <div className="mt-5 grid grid-cols-2 gap-2">
+            <div className="mt-auto grid grid-cols-2 gap-2 pt-5">
               <button
                 type="button"
                 onClick={onAdicionar}
@@ -205,7 +205,7 @@ export default function ProductCard({
             <button
               type="button"
               onClick={onOpen}
-              className="mt-5 w-full rounded-xl bg-[#8a5d2b] p-3 font-semibold text-white transition hover:bg-[#70491f]"
+              className="mt-auto w-full rounded-xl bg-[#8a5d2b] p-3 font-semibold text-white transition hover:bg-[#70491f]"
             >
               Consultar produto
             </button>

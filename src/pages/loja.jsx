@@ -916,7 +916,7 @@ if (!telefoneCliente.trim()) {
         </div>
       )}
 
-      <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid min-w-0 auto-rows-fr grid-cols-1 items-stretch gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {produtosFiltrados.map((produto) => (
           <ProductCard
             key={produto.id}
