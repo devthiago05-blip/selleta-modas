@@ -6,7 +6,17 @@ import { supabase } from "../lib/supabase";
 
 const pixKey = import.meta.env.VITE_PIX_KEY || "";
 const pixReceiver = import.meta.env.VITE_PIX_RECEIVER || "Selleta Modas";
+const whatsappNumero = String(
+  import.meta.env.VITE_WHATSAPP_NUMBER || "5585992903028"
+).replace(/\D/g, "");
 const chaveAcompanhamento = "selleta-last-order";
+
+const etapasPedido = [
+  "Pedido recebido",
+  "Pagamento analisado",
+  "Pedido confirmado",
+  "Preparação e entrega",
+];
 
 function salvarAcompanhamento(pedido) {
   try {
@@ -39,6 +49,7 @@ export default function CheckoutModal({ carrinho, total, onClose, onSuccess }) {
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState("");
   const [pedido, setPedido] = useState(null);
+  const [pixCopiado, setPixCopiado] = useState(false);
 
   async function finalizar(evento) {
     evento.preventDefault();
@@ -91,7 +102,12 @@ export default function CheckoutModal({ carrinho, total, onClose, onSuccess }) {
 
   async function copiarPix() {
     await navigator.clipboard.writeText(pixKey);
+    setPixCopiado(true);
   }
+
+  const mensagemWhatsAppPedido = pedido
+    ? `Olá! Acabei de fazer o pedido #${pedido.order_number} pelo site da Selleta Modas.`
+    : "";
 
   return (
     <div
@@ -121,22 +137,52 @@ export default function CheckoutModal({ carrinho, total, onClose, onSuccess }) {
         </div>
 
         {pedido ? (
-          <div className="mt-6">
-            <div className="rounded-2xl bg-green-50 p-5 text-green-800">
-              <strong className="block text-lg">
+          <div className="mt-6 space-y-4">
+            <div className="rounded-3xl bg-gradient-to-br from-emerald-50 to-[#fff7ed] p-5 text-emerald-900">
+              <p className="text-sm font-bold uppercase tracking-[0.18em] text-emerald-700">
+                Pedido criado
+              </p>
+              <strong className="mt-1 block text-2xl">
                 Pedido #{pedido.order_number} recebido!
               </strong>
-              {pedido.pagamento === "pix"
-                ? "O pedido aguarda a confirmação do pagamento Pix."
-                : "O pagamento será realizado no momento da entrega."}
+              <p className="mt-2 text-sm text-emerald-800/80">
+                {pedido.pagamento === "pix"
+                  ? "Seu pedido ficou com pagamento pendente até a equipe confirmar o Pix."
+                  : "Seu pedido foi recebido e o pagamento será tratado na entrega."}
+              </p>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-4">
+              {etapasPedido.map((etapa, index) => (
+                <div
+                  key={etapa}
+                  className={`rounded-2xl border p-3 text-sm ${
+                    index === 0
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                      : "border-gray-200 bg-gray-50 text-gray-500"
+                  }`}
+                >
+                  <span className="mb-2 grid h-7 w-7 place-items-center rounded-full bg-white text-xs font-bold">
+                    {index + 1}
+                  </span>
+                  {etapa}
+                </div>
+              ))}
             </div>
 
             {pedido.pagamento === "pix" && pixKey && (
-              <div className="mt-4 rounded-2xl border p-5">
-                <p className="font-bold">Dados para pagamento Pix</p>
-                <p className="mt-2 text-sm text-gray-500">
-                  Favorecido: {pixReceiver}
-                </p>
+              <div className="rounded-2xl border border-[#8a5d2b]/15 p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="font-bold">Dados para pagamento Pix</p>
+                    <p className="mt-1 text-sm text-gray-500">
+                      Favorecido: {pixReceiver}
+                    </p>
+                  </div>
+                  <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-800">
+                    Pendente
+                  </span>
+                </div>
                 <div className="mt-3 flex items-center gap-2 rounded-xl bg-gray-50 p-3">
                   <code className="min-w-0 flex-1 break-all text-sm">{pixKey}</code>
                   <button
@@ -144,20 +190,41 @@ export default function CheckoutModal({ carrinho, total, onClose, onSuccess }) {
                     onClick={copiarPix}
                     className="rounded-lg bg-[#8a5d2b] px-3 py-2 text-sm font-bold text-white"
                   >
-                    Copiar
+                    {pixCopiado ? "Copiado" : "Copiar"}
                   </button>
                 </div>
                 <p className="mt-3 text-sm text-gray-500">
-                  Após pagar, aguarde a equipe confirmar o pagamento no sistema.
+                  Depois do Pix, envie o comprovante pelo WhatsApp ou aguarde a
+                  conferência da equipe. O status mudará para pagamento
+                  confirmado quando for aprovado.
                 </p>
               </div>
             )}
 
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Link
+                to={`/pedido?token=${pedido.public_token}`}
+                className="inline-flex justify-center rounded-xl bg-[#2f2924] p-4 font-bold text-white"
+              >
+                Acompanhar pedido
+              </Link>
+              <a
+                href={`https://wa.me/${whatsappNumero}?text=${encodeURIComponent(
+                  mensagemWhatsAppPedido
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex justify-center rounded-xl bg-green-600 p-4 font-bold text-white"
+              >
+                Falar no WhatsApp
+              </a>
+            </div>
+
             <Link
-              to={`/pedido?token=${pedido.public_token}`}
-              className="mt-5 inline-flex w-full justify-center rounded-xl bg-[#2f2924] p-4 font-bold text-white"
+              to="/cliente"
+              className="block rounded-2xl bg-[#fff7ed] p-4 text-center text-sm font-semibold text-[#8a5d2b]"
             >
-              Acompanhar pedido
+              Entrar ou criar conta para ver seus pedidos em um só lugar
             </Link>
           </div>
         ) : (

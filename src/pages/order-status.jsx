@@ -16,6 +16,36 @@ const formatarPreco = (valor) =>
 
 const chaveAcompanhamento = "selleta-last-order";
 
+const fluxoPedido = [
+  "received",
+  "confirmed",
+  "preparing",
+  "ready",
+  "out_for_delivery",
+  "delivered",
+];
+
+function obterIndicePedido(status) {
+  const indice = fluxoPedido.indexOf(status);
+  return indice >= 0 ? indice : 0;
+}
+
+function obterMensagemPagamento(pedido) {
+  if (pedido.payment_method === "pix" && pedido.payment_status === "pending") {
+    return "Seu Pix ainda está em conferência. Assim que a equipe confirmar, o pedido segue para preparação.";
+  }
+
+  if (pedido.payment_status === "paid") {
+    return "Pagamento confirmado. Agora é só acompanhar a preparação do pedido.";
+  }
+
+  if (pedido.payment_status === "pay_on_delivery") {
+    return "Pagamento combinado para a entrega. A equipe seguirá com a confirmação do pedido.";
+  }
+
+  return "Acompanhe esta tela para ver as próximas atualizações.";
+}
+
 function carregarAcompanhamento() {
   try {
     const salvo = JSON.parse(
@@ -72,6 +102,9 @@ export default function OrderStatus() {
     }
   }
 
+  const etapaAtual = pedido ? obterIndicePedido(pedido.order_status) : 0;
+  const pedidoCancelado = pedido?.order_status === "canceled";
+
   return (
     <main className="mx-auto min-h-screen max-w-2xl px-4 py-8">
       <Link to="/">
@@ -117,9 +150,63 @@ export default function OrderStatus() {
 
         {pedido && (
           <div className="mt-6 space-y-4">
+            <div className="rounded-3xl bg-gradient-to-br from-[#2f2924] to-[#8a5d2b] p-5 text-white">
+              <p className="text-sm uppercase tracking-[0.18em] text-[#f4d7aa]">
+                Pedido #{pedido.order_number}
+              </p>
+              <h2 className="mt-1 text-2xl font-bold">
+                {pedidoCancelado
+                  ? "Pedido cancelado"
+                  : pedidoLabels[pedido.order_status]}
+              </h2>
+              <p className="mt-2 text-sm text-white/75">
+                {pedidoCancelado
+                  ? "Entre em contato com a equipe se precisar revisar este pedido."
+                  : obterMensagemPagamento(pedido)}
+              </p>
+            </div>
+
+            {!pedidoCancelado && (
+              <div className="rounded-2xl border bg-white p-5">
+                <h2 className="font-bold">Andamento</h2>
+                <div className="mt-4 space-y-3">
+                  {fluxoPedido.map((status, index) => {
+                    const concluido = index <= etapaAtual;
+
+                    return (
+                      <div key={status} className="flex gap-3">
+                        <span
+                          className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full text-xs font-bold ${
+                            concluido
+                              ? "bg-[#8a5d2b] text-white"
+                              : "bg-gray-100 text-gray-400"
+                          }`}
+                        >
+                          {index + 1}
+                        </span>
+                        <div className="min-w-0">
+                          <p
+                            className={`font-semibold ${
+                              concluido ? "text-[#2f2924]" : "text-gray-400"
+                            }`}
+                          >
+                            {pedidoLabels[status]}
+                          </p>
+                          {index === etapaAtual && (
+                            <p className="text-sm text-gray-500">
+                              Status atual do seu pedido.
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <div className="rounded-2xl bg-[#fff7ed] p-5">
-              <p className="font-bold">Pedido #{pedido.order_number}</p>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <div>
                   <span className="text-xs uppercase text-gray-500">Pagamento</span>
                   <p className="font-semibold">
