@@ -6,6 +6,11 @@ import {
   statusPagamentoOpcoes,
   statusPedidoOpcoes,
 } from "../lib/order-status";
+import {
+  criarLinkWhatsAppPedido,
+  pagamentoPixPendente,
+  pedidoPodeAvancarComPagamento,
+} from "../lib/order-ui";
 import { atualizarPedidoAdmin } from "../lib/orders";
 import { supabase } from "../lib/supabase";
 
@@ -16,13 +21,9 @@ const formatarPreco = (valor) =>
   });
 
 const referenciaRelatorio = Date.now();
-const statusPedidoQueExigemPagamento = new Set([
-  "confirmed",
-  "preparing",
-  "ready",
-  "out_for_delivery",
-  "delivered",
-]);
+const whatsappNumero = String(
+  import.meta.env.VITE_WHATSAPP_NUMBER || "5585992903028"
+).replace(/\D/g, "");
 
 function obterMensagemErroStatus(error) {
   const mensagem = error?.message || "";
@@ -187,11 +188,7 @@ export default function AdminOrders() {
   async function salvarStatus(pedido) {
     setErro("");
 
-    if (
-      pedido.payment_method === "pix" &&
-      pedido.payment_status !== "paid" &&
-      statusPedidoQueExigemPagamento.has(pedido.order_status)
-    ) {
+    if (!pedidoPodeAvancarComPagamento(pedido)) {
       await carregarPedidos();
       setErro("Confirme o pagamento Pix antes de avançar o pedido.");
       return;
@@ -344,8 +341,15 @@ export default function AdminOrders() {
         </div>
       ) : (
         <div className="space-y-4">
-          {pedidosFiltrados.map((pedido) => (
-            <article key={pedido.id} className="rounded-2xl border bg-white p-5 shadow-sm">
+          {pedidosFiltrados.map((pedido) => {
+            const linkWhatsApp = criarLinkWhatsAppPedido(
+              pedido.customer_phone || whatsappNumero,
+              pedido,
+              "admin"
+            );
+
+            return (
+              <article key={pedido.id} className="rounded-2xl border bg-white p-5 shadow-sm">
               <div className="flex flex-col justify-between gap-3 sm:flex-row">
                 <div>
                   <p className="text-sm font-bold text-[#8a5d2b]">
@@ -361,6 +365,16 @@ export default function AdminOrders() {
                   <p className="text-sm text-gray-500">
                     {metodoPagamentoLabels[pedido.payment_method]}
                   </p>
+                  {linkWhatsApp && (
+                    <a
+                      href={linkWhatsApp}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-2 inline-flex rounded-lg bg-green-600 px-3 py-2 text-sm font-bold text-white"
+                    >
+                      WhatsApp
+                    </a>
+                  )}
                 </div>
               </div>
 
@@ -373,13 +387,12 @@ export default function AdminOrders() {
                 ))}
               </div>
 
-              {pedido.payment_method === "pix" &&
-                pedido.payment_status === "pending" && (
-                  <p className="mt-3 rounded-xl bg-amber-50 p-3 text-sm font-semibold text-amber-800">
-                    Pix pendente: marque “Pagamento confirmado” antes de avançar
-                    o status do pedido.
-                  </p>
-                )}
+              {pagamentoPixPendente(pedido) && (
+                <p className="mt-3 rounded-xl bg-amber-50 p-3 text-sm font-semibold text-amber-800">
+                  Pix pendente: marque “Pagamento confirmado” antes de avançar
+                  o status do pedido.
+                </p>
+              )}
 
               <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
                 <label>
@@ -435,7 +448,8 @@ export default function AdminOrders() {
                 {pedidoLabels[pedido.order_status]}
               </p>
             </article>
-          ))}
+            );
+          })}
         </div>
       )}
     </section>

@@ -6,6 +6,12 @@ import {
   pagamentoLabels,
   pedidoLabels,
 } from "../src/lib/order-status.js";
+import {
+  criarMensagemWhatsAppPedido,
+  normalizarTelefone,
+  pagamentoPixPendente,
+  pedidoPodeAvancarComPagamento,
+} from "../src/lib/order-ui.js";
 
 test("migrações de pedidos usam UUID para produtos", async () => {
   const instalacao = await readFile(
@@ -73,4 +79,18 @@ test("balanço de estoque exige administrador e mantém histórico", async () =>
   assert.match(balanco, /public\.admin_balance_product_stock/);
   assert.match(balanco, /private\.is_admin/);
   assert.match(balanco, /array\['P', 'M', 'G', 'GG'\]/);
+});
+
+test("regras comerciais de pedido protegem Pix e WhatsApp", () => {
+  const pedido = {
+    order_number: 12,
+    payment_method: "pix",
+    payment_status: "pending",
+    order_status: "confirmed",
+  };
+
+  assert.equal(pagamentoPixPendente(pedido), true);
+  assert.equal(pedidoPodeAvancarComPagamento(pedido), false);
+  assert.match(criarMensagemWhatsAppPedido(pedido, "admin"), /#12/);
+  assert.equal(normalizarTelefone("(85) 99999-0000"), "5585999990000");
 });

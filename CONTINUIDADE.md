@@ -1,6 +1,6 @@
 # Continuidade do projeto Selleta Modas
 
-Atualizado em: 19 de julho de 2026.
+Atualizado em: 20 de julho de 2026.
 
 ## Estado atual
 
@@ -23,6 +23,7 @@ Atualizado em: 19 de julho de 2026.
 - O painel possui importação de `.xlsx` com instruções das colunas A–O, validação, prévia e criação automática da grade P/M/G/GG.
 - Três novas peças do Instagram oficial foram adicionadas: Vestido Longo Cacau, Conjunto Short Solar e Vestido Curto Poá Menta.
 - O primeiro bloco de segurança remove o upload anônimo do Storage e limita o bucket `produtos` a JPEG/PNG/WebP de até 5 MB.
+- A experiência de pedidos foi reforçada com helper compartilhado de status, progresso visual na área da cliente e atalhos de WhatsApp para cliente/admin.
 
 ## Regra para próximas rodadas
 
@@ -81,6 +82,7 @@ verificação da publicação no Vercel. Depois de cada publicação:
 - Corrigido o erro de grade causado pela tentativa de salvar um produto já excluído; o editor agora prepara P/M/G/GG por padrão.
 - Adicionada a guia Balanço para substituir quantidades por tamanho e registrar cada diferença de estoque.
 - Frontend da loja reorganizado em componentes reutilizáveis, com rodapé comercial, guia de compra atualizado e refinamento mobile-first.
+- Centralizadas as regras visuais de pedidos em `src/lib/order-ui.js`, reutilizadas no acompanhamento, área da cliente e painel administrativo.
 
 ## Esquema principal
 
@@ -111,7 +113,8 @@ O upload do bucket `produtos` já foi restringido a administradores autenticados
 2. Testar um pedido real com variação e acompanhar em `/pedido`.
 3. Confirmar/cancelar o pedido no painel administrativo para validar estoque e status.
 4. Integrar provedor de Pix com QR Code e webhook para confirmação automática.
-5. Fazer auditoria final das políticas RLS, analytics, monitoramento e testes E2E.
+5. Melhorar e automatizar e-mails/WhatsApp transacionais para pedido recebido, pagamento confirmado e pedido entregue.
+6. Fazer auditoria final das políticas RLS, analytics, monitoramento e testes E2E.
 
 O cálculo de frete ficará fora do escopo por enquanto. O checkout não soma frete ao subtotal.
 

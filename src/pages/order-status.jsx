@@ -7,6 +7,13 @@ import {
   pagamentoLabels,
   pedidoLabels,
 } from "../lib/order-status";
+import {
+  criarLinkWhatsAppPedido,
+  fluxoPedido,
+  obterIndicePedido,
+  obterMensagemPagamento,
+  pedidoEstaCancelado,
+} from "../lib/order-ui";
 
 const formatarPreco = (valor) =>
   Number(valor || 0).toLocaleString("pt-BR", {
@@ -15,36 +22,9 @@ const formatarPreco = (valor) =>
   });
 
 const chaveAcompanhamento = "selleta-last-order";
-
-const fluxoPedido = [
-  "received",
-  "confirmed",
-  "preparing",
-  "ready",
-  "out_for_delivery",
-  "delivered",
-];
-
-function obterIndicePedido(status) {
-  const indice = fluxoPedido.indexOf(status);
-  return indice >= 0 ? indice : 0;
-}
-
-function obterMensagemPagamento(pedido) {
-  if (pedido.payment_method === "pix" && pedido.payment_status === "pending") {
-    return "Seu Pix ainda está em conferência. Assim que a equipe confirmar, o pedido segue para preparação.";
-  }
-
-  if (pedido.payment_status === "paid") {
-    return "Pagamento confirmado. Agora é só acompanhar a preparação do pedido.";
-  }
-
-  if (pedido.payment_status === "pay_on_delivery") {
-    return "Pagamento combinado para a entrega. A equipe seguirá com a confirmação do pedido.";
-  }
-
-  return "Acompanhe esta tela para ver as próximas atualizações.";
-}
+const whatsappNumero = String(
+  import.meta.env.VITE_WHATSAPP_NUMBER || "5585992903028"
+).replace(/\D/g, "");
 
 function carregarAcompanhamento() {
   try {
@@ -79,7 +59,7 @@ export default function OrderStatus() {
     () => searchParams.get("token") || pedidoSalvo?.public_token || ""
   );
   const [telefone, setTelefone] = useState(
-    () => pedidoSalvo?.telefone || ""
+    () => searchParams.get("telefone") || pedidoSalvo?.telefone || ""
   );
   const [pedido, setPedido] = useState(null);
   const [erro, setErro] = useState("");
@@ -103,7 +83,8 @@ export default function OrderStatus() {
   }
 
   const etapaAtual = pedido ? obterIndicePedido(pedido.order_status) : 0;
-  const pedidoCancelado = pedido?.order_status === "canceled";
+  const pedidoCancelado = pedidoEstaCancelado(pedido);
+  const linkWhatsApp = criarLinkWhatsAppPedido(whatsappNumero, pedido, "cliente");
 
   return (
     <main className="mx-auto min-h-screen max-w-2xl px-4 py-8">
@@ -244,6 +225,25 @@ export default function OrderStatus() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              {linkWhatsApp && (
+                <a
+                  href={linkWhatsApp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex justify-center rounded-xl bg-green-600 p-3 font-bold text-white shadow-sm transition hover:bg-green-700"
+                >
+                  Falar no WhatsApp
+                </a>
+              )}
+              <Link
+                to="/cliente"
+                className="inline-flex justify-center rounded-xl border border-[#8a5d2b]/20 p-3 font-bold text-[#8a5d2b] transition hover:bg-[#fff7ed]"
+              >
+                Ver minha conta
+              </Link>
             </div>
           </div>
         )}

@@ -5,8 +5,14 @@ import { vincularPedido } from "../lib/orders";
 import {
   metodoPagamentoLabels,
   pagamentoLabels,
-  pedidoLabels,
 } from "../lib/order-status";
+import {
+  criarLinkWhatsAppPedido,
+  fluxoPedido,
+  obterIndicePedido,
+  obterResumoOperacionalPedido,
+  pedidoEstaCancelado,
+} from "../lib/order-ui";
 import {
   consultarBloqueioLogin,
   limparFalhasLogin,
@@ -20,6 +26,10 @@ const formatarPreco = (valor) =>
     style: "currency",
     currency: "BRL",
   });
+
+const whatsappNumero = String(
+  import.meta.env.VITE_WHATSAPP_NUMBER || "5585992903028"
+).replace(/\D/g, "");
 
 export default function Customer() {
   const [session, setSession] = useState(null);
@@ -310,31 +320,87 @@ export default function Customer() {
               </div>
             ) : (
               <div className="mt-4 grid gap-4 md:grid-cols-2">
-                {pedidos.map((pedido) => (
-                  <article key={pedido.id} className="rounded-2xl border bg-white p-5 shadow-sm">
-                    <div className="flex justify-between gap-3">
-                      <strong>Pedido #{pedido.order_number}</strong>
-                      <strong className="text-[#8a5d2b]">
-                        {formatarPreco(pedido.subtotal)}
-                      </strong>
-                    </div>
-                    <p className="mt-3 text-sm">
-                      {pagamentoLabels[pedido.payment_status]} ·{" "}
-                      {pedidoLabels[pedido.order_status]}
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      {metodoPagamentoLabels[pedido.payment_method]}
-                    </p>
-                    <div className="mt-4 space-y-1 border-t pt-3 text-sm">
-                      {pedido.order_items?.map((item) => (
-                        <p key={item.id}>
-                          {item.quantity}× {item.product_name} — {item.size}/
-                          {item.color}/{item.print || "Sem estampa"}
-                        </p>
-                      ))}
-                    </div>
-                  </article>
-                ))}
+                {pedidos.map((pedido) => {
+                  const etapaAtual = obterIndicePedido(pedido.order_status);
+                  const cancelado = pedidoEstaCancelado(pedido);
+                  const linkWhatsApp = criarLinkWhatsAppPedido(
+                    whatsappNumero,
+                    pedido,
+                    "cliente"
+                  );
+                  const linkAcompanhamento = pedido.public_token
+                    ? `/pedido?token=${pedido.public_token}&telefone=${encodeURIComponent(
+                        pedido.customer_phone || ""
+                      )}`
+                    : "/pedido";
+
+                  return (
+                    <article
+                      key={pedido.id}
+                      className="rounded-2xl border bg-white p-5 shadow-sm"
+                    >
+                      <div className="flex justify-between gap-3">
+                        <div>
+                          <strong>Pedido #{pedido.order_number}</strong>
+                          <p className="mt-1 text-sm font-semibold text-[#8a5d2b]">
+                            {obterResumoOperacionalPedido(pedido)}
+                          </p>
+                        </div>
+                        <strong className="text-[#8a5d2b]">
+                          {formatarPreco(pedido.subtotal)}
+                        </strong>
+                      </div>
+
+                      {!cancelado && (
+                        <div className="mt-4 flex items-center gap-1.5">
+                          {fluxoPedido.map((status, index) => (
+                            <span
+                              key={status}
+                              className={`h-2 flex-1 rounded-full ${
+                                index <= etapaAtual
+                                  ? "bg-[#8a5d2b]"
+                                  : "bg-gray-100"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      )}
+
+                      <p className="mt-4 text-sm">
+                        {pagamentoLabels[pedido.payment_status]} ·{" "}
+                        {metodoPagamentoLabels[pedido.payment_method]}
+                      </p>
+
+                      <div className="mt-4 space-y-1 border-t pt-3 text-sm text-gray-600">
+                        {pedido.order_items?.map((item) => (
+                          <p key={item.id}>
+                            {item.quantity}× {item.product_name} — {item.size}/
+                            {item.color}/{item.print || "Sem estampa"}
+                          </p>
+                        ))}
+                      </div>
+
+                      <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                        <Link
+                          to={linkAcompanhamento}
+                          className="rounded-xl bg-[#8a5d2b] px-4 py-3 text-center text-sm font-bold text-white"
+                        >
+                          Acompanhar
+                        </Link>
+                        {linkWhatsApp && (
+                          <a
+                            href={linkWhatsApp}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="rounded-xl border border-green-600 px-4 py-3 text-center text-sm font-bold text-green-700"
+                          >
+                            WhatsApp
+                          </a>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
               </div>
             )}
           </section>
