@@ -35,6 +35,9 @@ export default function ProductCard({
   });
   const emEstoque = opcoes.estoque > 0;
   const imagemPrincipal = obterImagemPrincipal(produto);
+  const precoVenda = obterPrecoVenda(produto);
+  const possuiPromocao = temPrecoPromocional(produto);
+  const economia = possuiPromocao ? Number(produto.preco) - precoVenda : 0;
   const possuiEstampa = opcoes.estampas.some(
     (opcao) => normalizarOpcao(opcao) !== normalizarOpcao(SEM_ESTAMPA)
   );
@@ -66,7 +69,7 @@ export default function ProductCard({
             </div>
           )}
 
-          {temPrecoPromocional(produto) && (
+          {possuiPromocao && (
             <span className="absolute left-3 top-3 rounded-full bg-red-600 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
               Oferta
             </span>
@@ -96,13 +99,18 @@ export default function ProductCard({
           </p>
 
           <div className="mt-4 min-h-[3.75rem]">
-            {temPrecoPromocional(produto) && (
+            {possuiPromocao && (
               <p className="text-sm text-gray-400 line-through">
                 {formatarPreco(produto.preco)}
               </p>
             )}
             <p className="text-xl font-bold text-[#8a5d2b]">
-              {formatarPreco(obterPrecoVenda(produto))}
+              {formatarPreco(precoVenda)}
+            </p>
+            <p className="mt-1 text-xs font-medium text-gray-500">
+              {economia > 0
+                ? `Economize ${formatarPreco(economia)}`
+                : "Pix ou pagamento na entrega, quando disponível"}
             </p>
           </div>
 

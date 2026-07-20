@@ -6,11 +6,13 @@ import ProductCard from "../components/ProductCard";
 import ProductModal from "../components/ProductModal";
 import SiteHeader from "../components/SiteHeader";
 import {
+  CollectionHighlights,
   FloatingWhatsApp,
   PurchaseGuide,
   StoreBenefits,
   StoreFooter,
   StoreHero,
+  TrustSection,
 } from "../components/StorefrontSections";
 import { carregarCatalogo } from "../lib/catalog";
 import {
@@ -21,6 +23,7 @@ import {
   obterTamanhosProduto,
   obterUrlProduto,
   obterPrecoVenda,
+  temPrecoPromocional,
   obterVariacoes,
 } from "../lib/product";
 
@@ -424,11 +427,12 @@ if (!telefoneCliente.trim()) {
     soma + obterPrecoVenda(item) * item.quantidade,
   0
 );
+  const produtosAtivos = produtos.filter((produto) => produto.ativo !== false);
   const categorias = [
-    ...new Set(produtos.map((produto) => produto.categoria).filter(Boolean)),
+    ...new Set(produtosAtivos.map((produto) => produto.categoria).filter(Boolean)),
   ];
   const tamanhosDisponiveis = obterOpcoesUnicas(
-    produtos
+    produtosAtivos
       .flatMap((produto) => obterTamanhosProduto(produto))
       .map((tamanho) => tamanho.toLocaleUpperCase("pt-BR"))
   ).sort((tamanhoA, tamanhoB) => {
@@ -437,8 +441,9 @@ if (!telefoneCliente.trim()) {
     return (indiceA < 0 ? 99 : indiceA) - (indiceB < 0 ? 99 : indiceB);
   });
   const coresDisponiveis = obterOpcoesUnicas(
-    produtos.flatMap((produto) => obterCoresProduto(produto))
+    produtosAtivos.flatMap((produto) => obterCoresProduto(produto))
   );
+  const totalPromocoes = produtosAtivos.filter(temPrecoPromocional).length;
   const produtosFiltrados = produtos.filter((produto) => {
     const produtoAtivo = produto.ativo !== false;
     const correspondeBusca = produto.products
@@ -876,6 +881,11 @@ if (!telefoneCliente.trim()) {
         </>
       )}
       <StoreHero whatsappNumero={whatsappNumero} />
+      <CollectionHighlights
+        totalProdutos={produtosAtivos.length}
+        totalCategorias={categorias.length}
+        totalPromocoes={totalPromocoes}
+      />
       <StoreBenefits />
 
       <section id="catalogo" aria-labelledby="titulo-catalogo" className="min-w-0">
@@ -911,8 +921,33 @@ if (!telefoneCliente.trim()) {
       )}
 
       {!carregando && !erroProdutos && produtosFiltrados.length === 0 && (
-        <div className="rounded-2xl border border-dashed bg-white p-10 text-center text-gray-500">
-          Nenhum produto encontrado.
+        <div className="rounded-3xl border border-dashed border-[#8a5d2b]/20 bg-white p-10 text-center">
+          <p className="text-xl font-bold text-[#2f2924]">
+            Nenhuma peça encontrada
+          </p>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-gray-500">
+            Tente limpar os filtros ou chame a Selleta no WhatsApp para receber
+            ajuda com tamanho, cor e disponibilidade.
+          </p>
+          <div className="mt-5 flex flex-col justify-center gap-2 sm:flex-row">
+            <button
+              type="button"
+              onClick={limparFiltros}
+              className="rounded-xl border border-[#8a5d2b]/25 px-5 py-3 font-semibold text-[#8a5d2b]"
+            >
+              Limpar filtros
+            </button>
+            <a
+              href={`https://wa.me/${whatsappNumero}?text=${encodeURIComponent(
+                "Olá! Preciso de ajuda para encontrar uma peça da Selleta Modas."
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-xl bg-green-600 px-5 py-3 font-semibold text-white"
+            >
+              Pedir ajuda no WhatsApp
+            </a>
+          </div>
         </div>
       )}
 
@@ -941,6 +976,7 @@ if (!telefoneCliente.trim()) {
       </section>
 
       <PurchaseGuide checkoutDiretoAtivo={checkoutDiretoAtivo} />
+      <TrustSection />
       <FloatingWhatsApp whatsappNumero={whatsappNumero} />
       <StoreFooter whatsappNumero={whatsappNumero} />
     </main>

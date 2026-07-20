@@ -33,7 +33,8 @@ export default function CatalogFilters({
             Encontre seu próximo look
           </h2>
           <p className="mt-2 text-sm text-gray-500">
-            Filtre por categoria, tamanho, cor ou faixa de preço.
+            {totalEncontrado} peça(s) disponível(is). Filtre por categoria,
+            tamanho, cor ou faixa de preço.
           </p>
         </div>
 
@@ -122,9 +123,17 @@ export default function CatalogFilters({
         </div>
       )}
 
-      {filtrosAtivos && (
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-[#fff2df] px-4 py-3 text-sm">
-          <span>{totalEncontrado} produto(s) encontrado(s)</span>
+      <div
+        className={`mb-5 flex flex-wrap items-center justify-between gap-2 rounded-xl px-4 py-3 text-sm ${
+          filtrosAtivos ? "bg-[#fff2df]" : "border border-[#8a5d2b]/10 bg-white"
+        }`}
+      >
+        <span>
+          {filtrosAtivos
+            ? `${totalEncontrado} produto(s) encontrado(s)`
+            : "Dica: escolha o tamanho primeiro para ver peças com grade disponível."}
+        </span>
+        {filtrosAtivos && (
           <button
             type="button"
             onClick={onLimpar}
@@ -132,8 +141,8 @@ export default function CatalogFilters({
           >
             Limpar filtros
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 }

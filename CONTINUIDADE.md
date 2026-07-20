@@ -24,6 +24,7 @@ Atualizado em: 20 de julho de 2026.
 - Três novas peças do Instagram oficial foram adicionadas: Vestido Longo Cacau, Conjunto Short Solar e Vestido Curto Poá Menta.
 - O primeiro bloco de segurança remove o upload anônimo do Storage e limita o bucket `produtos` a JPEG/PNG/WebP de até 5 MB.
 - A experiência de pedidos foi reforçada com helper compartilhado de status, progresso visual na área da cliente e atalhos de WhatsApp para cliente/admin.
+- A vitrine pública ganhou destaques de coleção, microcopy de economia/pagamento, filtros mais claros e seção de confiança sem depoimentos fictícios.
 
 ## Regra para próximas rodadas
 
@@ -83,6 +84,7 @@ verificação da publicação no Vercel. Depois de cada publicação:
 - Adicionada a guia Balanço para substituir quantidades por tamanho e registrar cada diferença de estoque.
 - Frontend da loja reorganizado em componentes reutilizáveis, com rodapé comercial, guia de compra atualizado e refinamento mobile-first.
 - Centralizadas as regras visuais de pedidos em `src/lib/order-ui.js`, reutilizadas no acompanhamento, área da cliente e painel administrativo.
+- Adicionadas seções públicas de destaque e confiança para aumentar conversão sem alterar banco ou dependências.
 
 ## Esquema principal
 

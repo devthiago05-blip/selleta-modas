@@ -72,6 +72,18 @@ export function StoreHero({ whatsappNumero }) {
               Falar com a Selleta
             </a>
           </div>
+          <div className="mx-auto mt-8 grid max-w-2xl gap-3 text-left sm:grid-cols-3 lg:mx-0">
+            {[
+              ["Grade completa", "P, M, G e GG"],
+              ["Compra assistida", "Online ou WhatsApp"],
+              ["Pedido visível", "Status atualizado"],
+            ].map(([titulo, texto]) => (
+              <div key={titulo} className="rounded-2xl bg-white/10 p-4 backdrop-blur-sm">
+                <strong className="block text-sm">{titulo}</strong>
+                <span className="text-xs text-white/70">{texto}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="hidden rounded-3xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm lg:block">
@@ -88,6 +100,44 @@ export function StoreHero({ whatsappNumero }) {
           </div>
         </div>
       </div>
+    </section>
+  );
+}
+
+export function CollectionHighlights({
+  totalProdutos = 0,
+  totalCategorias = 0,
+  totalPromocoes = 0,
+}) {
+  const destaques = [
+    [
+      totalProdutos > 0 ? `${totalProdutos} peças` : "Coleção online",
+      "Vitrine organizada para escolher por tamanho, cor e estilo.",
+    ],
+    [
+      totalCategorias > 0 ? `${totalCategorias} categorias` : "Curadoria feminina",
+      "Looks para passeio, rotina, eventos e momentos especiais.",
+    ],
+    [
+      totalPromocoes > 0 ? `${totalPromocoes} ofertas` : "Promoções sinalizadas",
+      "Preço normal e promocional aparecem com clareza no catálogo.",
+    ],
+  ];
+
+  return (
+    <section
+      aria-label="Resumo da coleção Selleta"
+      className="mb-10 grid gap-3 md:grid-cols-3"
+    >
+      {destaques.map(([titulo, texto]) => (
+        <article
+          key={titulo}
+          className="rounded-3xl border border-[#8a5d2b]/10 bg-white p-5 shadow-sm"
+        >
+          <strong className="text-2xl text-[#8a5d2b]">{titulo}</strong>
+          <p className="mt-2 text-sm leading-relaxed text-gray-500">{texto}</p>
+        </article>
+      ))}
     </section>
   );
 }
@@ -156,6 +206,54 @@ export function PurchaseGuide({ checkoutDiretoAtivo }) {
             </span>
             <h3 className="mt-4 font-bold">{titulo}</h3>
             <p className="mt-1 text-sm leading-relaxed text-white/70">{texto}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function TrustSection() {
+  const pontos = [
+    [
+      "Atendimento humano",
+      "A cliente pode comprar pelo site ou chamar a equipe para tirar dúvidas antes de finalizar.",
+    ],
+    [
+      "Pedido acompanhado",
+      "Depois da compra, o pedido mostra pagamento, status e itens selecionados.",
+    ],
+    [
+      "Escolha sem erro",
+      "Tamanho, cor e estampa ficam visíveis antes de adicionar ao carrinho.",
+    ],
+  ];
+
+  return (
+    <section className="mt-16 grid gap-6 rounded-[2rem] border border-[#8a5d2b]/10 bg-white p-6 shadow-sm lg:grid-cols-[0.9fr_1.1fr] lg:p-8">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#8a5d2b]">
+          Confiança Selleta
+        </p>
+        <h2 className="mt-2 text-2xl font-bold sm:text-3xl">
+          Uma compra bonita por fora e organizada por dentro
+        </h2>
+        <p className="mt-3 text-sm leading-relaxed text-gray-500 sm:text-base">
+          O site foi pensado para reduzir dúvidas: catálogo claro, estoque por
+          variação, checkout opcional e acompanhamento depois do pedido.
+        </p>
+      </div>
+
+      <div className="grid gap-3">
+        {pontos.map(([titulo, texto], index) => (
+          <article key={titulo} className="flex gap-4 rounded-2xl bg-[#fff7ed] p-4">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[#8a5d2b] text-sm font-bold text-white">
+              {index + 1}
+            </span>
+            <div>
+              <h3 className="font-bold">{titulo}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-gray-600">{texto}</p>
+            </div>
           </article>
         ))}
       </div>
