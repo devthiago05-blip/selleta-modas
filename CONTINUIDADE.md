@@ -1,6 +1,6 @@
 # Continuidade do projeto Selleta Modas
 
-Atualizado em: 3 de julho de 2026.
+Atualizado em: 19 de julho de 2026.
 
 ## Estado atual
 
@@ -12,6 +12,7 @@ Atualizado em: 3 de julho de 2026.
 - Verificação atual: `public.product_variants` está acessível pela API REST do Supabase.
 - O painel administrativo está disponível em `/login` e protegido por Supabase Auth + `admin_users`.
 - Checkout próprio, área da cliente, pedidos, status e relatórios administrativos estão ativos.
+- Pendência registrada para fazer depois: configurar `VITE_PIX_KEY` e `VITE_PIX_RECEIVER` no Vercel, criar um pedido real no site e conferir o fluxo completo em `/pedido` e no painel administrativo.
 - A grade por tamanho, cor, estampa e estoque por combinação está ativa no código e no Supabase.
 - Auditoria do Supabase confirmou RLS nas tabelas principais e corrigiu privilégios anônimos das funções administrativas.
 - O editor de grade oferece P/M/G/GG, 30 cores comuns, gerador de combinações e imagem opcional por estampa.
@@ -106,10 +107,11 @@ O upload do bucket `produtos` já foi restringido a administradores autenticados
 
 ## Próximas melhorias por prioridade
 
-1. Entrar em `/login`, editar um produto e cadastrar sua grade.
-2. Testar um pedido com variação e confirmar/cancelar no painel para validar o estoque.
-3. Integrar provedor de Pix com QR Code e webhook para confirmação automática.
-4. Fazer auditoria final das políticas RLS, analytics, monitoramento e testes E2E.
+1. Configurar `VITE_PIX_KEY` e `VITE_PIX_RECEIVER` no Vercel.
+2. Testar um pedido real com variação e acompanhar em `/pedido`.
+3. Confirmar/cancelar o pedido no painel administrativo para validar estoque e status.
+4. Integrar provedor de Pix com QR Code e webhook para confirmação automática.
+5. Fazer auditoria final das políticas RLS, analytics, monitoramento e testes E2E.
 
 O cálculo de frete ficará fora do escopo por enquanto. O checkout não soma frete ao subtotal.
 
@@ -117,7 +119,7 @@ O cálculo de frete ficará fora do escopo por enquanto. O checkout não soma fr
 
 Envie este arquivo junto com o projeto e peça:
 
-> Leia `CONTINUIDADE.md`, teste a grade no painel e continue pelas melhorias de Pix automático e auditoria final. Mantenha o cálculo de frete fora do escopo, preserve o que já funciona e valide com lint, testes e build.
+> Leia `CONTINUIDADE.md`, configure as variáveis de Pix no Vercel quando possível, teste um pedido real e continue pelas melhorias de Pix automático e auditoria final. Mantenha o cálculo de frete fora do escopo, preserve o que já funciona e valide com lint, testes e build.
 
 ## Comandos
 

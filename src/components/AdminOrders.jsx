@@ -16,6 +16,27 @@ const formatarPreco = (valor) =>
   });
 
 const referenciaRelatorio = Date.now();
+const statusPedidoQueExigemPagamento = new Set([
+  "confirmed",
+  "preparing",
+  "ready",
+  "out_for_delivery",
+  "delivered",
+]);
+
+function obterMensagemErroStatus(error) {
+  const mensagem = error?.message || "";
+
+  if (mensagem.includes("Confirme o pagamento Pix")) {
+    return "Confirme o pagamento Pix antes de avançar o pedido.";
+  }
+
+  if (mensagem.includes("Estoque insuficiente")) {
+    return "Estoque insuficiente para confirmar este pedido. Confira o balanço.";
+  }
+
+  return "Não foi possível atualizar o pedido. Tente novamente.";
+}
 
 export default function AdminOrders() {
   const [pedidos, setPedidos] = useState([]);
@@ -164,8 +185,19 @@ export default function AdminOrders() {
   }
 
   async function salvarStatus(pedido) {
-    setSalvandoId(pedido.id);
     setErro("");
+
+    if (
+      pedido.payment_method === "pix" &&
+      pedido.payment_status !== "paid" &&
+      statusPedidoQueExigemPagamento.has(pedido.order_status)
+    ) {
+      await carregarPedidos();
+      setErro("Confirme o pagamento Pix antes de avançar o pedido.");
+      return;
+    }
+
+    setSalvandoId(pedido.id);
 
     const {
       data: { session },
@@ -179,8 +211,10 @@ export default function AdminOrders() {
         session?.access_token
       );
       await carregarPedidos();
-    } catch {
-      setErro("Não foi possível atualizar o pedido. Tente novamente.");
+    } catch (error) {
+      const mensagemErro = obterMensagemErroStatus(error);
+      await carregarPedidos();
+      setErro(mensagemErro);
     } finally {
       setSalvandoId(null);
     }
@@ -338,6 +372,14 @@ export default function AdminOrders() {
                   </p>
                 ))}
               </div>
+
+              {pedido.payment_method === "pix" &&
+                pedido.payment_status === "pending" && (
+                  <p className="mt-3 rounded-xl bg-amber-50 p-3 text-sm font-semibold text-amber-800">
+                    Pix pendente: marque “Pagamento confirmado” antes de avançar
+                    o status do pedido.
+                  </p>
+                )}
 
               <div className="mt-4 grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
                 <label>
