@@ -28,3 +28,15 @@ test("robots informa o sitemap público", async () => {
   assert.match(sitemap, /<loc>https:\/\/selleta-modas\.vercel\.app\/<\/loc>/);
   assert.doesNotMatch(sitemap, /\/admin|\/login|\/cliente|\/pedido/);
 });
+
+test("página de produto prepara dados estruturados de produto", async () => {
+  const paginaProduto = await readFile(
+    new URL("../src/pages/product-detail.jsx", import.meta.url),
+    "utf8"
+  );
+
+  assert.match(paginaProduto, /selleta-single-product-schema/);
+  assert.match(paginaProduto, /"@type": "Product"/);
+  assert.match(paginaProduto, /priceCurrency/);
+  assert.match(paginaProduto, /availability/);
+});

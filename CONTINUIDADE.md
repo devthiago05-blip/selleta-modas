@@ -1,6 +1,6 @@
 # Continuidade do projeto Selleta Modas
 
-Atualizado em: 20 de julho de 2026.
+Atualizado em: 21 de julho de 2026.
 
 ## Estado atual
 
@@ -25,6 +25,7 @@ Atualizado em: 20 de julho de 2026.
 - O primeiro bloco de segurança remove o upload anônimo do Storage e limita o bucket `produtos` a JPEG/PNG/WebP de até 5 MB.
 - A experiência de pedidos foi reforçada com helper compartilhado de status, progresso visual na área da cliente e atalhos de WhatsApp para cliente/admin.
 - A vitrine pública ganhou destaques de coleção, microcopy de economia/pagamento, filtros mais claros e seção de confiança sem depoimentos fictícios.
+- A página individual do produto foi reforçada com dados estruturados SEO, CTA de WhatsApp, resumo de seleção/estoque e peças relacionadas.
 
 ## Regra para próximas rodadas
 
@@ -85,6 +86,7 @@ verificação da publicação no Vercel. Depois de cada publicação:
 - Frontend da loja reorganizado em componentes reutilizáveis, com rodapé comercial, guia de compra atualizado e refinamento mobile-first.
 - Centralizadas as regras visuais de pedidos em `src/lib/order-ui.js`, reutilizadas no acompanhamento, área da cliente e painel administrativo.
 - Adicionadas seções públicas de destaque e confiança para aumentar conversão sem alterar banco ou dependências.
+- Melhorada a página `/produto/:slug` com breadcrumb, preço/economia, confiança e navegação para produtos relacionados.
 
 ## Esquema principal
 

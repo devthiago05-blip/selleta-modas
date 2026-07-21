@@ -5,13 +5,18 @@ import SiteHeader from "../components/SiteHeader";
 import { carregarCatalogo } from "../lib/catalog";
 import {
   gerarSlugProduto,
+  obterImagemPrincipal,
   obterImagensProduto,
   obterOpcoesDisponiveisProduto,
   obterPrecoVenda,
+  obterUrlProduto,
   temPrecoPromocional,
 } from "../lib/product";
 
 const CHAVE_CARRINHO = "selleta-modas-carrinho";
+const whatsappNumero = String(
+  import.meta.env.VITE_WHATSAPP_NUMBER || "5585992903028"
+).replace(/\D/g, "");
 
 const formatarPreco = (valor) =>
   Number(valor || 0).toLocaleString("pt-BR", {
@@ -80,6 +85,19 @@ export default function ProductDetail() {
     () => (produto ? obterImagensProduto(produto) : []),
     [produto]
   );
+  const produtosRelacionados = useMemo(() => {
+    if (!produto) return [];
+
+    return produtos
+      .filter(
+        (item) =>
+          item.ativo !== false &&
+          item.id !== produto.id &&
+          item.categoria &&
+          item.categoria === produto.categoria
+      )
+      .slice(0, 4);
+  }, [produto, produtos]);
   const [imagemAtiva, setImagemAtiva] = useState("");
   const quantidadeCarrinho = carrinho.reduce(
     (total, item) => total + Number(item.quantidade || 0),
@@ -145,6 +163,49 @@ export default function ProductDetail() {
     }
     definirCanonical(urlProduto);
   }, [produto]);
+
+  useEffect(() => {
+    if (!produto) return undefined;
+
+    const scriptAnterior = document.getElementById("selleta-single-product-schema");
+    scriptAnterior?.remove();
+
+    const urlProduto = `${window.location.origin}${obterUrlProduto(produto)}`;
+    const precoVenda = obterPrecoVenda(produto);
+    const script = document.createElement("script");
+
+    script.id = "selleta-single-product-schema";
+    script.type = "application/ld+json";
+    script.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: produto.products,
+      description:
+        produto.descricao || "Produto feminino selecionado pela Selleta Modas.",
+      image: imagens,
+      category: produto.categoria || "Moda feminina",
+      brand: {
+        "@type": "Brand",
+        name: "Selleta Modas",
+      },
+      offers: {
+        "@type": "Offer",
+        url: urlProduto,
+        priceCurrency: "BRL",
+        price: precoVenda.toFixed(2),
+        availability:
+          Number(produto.estoque) > 0
+            ? "https://schema.org/InStock"
+            : "https://schema.org/OutOfStock",
+      },
+    });
+
+    document.head.appendChild(script);
+
+    return () => {
+      script.remove();
+    };
+  }, [imagens, produto]);
 
   function selecionarTamanho(novoTamanho) {
     const novaSelecao = obterOpcoesDisponiveisProduto(produto, {
@@ -268,6 +329,15 @@ export default function ProductDetail() {
   const imagemPrincipal = imagens.includes(imagemAtiva)
     ? imagemAtiva
     : imagens[0] || "";
+  const precoVenda = obterPrecoVenda(produto);
+  const possuiPromocao = temPrecoPromocional(produto);
+  const economia = possuiPromocao
+    ? Math.max(0, Number(produto.preco) - precoVenda)
+    : 0;
+  const emEstoque = opcoes.estoque > 0;
+  const linkWhatsAppProduto = `https://wa.me/${whatsappNumero}?text=${encodeURIComponent(
+    `Olá! Gostaria de tirar uma dúvida sobre ${produto.products}: ${window.location.href}`
+  )}`;
 
   return (
     <div className="min-h-screen bg-[#fffaf4]">
@@ -278,9 +348,24 @@ export default function ProductDetail() {
 
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <Link to="/#catalogo" className="text-sm font-semibold text-[#8a5d2b]">
-            ← Voltar ao catálogo
-          </Link>
+          <nav
+            aria-label="Caminho do produto"
+            className="flex flex-wrap items-center gap-2 text-sm text-gray-500"
+          >
+            <Link to="/" className="font-semibold text-[#8a5d2b]">
+              Início
+            </Link>
+            <span aria-hidden="true">/</span>
+            <Link to="/#catalogo" className="font-semibold text-[#8a5d2b]">
+              Catálogo
+            </Link>
+            {produto.categoria && (
+              <>
+                <span aria-hidden="true">/</span>
+                <span>{produto.categoria}</span>
+              </>
+            )}
+          </nav>
           <button
             type="button"
             onClick={copiarLinkProduto}
@@ -290,7 +375,7 @@ export default function ProductDetail() {
           </button>
         </div>
 
-        <section className="mt-6 grid gap-8 rounded-[2rem] bg-white p-4 shadow-sm md:grid-cols-[1fr_0.9fr] md:p-8">
+        <section className="mt-6 grid items-start gap-8 rounded-[2rem] bg-white p-4 shadow-sm md:grid-cols-[1fr_0.9fr] md:p-8">
           <div>
             {imagemPrincipal ? (
               <img
@@ -329,26 +414,65 @@ export default function ProductDetail() {
             )}
           </div>
 
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wider text-[#8a5d2b]">
-              {produto.categoria || "Moda feminina"}
-            </p>
+          <div className="md:sticky md:top-24">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-sm font-semibold uppercase tracking-wider text-[#8a5d2b]">
+                {produto.categoria || "Moda feminina"}
+              </p>
+              <span
+                className={`rounded-full px-3 py-1 text-xs font-bold ${
+                  emEstoque
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "bg-gray-100 text-gray-600"
+                }`}
+              >
+                {emEstoque ? "Em estoque" : "Esgotado"}
+              </span>
+            </div>
             <h1 className="mt-2 text-3xl font-bold sm:text-4xl">
               {produto.products}
             </h1>
             <div className="mt-4">
-              {temPrecoPromocional(produto) && (
+              {possuiPromocao && (
                 <p className="text-gray-400 line-through">
                   {formatarPreco(produto.preco)}
                 </p>
               )}
               <p className="text-3xl font-bold text-[#8a5d2b]">
-                {formatarPreco(obterPrecoVenda(produto))}
+                {formatarPreco(precoVenda)}
+              </p>
+              <p className="mt-1 text-sm font-medium text-gray-500">
+                {economia > 0
+                  ? `Economize ${formatarPreco(economia)} nesta peça.`
+                  : "Finalize pelo site ou fale com a equipe no WhatsApp."}
               </p>
             </div>
             <p className="mt-5 leading-relaxed text-gray-600">
               {produto.descricao || "Peça selecionada pela Selleta Modas."}
             </p>
+
+            <div className="mt-5 grid gap-2 rounded-2xl bg-[#fff7ed] p-4 text-sm text-gray-600 sm:grid-cols-3">
+              <div>
+                <span className="block text-xs font-bold uppercase text-[#8a5d2b]">
+                  Tamanho
+                </span>
+                <strong className="text-gray-900">{opcoes.tamanho}</strong>
+              </div>
+              <div>
+                <span className="block text-xs font-bold uppercase text-[#8a5d2b]">
+                  Cor
+                </span>
+                <strong className="text-gray-900">{opcoes.cor}</strong>
+              </div>
+              <div>
+                <span className="block text-xs font-bold uppercase text-[#8a5d2b]">
+                  Estoque
+                </span>
+                <strong className="text-gray-900">
+                  {emEstoque ? `${opcoes.estoque} un.` : "Indisponível"}
+                </strong>
+              </div>
+            </div>
 
             <div className="my-7">
               <ProductOptions
@@ -389,7 +513,16 @@ export default function ProductDetail() {
               </button>
             </div>
 
-            <div className="mt-6 grid gap-3 text-sm text-gray-600 sm:grid-cols-2">
+            <a
+              href={linkWhatsAppProduto}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 flex items-center justify-center rounded-xl bg-green-600 p-4 font-bold text-white transition hover:bg-green-700"
+            >
+              Tirar dúvida sobre esta peça
+            </a>
+
+            <div className="mt-6 grid gap-3 text-sm text-gray-600 sm:grid-cols-3">
               <div className="rounded-xl bg-[#fff7ed] p-4">
                 <strong className="block text-gray-900">Entrega</strong>
                 Prazo e valor confirmados no atendimento.
@@ -398,9 +531,70 @@ export default function ProductDetail() {
                 <strong className="block text-gray-900">Trocas</strong>
                 Consulte condições pelo WhatsApp.
               </div>
+              <div className="rounded-xl bg-[#fff7ed] p-4">
+                <strong className="block text-gray-900">Pedido</strong>
+                Acompanhe status e pagamento depois da compra.
+              </div>
             </div>
           </div>
         </section>
+
+        {produtosRelacionados.length > 0 && (
+          <section className="mt-10">
+            <div className="mb-4 flex items-end justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#8a5d2b]">
+                  Continue olhando
+                </p>
+                <h2 className="mt-1 text-2xl font-bold">
+                  Peças da mesma categoria
+                </h2>
+              </div>
+              <Link
+                to="/#catalogo"
+                className="hidden text-sm font-semibold text-[#8a5d2b] hover:underline sm:block"
+              >
+                Ver catálogo
+              </Link>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              {produtosRelacionados.map((relacionado) => (
+                <Link
+                  key={relacionado.id}
+                  to={obterUrlProduto(relacionado)}
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="group overflow-hidden rounded-2xl border border-[#8a5d2b]/10 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                >
+                  {obterImagemPrincipal(relacionado) ? (
+                    <img
+                      src={obterImagemPrincipal(relacionado)}
+                      alt={relacionado.products}
+                      loading="lazy"
+                      decoding="async"
+                      className="h-64 w-full bg-[#f8f1e9] object-contain transition duration-500 group-hover:scale-[1.03]"
+                    />
+                  ) : (
+                    <div className="grid h-64 place-items-center bg-[#fff7ed] text-sm text-gray-400">
+                      Imagem indisponível
+                    </div>
+                  )}
+                  <div className="p-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#8a5d2b]">
+                      {relacionado.categoria}
+                    </p>
+                    <h3 className="mt-1 line-clamp-2 font-bold group-hover:text-[#8a5d2b]">
+                      {relacionado.products}
+                    </h3>
+                    <p className="mt-2 font-bold text-[#8a5d2b]">
+                      {formatarPreco(obterPrecoVenda(relacionado))}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   );
