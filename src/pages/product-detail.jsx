@@ -12,6 +12,7 @@ import {
   obterUrlProduto,
   temPrecoPromocional,
 } from "../lib/product";
+import { criarUrlAbsoluta, textoMeta } from "../lib/seo";
 
 const CHAVE_CARRINHO = "selleta-modas-carrinho";
 const whatsappNumero = String(
@@ -128,12 +129,15 @@ export default function ProductDetail() {
   useEffect(() => {
     if (!produto) return;
 
-    const urlProduto = window.location.href;
+    const urlProduto = criarUrlAbsoluta(obterUrlProduto(produto));
     document.title = `${produto.products} | Selleta Modas`;
     const descricao =
       produto.descricao || "Produto feminino selecionado pela Selleta Modas.";
-    const descricaoCurta = descricao.slice(0, 155);
-    const imagem = obterImagensProduto(produto)[0];
+    const descricaoCurta = textoMeta(
+      `${produto.products}: ${descricao} Confira tamanhos, cores, estoque e compra online na Selleta Modas.`
+    );
+    const primeiraImagem = obterImagensProduto(produto)[0];
+    const imagem = primeiraImagem ? criarUrlAbsoluta(primeiraImagem) : "";
 
     definirMeta('meta[name="description"]', {
       name: "description",
@@ -160,7 +164,37 @@ export default function ProductDetail() {
         property: "og:image",
         content: imagem,
       });
+      definirMeta('meta[property="og:image:alt"]', {
+        property: "og:image:alt",
+        content: produto.products,
+      });
     }
+    definirMeta('meta[name="twitter:card"]', {
+      name: "twitter:card",
+      content: imagem ? "summary_large_image" : "summary",
+    });
+    definirMeta('meta[name="twitter:title"]', {
+      name: "twitter:title",
+      content: `${produto.products} | Selleta Modas`,
+    });
+    definirMeta('meta[name="twitter:description"]', {
+      name: "twitter:description",
+      content: descricaoCurta,
+    });
+    if (imagem) {
+      definirMeta('meta[name="twitter:image"]', {
+        name: "twitter:image",
+        content: imagem,
+      });
+    }
+    definirMeta('meta[property="product:price:amount"]', {
+      property: "product:price:amount",
+      content: obterPrecoVenda(produto).toFixed(2),
+    });
+    definirMeta('meta[property="product:price:currency"]', {
+      property: "product:price:currency",
+      content: "BRL",
+    });
     definirCanonical(urlProduto);
   }, [produto]);
 
@@ -170,7 +204,7 @@ export default function ProductDetail() {
     const scriptAnterior = document.getElementById("selleta-single-product-schema");
     scriptAnterior?.remove();
 
-    const urlProduto = `${window.location.origin}${obterUrlProduto(produto)}`;
+    const urlProduto = criarUrlAbsoluta(obterUrlProduto(produto));
     const precoVenda = obterPrecoVenda(produto);
     const script = document.createElement("script");
 
@@ -182,8 +216,9 @@ export default function ProductDetail() {
       name: produto.products,
       description:
         produto.descricao || "Produto feminino selecionado pela Selleta Modas.",
-      image: imagens,
+      image: imagens.map(criarUrlAbsoluta),
       category: produto.categoria || "Moda feminina",
+      sku: String(produto.id || gerarSlugProduto(produto)),
       brand: {
         "@type": "Brand",
         name: "Selleta Modas",
@@ -193,10 +228,15 @@ export default function ProductDetail() {
         url: urlProduto,
         priceCurrency: "BRL",
         price: precoVenda.toFixed(2),
+        itemCondition: "https://schema.org/NewCondition",
         availability:
           Number(produto.estoque) > 0
             ? "https://schema.org/InStock"
             : "https://schema.org/OutOfStock",
+        seller: {
+          "@type": "Organization",
+          name: "Selleta Modas",
+        },
       },
     });
 
@@ -336,7 +376,9 @@ export default function ProductDetail() {
     : 0;
   const emEstoque = opcoes.estoque > 0;
   const linkWhatsAppProduto = `https://wa.me/${whatsappNumero}?text=${encodeURIComponent(
-    `Olá! Gostaria de tirar uma dúvida sobre ${produto.products}: ${window.location.href}`
+    `Olá! Gostaria de tirar uma dúvida sobre ${produto.products}: ${criarUrlAbsoluta(
+      obterUrlProduto(produto)
+    )}`
   )}`;
 
   return (

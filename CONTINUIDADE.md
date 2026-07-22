@@ -1,6 +1,6 @@
 # Continuidade do projeto Selleta Modas
 
-Atualizado em: 21 de julho de 2026.
+Atualizado em: 22 de julho de 2026.
 
 ## Estado atual
 
@@ -26,6 +26,7 @@ Atualizado em: 21 de julho de 2026.
 - A experiência de pedidos foi reforçada com helper compartilhado de status, progresso visual na área da cliente e atalhos de WhatsApp para cliente/admin.
 - A vitrine pública ganhou destaques de coleção, microcopy de economia/pagamento, filtros mais claros e seção de confiança sem depoimentos fictícios.
 - A página individual do produto foi reforçada com dados estruturados SEO, CTA de WhatsApp, resumo de seleção/estoque e peças relacionadas.
+- SEO técnico reforçado com metadados mais específicos, imagem social, schema `WebSite`/`ClothingStore`, canonical absoluto por `VITE_SITE_URL` e `robots.txt` gerado junto do sitemap.
 
 ## Regra para próximas rodadas
 
@@ -87,6 +88,7 @@ verificação da publicação no Vercel. Depois de cada publicação:
 - Centralizadas as regras visuais de pedidos em `src/lib/order-ui.js`, reutilizadas no acompanhamento, área da cliente e painel administrativo.
 - Adicionadas seções públicas de destaque e confiança para aumentar conversão sem alterar banco ou dependências.
 - Melhorada a página `/produto/:slug` com breadcrumb, preço/economia, confiança e navegação para produtos relacionados.
+- Ajustado SEO técnico para e-commerce com URLs canônicas estáveis, dados estruturados mais completos e suporte a domínio futuro via `VITE_SITE_URL`.
 
 ## Esquema principal
 
@@ -114,11 +116,12 @@ O upload do bucket `produtos` já foi restringido a administradores autenticados
 ## Próximas melhorias por prioridade
 
 1. Configurar `VITE_PIX_KEY` e `VITE_PIX_RECEIVER` no Vercel.
-2. Testar um pedido real com variação e acompanhar em `/pedido`.
-3. Confirmar/cancelar o pedido no painel administrativo para validar estoque e status.
-4. Integrar provedor de Pix com QR Code e webhook para confirmação automática.
-5. Melhorar e automatizar e-mails/WhatsApp transacionais para pedido recebido, pagamento confirmado e pedido entregue.
-6. Fazer auditoria final das políticas RLS, analytics, monitoramento e testes E2E.
+2. Quando o domínio `selletamodas.com.br` estiver ativo, configurar `VITE_SITE_URL=https://selletamodas.com.br` no Vercel e reenviar o sitemap no Google Search Console.
+3. Testar um pedido real com variação e acompanhar em `/pedido`.
+4. Confirmar/cancelar o pedido no painel administrativo para validar estoque e status.
+5. Integrar provedor de Pix com QR Code e webhook para confirmação automática.
+6. Melhorar e automatizar e-mails/WhatsApp transacionais para pedido recebido, pagamento confirmado e pedido entregue.
+7. Fazer auditoria final das políticas RLS, analytics, monitoramento e testes E2E.
 
 O cálculo de frete ficará fora do escopo por enquanto. O checkout não soma frete ao subtotal.
 

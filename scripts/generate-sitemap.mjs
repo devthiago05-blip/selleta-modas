@@ -108,6 +108,20 @@ const sitemap = [
   "",
 ].join("\n");
 
+const robots = [
+  "User-agent: *",
+  "Allow: /",
+  "",
+  "Disallow: /admin",
+  "Disallow: /login",
+  "Disallow: /cliente",
+  "Disallow: /pedido",
+  "",
+  `Sitemap: ${SITE_URL}/sitemap.xml`,
+  "",
+].join("\n");
+
 await mkdir("public", { recursive: true });
 await writeFile("public/sitemap.xml", sitemap, "utf8");
+await writeFile("public/robots.txt", robots, "utf8");
 console.log(`Sitemap gerado com ${urls.length} URL(s).`);

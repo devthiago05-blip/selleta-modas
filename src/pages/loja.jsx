@@ -26,6 +26,7 @@ import {
   temPrecoPromocional,
   obterVariacoes,
 } from "../lib/product";
+import { criarUrlAbsoluta } from "../lib/seo";
 
 const CHAVE_CARRINHO = "selleta-modas-carrinho";
 const whatsappNumero = String(
@@ -360,6 +361,8 @@ if (!telefoneCliente.trim()) {
 
     if (produtosAtivos.length === 0) return undefined;
 
+    document.getElementById("selleta-product-schema")?.remove();
+
     const script = document.createElement("script");
     script.id = "selleta-product-schema";
     script.type = "application/ld+json";
@@ -373,13 +376,18 @@ if (!telefoneCliente.trim()) {
           "@type": "Product",
           name: produto.products,
           description: produto.descricao || undefined,
-          image: obterImagensProduto(produto),
+          image: obterImagensProduto(produto).map(criarUrlAbsoluta),
           category: produto.categoria || undefined,
+          brand: {
+            "@type": "Brand",
+            name: "Selleta Modas",
+          },
           offers: {
             "@type": "Offer",
-            url: `${window.location.origin}${obterUrlProduto(produto)}`,
+            url: criarUrlAbsoluta(obterUrlProduto(produto)),
             priceCurrency: "BRL",
             price: obterPrecoVenda(produto).toFixed(2),
+            itemCondition: "https://schema.org/NewCondition",
             availability:
               Number(produto.estoque) > 0
                 ? "https://schema.org/InStock"
